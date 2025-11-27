@@ -1,4 +1,4 @@
-Shader "Custom/ShockwaveParabola"
+Shader "Custom/ShockwaveShader"
 {
     Properties
     {
@@ -6,12 +6,10 @@ Shader "Custom/ShockwaveParabola"
         _Radius ("Radius", Float) = 0
         _Thickness ("Thickness", Float) = 0.15
         _Origin ("Origin", Vector) = (0,0,0,0)
-
-        _A ("A", Float) = 0.5
-        _B ("B", Float) = 0
-        _C ("C", Float) = 0
-
         _CurveThickness ("Curve Thickness", Float) = 0.1
+        
+        _FunctionLUT ("Function LUT", 2D) = "white" {}
+        _LUTRange ("LUT Range", Float) = 50
     }
 
     SubShader
@@ -32,11 +30,10 @@ Shader "Custom/ShockwaveParabola"
             float _Radius;
             float _Thickness;
             float4 _Origin;
-
-            float _A;
-            float _B;
-            float _C;
             float _CurveThickness;
+            
+            sampler2D _FunctionLUT;
+            float _LUTRange;
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -55,7 +52,6 @@ Shader "Custom/ShockwaveParabola"
                 return o;
             }
 
-            // Onda circular
             float ring(float dist, float radius, float thickness)
             {
                 float edge = abs(dist - radius);
@@ -63,23 +59,30 @@ Shader "Custom/ShockwaveParabola"
                 return 1 - smoothstep(smoothing, smoothing * 2, edge);
             }
 
-            // Curva y=ax²+bx+c com expansão tipo onda
-            float curveWave(float3 worldPos)
+            float sampleFunction(float x)
+            {
+                // Normaliza x para 0-1 baseado no range
+                float t = (x + _LUTRange * 0.5) / _LUTRange;
+                t = saturate(t);
+                
+                // Sample da textura LUT
+                return tex2D(_FunctionLUT, float2(t, 0.5)).r;
+            }
+
+            float functionWave(float3 worldPos)
             {
                 float x = worldPos.x - _Origin.x;
                 float z = worldPos.z - _Origin.z;
 
-                // valor correto da parábola
-                float yCurve = _A*x*x + _B*x + _C;
+                // Lê o valor da função da LUT
+                float yFunction = sampleFunction(x);
 
-                // "distância vertical" à parábola (define a linha)
-                float dy = abs(z - yCurve);
+                // Distância vertical à função
+                float dy = abs(z - yFunction);
                 float lineMask = 1 - smoothstep(_CurveThickness, _CurveThickness*2, dy);
 
-                // distância horizontal ao longo da parábola (define o avanço da onda)
+                // Onda progressiva
                 float tangentDist = abs(x);
-
-                // linha só aparece quando a onda chega nela
                 float waveMask = 1 - smoothstep(_Radius - _Thickness, _Radius + _Thickness, tangentDist);
 
                 return waveMask * lineMask;
@@ -93,9 +96,9 @@ Shader "Custom/ShockwaveParabola"
                 float d = distance(xz, oxz);
                 float circle = ring(d, _Radius, _Thickness);
 
-                float parabola = curveWave(i.worldPos);
+                float curve = functionWave(i.worldPos);
 
-                float alpha = saturate(circle + parabola) * _Color.a;
+                float alpha = saturate(circle + curve) * _Color.a;
 
                 return float4(_Color.rgb, alpha);
             }

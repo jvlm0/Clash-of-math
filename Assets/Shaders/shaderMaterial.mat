@@ -43,6 +43,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FunctionLUT:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -62,26 +66,41 @@ Material:
     m_Ints: []
     m_Floats:
     - _A: 0.5
+    - _Amplitude: 1
+    - _B: 0
     - _BumpScale: 1
+    - _C: 0
+    - _CurveThickness: 0.1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _LUTRange: 50
+    - _LineThickness: 0.2
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Radius: 0
+    - _Radius: 5.497974
+    - _ShockRadius: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Strength: 1
     - _Thickness: 0.1
+    - _TimeOffset: 26.967033
     - _UVSec: 0
+    - _WaveSize: 1
+    - _WaveSpeed: 3
+    - _WaveThickness: 0.2
+    - _WaveWidth: 1
     - _ZWrite: 1
     m_Colors:
+    - _Center: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Origin: {r: 0, g: 0, b: 0, a: 0}
+    - _ShockOrigin: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
