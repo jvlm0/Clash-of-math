@@ -141,7 +141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1101436516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,6 +549,7 @@ MonoBehaviour:
   shockwaveMaterial: {fileID: 2100000, guid: 7d24c56f040b934488c73985422c40d1, type: 2}
   speed: 2
   maxRadius: 20
+  functionExpression: x*x
 --- !u!4 &2054118804
 Transform:
   m_ObjectHideFlags: 0

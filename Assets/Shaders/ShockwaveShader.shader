@@ -61,11 +61,8 @@ Shader "Custom/ShockwaveShader"
 
             float sampleFunction(float x)
             {
-                // Normaliza x para 0-1 baseado no range
                 float t = (x + _LUTRange * 0.5) / _LUTRange;
                 t = saturate(t);
-                
-                // Sample da textura LUT
                 return tex2D(_FunctionLUT, float2(t, 0.5)).r;
             }
 
@@ -73,17 +70,22 @@ Shader "Custom/ShockwaveShader"
             {
                 float x = worldPos.x - _Origin.x;
                 float z = worldPos.z - _Origin.z;
-
-                // Lê o valor da função da LUT
+                
+                // Distância radial do centro
+                float radialDist = length(float2(x, z));
+                
+                // Só desenha se estiver próximo ao raio atual (banda circular)
+                float waveMask = 1 - smoothstep(_Radius - _Thickness, _Radius + _Thickness, abs(radialDist - _Radius));
+                
+                // Se não está na banda da onda, retorna 0
+                if(waveMask < 0.01) return 0;
+                
+                // Valor da função no ponto X
                 float yFunction = sampleFunction(x);
-
+                
                 // Distância vertical à função
                 float dy = abs(z - yFunction);
                 float lineMask = 1 - smoothstep(_CurveThickness, _CurveThickness*2, dy);
-
-                // Onda progressiva
-                float tangentDist = abs(x);
-                float waveMask = 1 - smoothstep(_Radius - _Thickness, _Radius + _Thickness, tangentDist);
 
                 return waveMask * lineMask;
             }
