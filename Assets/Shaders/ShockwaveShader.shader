@@ -66,6 +66,31 @@ Shader "Custom/ShockwaveShader"
                 return tex2D(_FunctionLUT, float2(t, 0.5)).r;
             }
 
+            float distanceToFunction(float2 point)
+            {
+                float x = point.x;
+                float z = point.y;
+                
+                // Amostra múltiplos pontos ao redor para encontrar o mais próximo
+                float minDist = 999999.0;
+                int samples = 16; // Mais amostras = mais preciso
+                
+                // Define range de busca baseado na posição
+                float searchRange = max(2.0, abs(x) * 0.5);
+                
+                for(int i = 0; i < samples; i++)
+                {
+                    float t = float(i) / float(samples - 1);
+                    float testX = x + (t - 0.5) * searchRange;
+                    
+                    float funcY = sampleFunction(testX);
+                    float dist = length(float2(testX - x, funcY - z));
+                    minDist = min(minDist, dist);
+                }
+                
+                return minDist;
+            }
+
             float functionWave(float3 worldPos)
             {
                 float x = worldPos.x - _Origin.x;
@@ -74,20 +99,22 @@ Shader "Custom/ShockwaveShader"
                 // Distância radial do centro
                 float radialDist = length(float2(x, z));
                 
-                // Só desenha se estiver próximo ao raio atual (banda circular)
-                float waveMask = 1 - smoothstep(_Radius - _Thickness, _Radius + _Thickness, abs(radialDist - _Radius));
+                // Máscara circular - só desenha na banda da shockwave
+                float bandWidth = _Thickness * 2.0;
+                float waveMask = 1.0 - smoothstep(0.0, bandWidth, abs(radialDist - _Radius));
                 
-                // Se não está na banda da onda, retorna 0
-                if(waveMask < 0.01) return 0;
+                if(waveMask < 0.01) return 0.0;
                 
-                // Valor da função no ponto X
-                float yFunction = sampleFunction(x);
+                // Calcula distância do ponto atual para a curva
+                float distToCurve = distanceToFunction(float2(x, z));
                 
-                // Distância vertical à função
-                float dy = abs(z - yFunction);
-                float lineMask = 1 - smoothstep(_CurveThickness, _CurveThickness*2, dy);
-
-                return waveMask * lineMask;
+                // Espessura adaptativa - mais grossa perto da origem onde a função varia mais
+                float adaptiveThickness = _CurveThickness * (1.0 + 3.0 / max(1.0, abs(x) + 1.0));
+                
+                // Máscara da curva
+                float curveMask = 1.0 - smoothstep(adaptiveThickness * 0.5, adaptiveThickness * 1.5, distToCurve);
+                
+                return waveMask * curveMask;
             }
 
             fixed4 frag (v2f i) : SV_Target

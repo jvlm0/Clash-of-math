@@ -15,8 +15,8 @@ public class ShockwaveShaderController : MonoBehaviour
     private float radius = 0f;
     private Vector3 startPos;
     private float[] functionLUT; // Look-Up Table
-    private int lutSize = 4096;
-    private float lutRange = 50f; // alcance de -25 a +25
+    private int lutSize = 8192;
+    private float lutRange = 30f; // alcance de -25 a +25
 
     [Header("Qualidade da Curva")]
     [Range(8, 128)]
@@ -71,13 +71,15 @@ public class ShockwaveShaderController : MonoBehaviour
 
     float EvaluateFunction(float x)
     {
-        // Substitui x na expressão e avalia
+        // Evita divisão por zero
+        if (Mathf.Abs(x) < 0.01f)
+            return Mathf.Sign(x) * 100f; // Retorna valor grande mas finito
+
         string expression = functionExpression.Replace(
             "x",
             x.ToString(System.Globalization.CultureInfo.InvariantCulture)
         );
 
-        // Suporte a funções matemáticas comuns
         expression = expression.Replace("sin", "Math.Sin");
         expression = expression.Replace("cos", "Math.Cos");
         expression = expression.Replace("tan", "Math.Tan");
@@ -86,8 +88,19 @@ public class ShockwaveShaderController : MonoBehaviour
         expression = expression.Replace("pow", "Math.Pow");
 
         DataTable dt = new DataTable();
-        var result = dt.Compute(expression, "");
-        return Convert.ToSingle(result);
+
+        try
+        {
+            var result = dt.Compute(expression, "");
+            float value = Convert.ToSingle(result);
+
+            // Clamp para evitar valores extremos
+            return Mathf.Clamp(value, -50f, 50f);
+        }
+        catch
+        {
+            return 0f;
+        }
     }
 
     void Update()

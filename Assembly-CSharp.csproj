@@ -65,7 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
+    <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
+    <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
+    <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\ShockwaveShader.shader" />
