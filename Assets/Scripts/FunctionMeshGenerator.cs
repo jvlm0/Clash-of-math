@@ -153,7 +153,7 @@ public class FunctionMeshGenerator : MonoBehaviour
         // ===== FUNÇÕES TRIGONOMÉTRICAS =====
         
         // Onda senoidal: f(x) = sin(x)
-         return Mathf.Sin(x * frequency) * amplitude;
+         return Mathf.Sin(x * frequency) * amplitude * x*x;
         
         // Onda cosseno: f(x) = cos(x)
         // return Mathf.Cos(x * frequency) * amplitude;
