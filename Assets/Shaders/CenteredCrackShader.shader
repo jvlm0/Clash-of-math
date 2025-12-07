@@ -1,14 +1,18 @@
-// == == == == == == == == == == SHADER COM FENDA PROCEDURAL NO CENTRO == == == == == == == == == ==
+// ====================SHADER COM FENDA PROCEDURAL NO CENTRO====================
 // Gera fenda diretamente no shader, sem necessidade de textura externa
-// Salve como : Assets / Shaders / CenteredCrackShader.shader
+// Salve como: Assets/Shaders/CenteredCrackShader.shader
 
 Shader "Custom/CenteredCrackShader"
 {
     Properties
     {
         [Header(Ground)]
-        _MainTex ("Ground Texture", 2D) = "white" {}
+        _Color ("Ground Color", Color) = (1, 1, 1, 1)
+        _MainTex ("Ground Texture (Albedo)", 2D) = "white" {}
         _NormalMap ("Ground Normal", 2D) = "bump" {}
+        _NormalIntensity ("Normal Intensity", Range(0, 2)) = 1.0
+        _SpecularMap ("Specular Map", 2D) = "white" {}
+        _SpecularIntensity ("Specular Intensity", Range(0, 1)) = 0.5
         _Smoothness ("Smoothness", Range(0, 1)) = 0.5
 
         [Header(Crack Position)]
@@ -42,12 +46,16 @@ Shader "Custom/CenteredCrackShader"
         LOD 200
 
         CGPROGRAM
-        #pragma surface surf Standard fullforwardshadows vertex:vert
+        #pragma surface surf StandardSpecular fullforwardshadows vertex:vert
         #pragma target 3.5
 
         sampler2D _MainTex;
         sampler2D _NormalMap;
-        //float4 _MainTex_ST;
+        sampler2D _SpecularMap;
+        
+        float4 _Color;
+        float _NormalIntensity;
+        float _SpecularIntensity;
 
         float2 _CrackCenter;
         float _CrackAngle;
@@ -88,8 +96,8 @@ Shader "Custom/CenteredCrackShader"
             float s = sin(rad);
             float c = cos(rad);
             return float2(
-            p.x * c - p.y * s,
-            p.x * s + p.y * c
+                p.x * c - p.y * s,
+                p.x * s + p.y * c
             );
         }
 
@@ -121,7 +129,7 @@ Shader "Custom/CenteredCrackShader"
             float maxLength = _CrackLength * _FormationProgress;
 
             // Fenda principal
-            float2 crackStart = float2(- maxLength * 0.5, 0);
+            float2 crackStart = float2(-maxLength * 0.5, 0);
             float2 crackEnd = float2(maxLength * 0.5, 0);
             float mainDist = lineDistance(p, crackStart, crackEnd, _CrackWidth);
             mask = 1.0 - smoothstep(_CrackWidth * 0.5, _CrackWidth * 1.5, mainDist);
@@ -131,13 +139,13 @@ Shader "Custom/CenteredCrackShader"
             {
                 float branchProgress = saturate((_FormationProgress - 0.3) / 0.7);
 
-                for (int i = 1; i <= _BranchCount; i ++)
+                for (int i = 1; i <= _BranchCount; i++)
                 {
                     // Posição ao longo da fenda principal
                     float branchPos = (float(i) / float(_BranchCount + 1)) * maxLength - maxLength * 0.5;
 
                     // Alterna entre esquerda e direita
-                    float side = (i % 2 == 0) ? 1.0 : - 1.0;
+                    float side = (i % 2 == 0) ? 1.0 : -1.0;
 
                     // Calcula ângulo da ramificação
                     float angle = _BranchAngle * side;
@@ -172,11 +180,18 @@ Shader "Custom/CenteredCrackShader"
         }
 
         // Fragment shader
-        void surf(Input IN, inout SurfaceOutputStandard o)
+        void surf(Input IN, inout SurfaceOutputStandardSpecular o)
         {
-            // Textura base
-            float4 groundColor = tex2D(_MainTex, IN.uv_MainTex);
+            // Textura base com cor aplicada
+            float4 groundColor = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            
+            // Normal map com intensidade ajustável
             float3 groundNormal = UnpackNormal(tex2D(_NormalMap, IN.uv_MainTex));
+            groundNormal.xy *= _NormalIntensity;
+            groundNormal = normalize(groundNormal);
+            
+            // Specular map
+            float3 specularColor = tex2D(_SpecularMap, IN.uv_MainTex).rgb * _SpecularIntensity;
 
             // Recalcula máscara para efeitos de superfície
             float crackMask = IN.crackMask;
@@ -198,12 +213,15 @@ Shader "Custom/CenteredCrackShader"
 
             // Normal perturbation
             float3 crackNormal = float3(
-            (noise(IN.uv_MainTex * 25.0) - 0.5) * 2.0,
-            (noise(IN.uv_MainTex * 25.0 + 0.5) - 0.5) * 2.0,
-            1.0
+                (noise(IN.uv_MainTex * 25.0) - 0.5) * 2.0,
+                (noise(IN.uv_MainTex * 25.0 + 0.5) - 0.5) * 2.0,
+                1.0
             );
             o.Normal = lerp(groundNormal, normalize(crackNormal), crackMask * 0.7);
 
+            // Specular: reduz nas fendas
+            o.Specular = lerp(specularColor, float3(0, 0, 0), crackMask * 0.8);
+            
             o.Smoothness = lerp(_Smoothness, 1.0 - _CrackRoughness, crackMask);
             o.Occlusion = lerp(1.0, 0.3, innerMask);
         }

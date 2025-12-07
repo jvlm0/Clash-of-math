@@ -65,17 +65,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CenteredCrackController.cs" />
+    <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
+    <Compile Include="Assets\Scripts\MathExpressionParser.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
+    <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
+    <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
+    <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
+    <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />
+    <Compile Include="Assets\Temple Minions\Demo\Scripts\CharacterSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\AdvancedGroundCrack.shader" />
+    <None Include="Assets\EgyptMonsters\Demo\DemoAssets\Shaders\GrassAnimate.shader" />
     <None Include="Assets\Shaders\CenteredCrackShader.shader" />
+    <None Include="Assets\Temple Minions\Demo\Shaders\UnlitDissolve.shader" />
+    <None Include="Assets\EgyptMonsters\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
