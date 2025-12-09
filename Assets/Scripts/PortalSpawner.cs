@@ -184,9 +184,14 @@ public class PortalSpawner : MonoBehaviour
         Vector3 leftPosition = centerPosition - Vector3.right * (distanceBetweenPairPortals / 2f);
         Vector3 rightPosition = centerPosition + Vector3.right * (distanceBetweenPairPortals / 2f);
         
+        GameObject portalParent = new GameObject($"Portal_Pair{pairIndex}");
+        portalParent.transform.position = centerPosition;
+        portalParent.transform.parent = this.transform;
+        portalParent.AddComponent<UniquePairPortalCollider>();
+
         // Criar portais
-        GameObject leftPortal = Instantiate(portalPrefab, leftPosition, portalPrefab.transform.rotation, transform);
-        GameObject rightPortal = Instantiate(portalPrefab, rightPosition, portalPrefab.transform.rotation, transform);
+        GameObject leftPortal = Instantiate(portalPrefab, leftPosition, portalPrefab.transform.rotation, portalParent.transform);
+        GameObject rightPortal = Instantiate(portalPrefab, rightPosition, portalPrefab.transform.rotation, portalParent.transform);
         
         leftPortal.name = $"Portal_Pair{pairIndex}_Left_{(leftIsBlue ? "Blue" : "Red")}";
         rightPortal.name = $"Portal_Pair{pairIndex}_Right_{(leftIsBlue ? "Red" : "Blue")}";

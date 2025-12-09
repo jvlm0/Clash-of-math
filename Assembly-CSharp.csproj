@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
+    <Compile Include="Assets\Scripts\UniquePairPortalCollider.cs" />
     <Compile Include="Assets\Scripts\PortalSpawner.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />

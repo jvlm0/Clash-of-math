@@ -21,9 +21,14 @@ public class PortalCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {   
+        if (GetComponentInParent<UniquePairPortalCollider>().HaveCollided())
+        {
+            return;
+        }   
         Debug.Log("Colidiu com: " + other.name);
         if (other.CompareTag("Player"))
         {
+            GetComponentInParent<UniquePairPortalCollider>().SetPortalState();
             string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
             Debug.Log("Equação coletada: " + expresion);
             EquationController.instance.AppendEquation(expresion);
