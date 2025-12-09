@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
+    <Compile Include="Assets\Scripts\EquationController.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Assets\Scripts\PortalSpawner.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />
+    <Compile Include="Assets\Scripts\PortalCollider.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\CharacterSelector.cs" />
   </ItemGroup>
   <ItemGroup>

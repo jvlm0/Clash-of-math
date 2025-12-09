@@ -11,7 +11,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     
     [Header("Função Matemática")]
     [SerializeField] [TextArea(2, 5)] 
-    private string mathExpression = "sin(x)";
+    public string mathExpression = "sin(x)";
     
     [Header("Animação de Propagação")]
     [SerializeField] private bool animateOnStart = true;
