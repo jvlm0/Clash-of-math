@@ -6,28 +6,25 @@ using UnityEngine;
 public class PortalCollider : MonoBehaviour
 {
     [Header("Componentes")]
-    [SerializeField] private GameObject textObject;
+    [SerializeField]
+    private GameObject textObject;
+
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    void Start() { }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 
     private void OnTriggerEnter(Collider other)
-    {   
-        if (GetComponentInParent<UniquePairPortalCollider>().HaveCollided())
-        {
-            return;
-        }   
-        Debug.Log("Colidiu com: " + other.name);
+    {
         if (other.CompareTag("Player"))
         {
+            if (GetComponentInParent<UniquePairPortalCollider>().HaveCollided())
+            {
+                return;
+            }
+            Debug.Log("Colidiu com: " + other.name);
+
             GetComponentInParent<UniquePairPortalCollider>().SetPortalState();
             string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
             Debug.Log("Equação coletada: " + expresion);
