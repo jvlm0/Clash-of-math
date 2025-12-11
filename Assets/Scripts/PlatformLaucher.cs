@@ -3,12 +3,20 @@ using UnityEngine;
 public class PlatformLaucher : MonoBehaviour
 {
     private CharacterController controller;
-    public float gravity = -25f;
+
+    [SerializeField]
+    private float horizontalSpeed = 10f;
+
+    [SerializeField]
+    private float verticalSpeed = 15f;
+
+    [SerializeField]
+    private float gravity = -25f;
 
     Vector3 velocity;
     bool isLaunched;
 
-    void Launch(Vector3 direction, float horizontalSpeed, float verticalSpeed)
+    void Launch(Vector3 direction)
     {
         velocity = direction.normalized * horizontalSpeed;
         velocity.y = verticalSpeed;
@@ -21,13 +29,10 @@ public class PlatformLaucher : MonoBehaviour
         if (controller != null)
         {
             Vector3 launchDirection = -Vector3.forward;
-            float horizontalSpeed = 10f;
-            float verticalSpeed = 15f;
-            Launch(launchDirection, horizontalSpeed, verticalSpeed);
+
+            Launch(launchDirection);
         }
     }
-
-
 
     void Update()
     {
