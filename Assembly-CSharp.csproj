@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\PlatformLaucher.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
+    <Compile Include="Assets\Scripts\FollowCamera.cs" />
     <Compile Include="Assets\Scripts\EquationController.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
