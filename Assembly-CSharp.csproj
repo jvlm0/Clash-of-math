@@ -69,10 +69,10 @@
     <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
+    <Compile Include="Assets\Scripts\PlayerAnimController.cs" />
     <Compile Include="Assets\Scripts\MathExpressionParser.cs" />
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
-    <Compile Include="Assets\Scripts\PlatformLaucher.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
     <Compile Include="Assets\Scripts\FollowCamera.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
     <Compile Include="Assets\Scripts\UniquePairPortalCollider.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FloatingJoystick.cs" />
+    <Compile Include="Assets\Scripts\AnimContants.cs" />
     <Compile Include="Assets\Scripts\PortalSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
