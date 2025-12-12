@@ -15,7 +15,15 @@ public class PlayerMovement : MonoBehaviour
     private float verticalJumpSpeed = 15f;
 
     [SerializeField]
+    private float jumpCenterY = 2.05f;
+    [SerializeField]
+    private float normalCenterY = 1.07f;
+
+    [SerializeField]
     private float gravity = -25f;
+
+    [SerializeField]
+    private float minAnimSpeed = 0.2f;
 
     Vector3 velocity; // vertical + horizontal da física
     bool isLaunched;
@@ -29,15 +37,14 @@ public class PlayerMovement : MonoBehaviour
 
     Animator animator;
 
-    float maxPossibleHeight;
+    float airTime; // tempo que está no ar
+    float estimatedAirTime; // tempo estimado baseado na distância/velocidade
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         animController = GetComponent<PlayerAnimController>();
         animator = GetComponent<Animator>();
-
-        maxPossibleHeight = (verticalJumpSpeed * verticalJumpSpeed) / (2f * Mathf.Abs(gravity));
     }
 
     void Update()
@@ -91,25 +98,24 @@ public class PlayerMovement : MonoBehaviour
         // ============================
         if (isLaunched)
         {
+            
             controller.Move(new Vector3(velocity.x, 0, velocity.z) * Time.deltaTime);
 
-            float currentHeight = transform.position.y;
+            airTime += Time.deltaTime;
 
-            // altura normalizada de 0 a 1
-            float t = Mathf.InverseLerp(0f, maxPossibleHeight, currentHeight);
-
-            // velocidade da animação baseada somente na altura
-            // mais próximo do topo → animação mais lenta
-            // mais próximo do chão → mais rápida
-            float jumpAnimSpeed = Mathf.Lerp(2f, 0.2f, t);
-
+            // Atualiza a velocidade da animação baseado no progresso real
+            float t = Mathf.Clamp01(airTime / estimatedAirTime);
+            float jumpAnimSpeed = Mathf.Lerp(2f, minAnimSpeed, t);
             animator.SetFloat("JumpSpeed", jumpAnimSpeed);
 
             if (controller.isGrounded)
             {
+                controller.center = new Vector3(0,normalCenterY,0);
+                animator.SetTrigger("FinishJump");
                 isLaunched = false;
                 velocity.x = 0;
                 velocity.z = 0;
+                airTime = 0f;
             }
         }
     }
@@ -126,16 +132,65 @@ public class PlayerMovement : MonoBehaviour
         // força vertical inicial
         velocity.y = verticalJumpSpeed;
 
-        isLaunched = true;
+        airTime = 0f;
+
+        // ← SOLUÇÃO: Detecta a plataforma de destino para calcular tempo real
+        // Faz um raycast ou spherecast na direção do pulo
+        Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        float horizontalSpeed = horizontalVelocity.magnitude;
+
+        RaycastHit hit;
+        float maxDistance = 50f; // distância máxima de busca
+        
+        if (Physics.Raycast(transform.position, horizontalVelocity.normalized, out hit, maxDistance))
+        {
+            // Calcula tempo baseado na distância até a plataforma
+            float horizontalDistance = hit.distance;
+            float timeToReachPlatform = horizontalDistance / horizontalSpeed;
+            
+            // Usa o tempo real até a plataforma
+            estimatedAirTime = Mathf.Clamp(timeToReachPlatform, minAirTime, maxAirTime);
+        }
+        else
+        {
+            // Se não encontrar plataforma, usa o tempo máximo teórico de voo
+            float theoreticalAirTime = (2f * verticalJumpSpeed) / Mathf.Abs(gravity);
+            estimatedAirTime = Mathf.Clamp(theoreticalAirTime, minAirTime, maxAirTime);
+        }
+
+        // Opcional: Ajusta JumpSpeed uma única vez no início
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        float jumpAnimDuration = 1f;
+        
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name == "Jump") // ← AJUSTE O NOME DA SUA ANIMAÇÃO
+            {
+                jumpAnimDuration = clip.length;
+                break;
+            }
+        }
+
+        float perfectSpeed = jumpAnimDuration / estimatedAirTime;
+        animator.SetFloat("JumpSpeed", perfectSpeed);
     }
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("PlatformLaucher"))
+        if (other.gameObject.CompareTag("PlatformLaucher") && !isLaunched)
         {
             Vector3 launchDirection = -Vector3.forward;
-            Launch(launchDirection);
+            //Launch(launchDirection);
+            isLaunched = true;
             animController.jump();
         }
+    }
+
+    public void OnJumpStartFinished()
+    {
+        // Aqui você faz o Launch de verdade!
+        Vector3 launchDirection = -Vector3.forward;
+        Launch(launchDirection);
+        controller.center = new Vector3(0,jumpCenterY,0);
     }
 }
