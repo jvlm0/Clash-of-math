@@ -29,6 +29,7 @@ public class PortalCollider : MonoBehaviour
             string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
             Debug.Log("Equação coletada: " + expresion);
             EquationController.instance.AppendEquation(expresion);
+            Destroy(gameObject.transform.parent.gameObject, 0.2f);
         }
     }
 }
