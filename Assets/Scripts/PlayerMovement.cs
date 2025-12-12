@@ -6,12 +6,18 @@ public class PlayerMovement : MonoBehaviour
     private float horizontalJumpSpeed = 10f;
 
     [SerializeField]
+    float minAirTime = 0.3f;
+
+    [SerializeField]
+    float maxAirTime = 3.2f;
+
+    [SerializeField]
     private float verticalJumpSpeed = 15f;
 
     [SerializeField]
     private float gravity = -25f;
 
-    Vector3 velocity;      // vertical + horizontal da física
+    Vector3 velocity; // vertical + horizontal da física
     bool isLaunched;
 
     public float speed = 6f;
@@ -19,9 +25,19 @@ public class PlayerMovement : MonoBehaviour
 
     CharacterController controller;
 
+    PlayerAnimController animController;
+
+    Animator animator;
+
+    float maxPossibleHeight;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        animController = GetComponent<PlayerAnimController>();
+        animator = GetComponent<Animator>();
+
+        maxPossibleHeight = (verticalJumpSpeed * verticalJumpSpeed) / (2f * Mathf.Abs(gravity));
     }
 
     void Update()
@@ -38,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (inputDir.sqrMagnitude > 0.01f)
             {
+                animController.run();
                 controller.Move(inputDir.normalized * speed * Time.deltaTime);
 
                 Quaternion targetRotation = Quaternion.LookRotation(inputDir);
@@ -46,6 +63,10 @@ public class PlayerMovement : MonoBehaviour
                     targetRotation,
                     turnSpeed * Time.deltaTime
                 );
+            }
+            else
+            {
+                animController.stopRun();
             }
         }
 
@@ -71,6 +92,18 @@ public class PlayerMovement : MonoBehaviour
         if (isLaunched)
         {
             controller.Move(new Vector3(velocity.x, 0, velocity.z) * Time.deltaTime);
+
+            float currentHeight = transform.position.y;
+
+            // altura normalizada de 0 a 1
+            float t = Mathf.InverseLerp(0f, maxPossibleHeight, currentHeight);
+
+            // velocidade da animação baseada somente na altura
+            // mais próximo do topo → animação mais lenta
+            // mais próximo do chão → mais rápida
+            float jumpAnimSpeed = Mathf.Lerp(2f, 0.2f, t);
+
+            animator.SetFloat("JumpSpeed", jumpAnimSpeed);
 
             if (controller.isGrounded)
             {
@@ -102,6 +135,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 launchDirection = -Vector3.forward;
             Launch(launchDirection);
+            animController.jump();
         }
     }
 }

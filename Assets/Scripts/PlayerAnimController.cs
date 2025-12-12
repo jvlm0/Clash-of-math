@@ -24,6 +24,11 @@ public class PlayerAnimController : MonoBehaviour
         animator.SetBool(AnimContants.walkBool, false);
     }
 
+    public void stopRun()
+    {
+        animator.SetBool(AnimContants.runBool, false);
+    }
+
     public void jump()
     {
         animator.SetTrigger(AnimContants.jumpTrigger);
@@ -38,4 +43,9 @@ public class PlayerAnimController : MonoBehaviour
     {
         animator.SetTrigger(AnimContants.standingAttackTrigger);
     }
+
+    public void run()
+    {
+        animator.SetBool(AnimContants.runBool, true);
+    }  
 }
