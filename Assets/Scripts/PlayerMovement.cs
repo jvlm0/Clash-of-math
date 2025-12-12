@@ -112,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 controller.center = new Vector3(0,normalCenterY,0);
                 animator.SetTrigger("FinishJump");
+                EquationController.instance.SpawnFunctionMesh(transform.position);
                 isLaunched = false;
                 velocity.x = 0;
                 velocity.z = 0;

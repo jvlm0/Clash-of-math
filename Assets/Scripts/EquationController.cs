@@ -55,6 +55,7 @@ public class EquationController : MonoBehaviour
 
     public void SpawnFunctionMesh(Vector3 position)
     {
+        position.y = .2f;
         GameObject functionMesh = Instantiate(functionMeshPrefab, position, Quaternion.identity);
 
         FunctionMeshGenerator meshGenerator = functionMesh.GetComponent<FunctionMeshGenerator>();
