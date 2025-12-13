@@ -71,6 +71,7 @@
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\Scripts\PlayerAnimController.cs" />
     <Compile Include="Assets\Scripts\MathExpressionParser.cs" />
+    <Compile Include="Assets\Scripts\FunctionMeshCollisionDetector.cs" />
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />

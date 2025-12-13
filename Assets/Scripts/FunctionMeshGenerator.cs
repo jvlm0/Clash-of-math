@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class FunctionMeshGenerator : MonoBehaviour
@@ -8,6 +9,9 @@ public class FunctionMeshGenerator : MonoBehaviour
     [SerializeField] private float xMin = -5f;
     [SerializeField] private float xMax = 5f;
     [SerializeField] private float lineThickness = 0.15f;
+    [SerializeField] private bool useZClamp = false;
+    [SerializeField] private float zMin = -100f;
+    [SerializeField] private float zMax = 100f;
     
     [Header("Função Matemática")]
     [SerializeField] [TextArea(2, 5)] 
@@ -15,20 +19,38 @@ public class FunctionMeshGenerator : MonoBehaviour
     
     [Header("Animação de Propagação")]
     [SerializeField] private bool animateOnStart = true;
-    [SerializeField] private float propagationSpeed = 2f; // Velocidade de propagação
+    [SerializeField] private float propagationSpeed = 2f;
     [SerializeField] private AnimationDirection direction = AnimationDirection.FromCenter;
+    
+    [Header("Configurações de Collider")]
+    [SerializeField] private bool enableColliders = true;
+    [SerializeField] private ColliderType colliderType = ColliderType.BoxColliders;
+    [SerializeField] private int colliderResolution = 20; // Menos colliders = melhor performance
+    [SerializeField] private float colliderHeight = 0.5f;
+    [SerializeField] private bool showColliderGizmos = true;
     
     public enum AnimationDirection
     {
-        FromLeft,      // Propaga da esquerda para direita
-        FromRight,     // Propaga da direita para esquerda
-        FromCenter,    // Propaga do centro para as bordas
-        ToBoth         // Propaga simultaneamente para ambos os lados
+        FromLeft,
+        FromRight,
+        FromCenter,
+        ToBoth
+    }
+    
+    public enum ColliderType
+    {
+        BoxColliders,      // Vários BoxColliders ao longo da curva (RÁPIDO)
+        SphereColliders,   // Esferas ao longo da curva (MUITO RÁPIDO)
+        CapsuleColliders,  // Cápsulas ao longo da curva (BALANCEADO)
+        MeshCollider       // MeshCollider tradicional (PESADO, não recomendado)
     }
     
     private MeshFilter meshFilter;
     private Mesh mesh;
     private MathExpressionParser parser;
+    
+    // Colliders dinâmicos
+    private List<GameObject> colliderObjects = new List<GameObject>();
     
     // Variáveis para animação
     private bool isAnimating = false;
@@ -67,7 +89,6 @@ public class FunctionMeshGenerator : MonoBehaviour
         isAnimating = true;
         animationProgress = 0f;
         
-        // Inicializa baseado na direção
         switch (direction)
         {
             case AnimationDirection.FromLeft:
@@ -101,11 +122,9 @@ public class FunctionMeshGenerator : MonoBehaviour
         mesh = new Mesh();
         mesh.name = "Function Graph";
 
-        // Usa currentXMin e currentXMax para animação
         int pointCount = resolution + 1;
         float xRange = currentXMax - currentXMin;
         
-        // Evita divisão por zero
         if (Mathf.Abs(xRange) < 0.001f)
         {
             meshFilter.mesh = mesh;
@@ -173,21 +192,192 @@ public class FunctionMeshGenerator : MonoBehaviour
         mesh.RecalculateBounds();
         
         meshFilter.mesh = mesh;
+        
+        // Gera colliders após criar a malha
+        if (enableColliders)
+        {
+            GenerateColliders();
+        }
+    }
+
+    void GenerateColliders()
+    {
+        // Remove colliders antigos
+        ClearColliders();
+        
+        float xRange = currentXMax - currentXMin;
+        if (Mathf.Abs(xRange) < 0.001f) return;
+        
+        // Usa menos colliders para melhor performance
+        int segmentCount = Mathf.Min(colliderResolution, resolution);
+        float xStep = xRange / segmentCount;
+        
+        switch (colliderType)
+        {
+            case ColliderType.BoxColliders:
+                GenerateBoxColliders(segmentCount, xStep);
+                break;
+                
+            case ColliderType.SphereColliders:
+                GenerateSphereColliders(segmentCount, xStep);
+                break;
+                
+            case ColliderType.CapsuleColliders:
+                GenerateCapsuleColliders(segmentCount, xStep);
+                break;
+                
+            case ColliderType.MeshCollider:
+                GenerateMeshCollider();
+                break;
+        }
+    }
+    
+    void GenerateBoxColliders(int segmentCount, float xStep)
+    {
+        for (int i = 0; i < segmentCount; i++)
+        {
+            float x1 = currentXMin + i * xStep;
+            float x2 = currentXMin + (i + 1) * xStep;
+            float z1 = CalculateFunction(x1);
+            float z2 = CalculateFunction(x2);
+            
+            Vector3 pos1 = new Vector3(x1, 0, z1);
+            Vector3 pos2 = new Vector3(x2, 0, z2);
+            
+            Vector3 center = (pos1 + pos2) / 2f;
+            float length = Vector3.Distance(pos1, pos2);
+            
+            GameObject colliderObj = new GameObject($"Collider_{i}");
+            colliderObj.transform.parent = transform;
+            colliderObj.transform.localPosition = center;
+            colliderObj.transform.localScale = Vector3.one; // Importante: reseta a escala local
+            colliderObj.layer = gameObject.layer;
+            
+            BoxCollider box = colliderObj.AddComponent<BoxCollider>();
+            box.size = new Vector3(lineThickness * 2f, colliderHeight, length);
+            
+            // Rotaciona para alinhar com a curva
+            Vector3 direction = (pos2 - pos1).normalized;
+            if (direction != Vector3.zero)
+            {
+                colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+            }
+            
+            colliderObjects.Add(colliderObj);
+        }
+    }
+    
+    void GenerateSphereColliders(int segmentCount, float xStep)
+    {
+        for (int i = 0; i <= segmentCount; i++)
+        {
+            float x = currentXMin + i * xStep;
+            float z = CalculateFunction(x);
+            
+            Vector3 position = new Vector3(x, 0, z);
+            
+            GameObject colliderObj = new GameObject($"Collider_{i}");
+            colliderObj.transform.parent = transform;
+            colliderObj.transform.localPosition = position;
+            colliderObj.transform.localScale = Vector3.one;
+            colliderObj.layer = gameObject.layer;
+
+            SphereCollider sphere = colliderObj.AddComponent<SphereCollider>();
+            sphere.radius = lineThickness;
+            
+            colliderObjects.Add(colliderObj);
+        }
+    }
+    
+    void GenerateCapsuleColliders(int segmentCount, float xStep)
+    {
+        for (int i = 0; i < segmentCount; i++)
+        {
+            float x1 = currentXMin + i * xStep;
+            float x2 = currentXMin + (i + 1) * xStep;
+            float z1 = CalculateFunction(x1);
+            float z2 = CalculateFunction(x2);
+            
+            Vector3 pos1 = new Vector3(x1, 0, z1);
+            Vector3 pos2 = new Vector3(x2, 0, z2);
+            
+            Vector3 center = (pos1 + pos2) / 2f;
+            float length = Vector3.Distance(pos1, pos2);
+            
+            GameObject colliderObj = new GameObject($"Collider_{i}");
+            colliderObj.transform.parent = transform;
+            colliderObj.transform.localPosition = center;
+            colliderObj.transform.localScale = Vector3.one;
+            colliderObj.layer = gameObject.layer;
+
+            colliderObj.AddComponent<FunctionMeshCollisionDetector>();
+            
+            CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
+            capsule.radius = lineThickness;
+            capsule.height = length + lineThickness * 2f;
+            capsule.direction = 2; // Z-axis
+            capsule.isTrigger = true;       
+            
+            // Rotaciona para alinhar com a curva
+            Vector3 direction = (pos2 - pos1).normalized;
+            if (direction != Vector3.zero)
+            {
+                colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+            }
+            
+            colliderObjects.Add(colliderObj);
+        }
+    }
+    
+    void GenerateMeshCollider()
+    {
+        GameObject colliderObj = new GameObject("MeshCollider");
+        colliderObj.transform.parent = transform;
+        colliderObj.transform.localPosition = Vector3.zero;
+        colliderObj.transform.localRotation = Quaternion.identity;
+        colliderObj.layer = gameObject.layer;
+        
+        MeshCollider meshCollider = colliderObj.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
+        meshCollider.convex = false; // Para malhas não-convexas
+        
+        colliderObjects.Add(colliderObj);
+    }
+    
+    void ClearColliders()
+    {
+        foreach (GameObject obj in colliderObjects)
+        {
+            if (obj != null)
+            {
+                if (Application.isPlaying)
+                    Destroy(obj);
+                else
+                    DestroyImmediate(obj);
+            }
+        }
+        colliderObjects.Clear();
     }
 
     float CalculateFunction(float x)
     {
-        return parser.Evaluate(x);
+        float z = parser.Evaluate(x);
+        
+        // Aplica clamp se ativado
+        if (useZClamp)
+        {
+            z = Mathf.Clamp(z, zMin, zMax);
+        }
+        
+        return z;
     }
 
     void Update()
     {
-        // Atualiza animação de propagação
         if (isAnimating)
         {
             animationProgress += Time.deltaTime * propagationSpeed;
             
-            // Calcula os limites baseado na direção
             switch (direction)
             {
                 case AnimationDirection.FromLeft:
@@ -244,7 +434,6 @@ public class FunctionMeshGenerator : MonoBehaviour
             GenerateMesh();
         }
         
-        // Teclas de controle
         if (Input.GetKeyDown(KeyCode.Space))
         {
             parser = new MathExpressionParser(mathExpression);
@@ -264,18 +453,59 @@ public class FunctionMeshGenerator : MonoBehaviour
             isAnimating = !isAnimating;
             Debug.Log(isAnimating ? "Animação retomada" : "Animação pausada");
         }
+        
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            enableColliders = !enableColliders;
+            if (!enableColliders)
+            {
+                ClearColliders();
+            }
+            else
+            {
+                GenerateColliders();
+            }
+            Debug.Log($"Colliders: {(enableColliders ? "Ativados" : "Desativados")}");
+        }
     }
 
     void OnDrawGizmos()
     {
-        if (mesh == null) return;
+        if (!showColliderGizmos) return;
         
-        Gizmos.color = Color.cyan;
-        Vector3[] vertices = mesh.vertices;
+        // Desenha os colliders em verde semi-transparente
+        Gizmos.color = new Color(0, 1, 0, 0.3f);
         
-        for (int i = 0; i < vertices.Length; i++)
+        foreach (GameObject obj in colliderObjects)
         {
-            Gizmos.DrawSphere(transform.TransformPoint(vertices[i]), 0.02f);
+            if (obj == null) continue;
+            
+            BoxCollider box = obj.GetComponent<BoxCollider>();
+            if (box != null)
+            {
+                Gizmos.matrix = obj.transform.localToWorldMatrix;
+                Gizmos.DrawCube(box.center, box.size);
+            }
+            
+            SphereCollider sphere = obj.GetComponent<SphereCollider>();
+            if (sphere != null)
+            {
+                Gizmos.DrawSphere(obj.transform.position, sphere.radius);
+            }
+            
+            CapsuleCollider capsule = obj.GetComponent<CapsuleCollider>();
+            if (capsule != null)
+            {
+                Gizmos.matrix = obj.transform.localToWorldMatrix;
+                Gizmos.DrawSphere(Vector3.zero, capsule.radius);
+            }
         }
+        
+        Gizmos.matrix = Matrix4x4.identity;
+    }
+    
+    void OnDestroy()
+    {
+        ClearColliders();
     }
 }
