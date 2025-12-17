@@ -12,6 +12,8 @@ public class FunctionMeshGenerator : MonoBehaviour
     [SerializeField] private bool useZClamp = false;
     [SerializeField] private float zMin = -100f;
     [SerializeField] private float zMax = 100f;
+    [SerializeField] private float maxSegmentLength = 1f; // Limita o comprimento máximo de cada segmento
+    [SerializeField] private float discontinuityThreshold = 5f; // Detecta descontinuidades (assíntotas)
     
     [Header("Função Matemática")]
     [SerializeField] [TextArea(2, 5)] 
@@ -24,9 +26,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     
     [Header("Configurações de Collider")]
     [SerializeField] private bool enableColliders = true;
-    [SerializeField] private ColliderType colliderType = ColliderType.BoxColliders;
-    [SerializeField] private int colliderResolution = 20; // Menos colliders = melhor performance
-    [SerializeField] private float colliderHeight = 0.5f;
+    [SerializeField] private int colliderResolution = 20;
     [SerializeField] private bool showColliderGizmos = true;
     
     public enum AnimationDirection
@@ -37,26 +37,31 @@ public class FunctionMeshGenerator : MonoBehaviour
         ToBoth
     }
     
-    public enum ColliderType
-    {
-        BoxColliders,      // Vários BoxColliders ao longo da curva (RÁPIDO)
-        SphereColliders,   // Esferas ao longo da curva (MUITO RÁPIDO)
-        CapsuleColliders,  // Cápsulas ao longo da curva (BALANCEADO)
-        MeshCollider       // MeshCollider tradicional (PESADO, não recomendado)
-    }
-    
     private MeshFilter meshFilter;
     private Mesh mesh;
     private MathExpressionParser parser;
     
-    // Colliders dinâmicos
     private List<GameObject> colliderObjects = new List<GameObject>();
+    private List<ValidPoint> subdividedPoints = new List<ValidPoint>(); // Armazena pontos para colliders
     
-    // Variáveis para animação
     private bool isAnimating = false;
     private float currentXMin;
     private float currentXMax;
     private float animationProgress = 0f;
+
+    private struct ValidPoint
+    {
+        public float x;
+        public float z;
+        public bool isValid;
+        
+        public ValidPoint(float x, float z, bool isValid)
+        {
+            this.x = x;
+            this.z = z;
+            this.isValid = isValid;
+        }
+    }
 
     void Start()
     {
@@ -133,213 +138,315 @@ public class FunctionMeshGenerator : MonoBehaviour
         
         float xStep = xRange / resolution;
 
-        int vertexCount = pointCount * 2;
-        Vector3[] vertices = new Vector3[vertexCount];
-        Vector2[] uvs = new Vector2[vertexCount];
-
+        // Calcula todos os pontos iniciais
+        List<ValidPoint> allPoints = new List<ValidPoint>();
+        
         for (int i = 0; i < pointCount; i++)
         {
             float x = currentXMin + i * xStep;
             float z = CalculateFunction(x);
-            
-            Vector3 centerPoint = new Vector3(x, 0, z);
-            
-            Vector3 forward;
-            if (i < pointCount - 1)
-            {
-                float nextX = currentXMin + (i + 1) * xStep;
-                float nextZ = CalculateFunction(nextX);
-                forward = new Vector3(nextX - x, 0, nextZ - z).normalized;
-            }
-            else
-            {
-                float prevX = currentXMin + (i - 1) * xStep;
-                float prevZ = CalculateFunction(prevX);
-                forward = new Vector3(x - prevX, 0, z - prevZ).normalized;
-            }
-            
-            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized * lineThickness;
-            
-            vertices[i * 2] = centerPoint + right;
-            vertices[i * 2 + 1] = centerPoint - right;
-            
-            float uvX = (float)i / resolution;
-            uvs[i * 2] = new Vector2(uvX, 1);
-            uvs[i * 2 + 1] = new Vector2(uvX, 0);
+            bool isValid = IsValidValue(z);
+            allPoints.Add(new ValidPoint(x, z, isValid));
         }
 
-        int triangleCount = resolution * 6;
-        int[] triangles = new int[triangleCount];
-        
-        int t = 0;
-        for (int i = 0; i < resolution; i++)
+        // Subdivide segmentos muito longos
+        allPoints = SubdivideLongSegments(allPoints);
+        subdividedPoints = allPoints; // Armazena para uso nos colliders
+
+        List<Vector3> verticesList = new List<Vector3>();
+        List<Vector2> uvsList = new List<Vector2>();
+        List<int> trianglesList = new List<int>();
+
+        // Processa pontos válidos em sequências contínuas
+        for (int i = 0; i < allPoints.Count - 1; i++)
         {
-            int v = i * 2;
+            if (!allPoints[i].isValid || !allPoints[i + 1].isValid)
+                continue;
+
+            int startIdx = i;
+            int endIdx = i;
             
-            triangles[t++] = v;
-            triangles[t++] = v + 1;
-            triangles[t++] = v + 2;
+            while (endIdx < allPoints.Count - 1 && allPoints[endIdx + 1].isValid)
+            {
+                endIdx++;
+            }
+
+            GenerateSegmentMesh(allPoints, startIdx, endIdx, verticesList, uvsList, trianglesList);
             
-            triangles[t++] = v + 1;
-            triangles[t++] = v + 3;
-            triangles[t++] = v + 2;
+            i = endIdx;
         }
 
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.uv = uvs;
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
+        if (verticesList.Count > 0)
+        {
+            mesh.vertices = verticesList.ToArray();
+            mesh.triangles = trianglesList.ToArray();
+            mesh.uv = uvsList.ToArray();
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+        }
         
         meshFilter.mesh = mesh;
         
-        // Gera colliders após criar a malha
         if (enableColliders)
         {
             GenerateColliders();
         }
     }
 
+    List<ValidPoint> SubdivideLongSegments(List<ValidPoint> points)
+    {
+        List<ValidPoint> result = new List<ValidPoint>();
+        
+        for (int i = 0; i < points.Count; i++)
+        {
+            result.Add(points[i]);
+            
+            // Se não é o último ponto e ambos são válidos
+            if (i < points.Count - 1 && points[i].isValid && points[i + 1].isValid)
+            {
+                Vector3 p1 = new Vector3(points[i].x, 0, points[i].z);
+                Vector3 p2 = new Vector3(points[i + 1].x, 0, points[i + 1].z);
+                float distance = Vector3.Distance(p1, p2);
+                
+                // Detecta descontinuidade (assíntota)
+                if (distance > discontinuityThreshold)
+                {
+                    // Marca o ponto atual como fim de segmento
+                    result[result.Count - 1] = new ValidPoint(points[i].x, points[i].z, false);
+                    continue;
+                }
+                
+                // Se o segmento é muito longo, subdivide
+                if (distance > maxSegmentLength)
+                {
+                    int subdivisions = Mathf.CeilToInt(distance / maxSegmentLength);
+                    
+                    for (int j = 1; j < subdivisions; j++)
+                    {
+                        float t = (float)j / subdivisions;
+                        float newX = Mathf.Lerp(points[i].x, points[i + 1].x, t);
+                        float newZ = CalculateFunction(newX);
+                        
+                        if (IsValidValue(newZ))
+                        {
+                            // Verifica se não está criando uma descontinuidade
+                            Vector3 lastPoint = new Vector3(result[result.Count - 1].x, 0, result[result.Count - 1].z);
+                            Vector3 newPoint = new Vector3(newX, 0, newZ);
+                            
+                            if (Vector3.Distance(lastPoint, newPoint) < discontinuityThreshold)
+                            {
+                                result.Add(new ValidPoint(newX, newZ, true));
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    void GenerateSegmentMesh(List<ValidPoint> points, int startIdx, int endIdx, 
+                            List<Vector3> vertices, List<Vector2> uvs, List<int> triangles)
+    {
+        int segmentLength = endIdx - startIdx + 1;
+        int baseVertexIndex = vertices.Count;
+
+        for (int i = 0; i < segmentLength; i++)
+        {
+            int pointIdx = startIdx + i;
+            float x = points[pointIdx].x;
+            float z = points[pointIdx].z;
+            
+            Vector3 centerPoint = new Vector3(x, 0, z);
+            
+            Vector3 forward;
+            if (i < segmentLength - 1)
+            {
+                int nextIdx = pointIdx + 1;
+                float nextX = points[nextIdx].x;
+                float nextZ = points[nextIdx].z;
+                forward = new Vector3(nextX - x, 0, nextZ - z).normalized;
+            }
+            else
+            {
+                int prevIdx = pointIdx - 1;
+                float prevX = points[prevIdx].x;
+                float prevZ = points[prevIdx].z;
+                forward = new Vector3(x - prevX, 0, z - prevZ).normalized;
+            }
+            
+            // Garante que forward não é zero
+            if (forward.magnitude < 0.001f)
+            {
+                forward = Vector3.forward;
+            }
+            
+            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized * lineThickness;
+            
+            vertices.Add(centerPoint + right);
+            vertices.Add(centerPoint - right);
+            
+            float uvX = (float)i / (segmentLength - 1);
+            uvs.Add(new Vector2(uvX, 1));
+            uvs.Add(new Vector2(uvX, 0));
+        }
+
+        for (int i = 0; i < segmentLength - 1; i++)
+        {
+            int v = baseVertexIndex + i * 2;
+            
+            triangles.Add(v);
+            triangles.Add(v + 1);
+            triangles.Add(v + 2);
+            
+            triangles.Add(v + 1);
+            triangles.Add(v + 3);
+            triangles.Add(v + 2);
+        }
+    }
+
+    bool IsValidValue(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
+    }
+
     void GenerateColliders()
     {
-        // Remove colliders antigos
         ClearColliders();
         
-        float xRange = currentXMax - currentXMin;
-        if (Mathf.Abs(xRange) < 0.001f) return;
+        if (subdividedPoints.Count < 2) return;
         
-        // Usa menos colliders para melhor performance
-        int segmentCount = Mathf.Min(colliderResolution, resolution);
-        float xStep = xRange / segmentCount;
+        // Identifica segmentos contínuos (sem descontinuidades)
+        List<List<int>> continuousSegments = new List<List<int>>();
+        List<int> currentSegment = new List<int>();
         
-        switch (colliderType)
+        for (int i = 0; i < subdividedPoints.Count; i++)
         {
-            case ColliderType.BoxColliders:
-                GenerateBoxColliders(segmentCount, xStep);
-                break;
-                
-            case ColliderType.SphereColliders:
-                GenerateSphereColliders(segmentCount, xStep);
-                break;
-                
-            case ColliderType.CapsuleColliders:
-                GenerateCapsuleColliders(segmentCount, xStep);
-                break;
-                
-            case ColliderType.MeshCollider:
-                GenerateMeshCollider();
-                break;
-        }
-    }
-    
-    void GenerateBoxColliders(int segmentCount, float xStep)
-    {
-        for (int i = 0; i < segmentCount; i++)
-        {
-            float x1 = currentXMin + i * xStep;
-            float x2 = currentXMin + (i + 1) * xStep;
-            float z1 = CalculateFunction(x1);
-            float z2 = CalculateFunction(x2);
-            
-            Vector3 pos1 = new Vector3(x1, 0, z1);
-            Vector3 pos2 = new Vector3(x2, 0, z2);
-            
-            Vector3 center = (pos1 + pos2) / 2f;
-            float length = Vector3.Distance(pos1, pos2);
-            
-            GameObject colliderObj = new GameObject($"Collider_{i}");
-            colliderObj.transform.parent = transform;
-            colliderObj.transform.localPosition = center;
-            colliderObj.transform.localScale = Vector3.one; // Importante: reseta a escala local
-            colliderObj.layer = gameObject.layer;
-            
-            BoxCollider box = colliderObj.AddComponent<BoxCollider>();
-            box.size = new Vector3(lineThickness * 2f, colliderHeight, length);
-            
-            // Rotaciona para alinhar com a curva
-            Vector3 direction = (pos2 - pos1).normalized;
-            if (direction != Vector3.zero)
+            if (subdividedPoints[i].isValid)
             {
-                colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+                currentSegment.Add(i);
             }
-            
-            colliderObjects.Add(colliderObj);
-        }
-    }
-    
-    void GenerateSphereColliders(int segmentCount, float xStep)
-    {
-        for (int i = 0; i <= segmentCount; i++)
-        {
-            float x = currentXMin + i * xStep;
-            float z = CalculateFunction(x);
-            
-            Vector3 position = new Vector3(x, 0, z);
-            
-            GameObject colliderObj = new GameObject($"Collider_{i}");
-            colliderObj.transform.parent = transform;
-            colliderObj.transform.localPosition = position;
-            colliderObj.transform.localScale = Vector3.one;
-            colliderObj.layer = gameObject.layer;
-
-            SphereCollider sphere = colliderObj.AddComponent<SphereCollider>();
-            sphere.radius = lineThickness;
-            
-            colliderObjects.Add(colliderObj);
-        }
-    }
-    
-    void GenerateCapsuleColliders(int segmentCount, float xStep)
-    {
-        for (int i = 0; i < segmentCount; i++)
-        {
-            float x1 = currentXMin + i * xStep;
-            float x2 = currentXMin + (i + 1) * xStep;
-            float z1 = CalculateFunction(x1);
-            float z2 = CalculateFunction(x2);
-            
-            Vector3 pos1 = new Vector3(x1, 0, z1);
-            Vector3 pos2 = new Vector3(x2, 0, z2);
-            
-            Vector3 center = (pos1 + pos2) / 2f;
-            float length = Vector3.Distance(pos1, pos2);
-            
-            GameObject colliderObj = new GameObject($"Collider_{i}");
-            colliderObj.transform.parent = transform;
-            colliderObj.transform.localPosition = center;
-            colliderObj.transform.localScale = Vector3.one;
-            colliderObj.layer = gameObject.layer;
-
-            colliderObj.AddComponent<FunctionMeshCollisionDetector>();
-            
-            CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
-            capsule.radius = lineThickness;
-            capsule.height = length + lineThickness * 2f;
-            capsule.direction = 2; // Z-axis
-            capsule.isTrigger = true;       
-            
-            // Rotaciona para alinhar com a curva
-            Vector3 direction = (pos2 - pos1).normalized;
-            if (direction != Vector3.zero)
+            else
             {
-                colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+                if (currentSegment.Count > 1)
+                {
+                    continuousSegments.Add(new List<int>(currentSegment));
+                }
+                currentSegment.Clear();
             }
-            
-            colliderObjects.Add(colliderObj);
+        }
+        
+        // Adiciona o último segmento se existir
+        if (currentSegment.Count > 1)
+        {
+            continuousSegments.Add(currentSegment);
+        }
+        
+        // Cria colliders para cada segmento contínuo
+        foreach (var segment in continuousSegments)
+        {
+            GenerateCollidersForSegment(segment);
         }
     }
     
-    void GenerateMeshCollider()
+    void GenerateCollidersForSegment(List<int> segmentIndices)
     {
-        GameObject colliderObj = new GameObject("MeshCollider");
+        if (segmentIndices.Count < 2) return;
+        
+        // Calcula comprimento total do segmento
+        float totalLength = 0f;
+        for (int i = 1; i < segmentIndices.Count; i++)
+        {
+            int idx1 = segmentIndices[i - 1];
+            int idx2 = segmentIndices[i];
+            
+            Vector3 p1 = new Vector3(subdividedPoints[idx1].x, 0, subdividedPoints[idx1].z);
+            Vector3 p2 = new Vector3(subdividedPoints[idx2].x, 0, subdividedPoints[idx2].z);
+            totalLength += Vector3.Distance(p1, p2);
+        }
+        
+        // Calcula quantos colliders criar baseado no comprimento
+        int numColliders = Mathf.Max(1, Mathf.CeilToInt(totalLength / maxSegmentLength));
+        numColliders = Mathf.Min(numColliders, segmentIndices.Count - 1);
+        
+        // Divide os índices uniformemente
+        float step = (float)(segmentIndices.Count - 1) / numColliders;
+        
+        for (int i = 0; i < numColliders; i++)
+        {
+            int startIdx = segmentIndices[Mathf.RoundToInt(i * step)];
+            int endIdx = segmentIndices[Mathf.RoundToInt((i + 1) * step)];
+            
+            if (startIdx != endIdx)
+            {
+                CreateCapsuleCollider(startIdx, endIdx);
+            }
+        }
+    }
+    
+    void CreateCapsuleCollider(int startIdx, int endIdx)
+    {
+        if (!subdividedPoints[startIdx].isValid || !subdividedPoints[endIdx].isValid)
+            return;
+        
+        Vector3 pos1 = new Vector3(subdividedPoints[startIdx].x, 0, subdividedPoints[startIdx].z);
+        Vector3 pos2 = new Vector3(subdividedPoints[endIdx].x, 0, subdividedPoints[endIdx].z);
+        
+        // Calcula o centro e comprimento real seguindo a curva
+        float curveLength = 0f;
+        Vector3 centerSum = Vector3.zero;
+        int pointCount = 0;
+        
+        for (int i = startIdx; i <= endIdx; i++)
+        {
+            if (subdividedPoints[i].isValid)
+            {
+                Vector3 p = new Vector3(subdividedPoints[i].x, 0, subdividedPoints[i].z);
+                centerSum += p;
+                pointCount++;
+                
+                if (i > startIdx && subdividedPoints[i - 1].isValid)
+                {
+                    Vector3 prevP = new Vector3(subdividedPoints[i - 1].x, 0, subdividedPoints[i - 1].z);
+                    curveLength += Vector3.Distance(prevP, p);
+                }
+            }
+        }
+        
+        Vector3 center = pointCount > 0 ? centerSum / pointCount : (pos1 + pos2) / 2f;
+        float length = curveLength > 0 ? curveLength : Vector3.Distance(pos1, pos2);
+        
+        // Pula segmentos muito pequenos
+        if (length < 0.01f) return;
+        
+        GameObject colliderObj = new GameObject($"Collider_{colliderObjects.Count}");
         colliderObj.transform.parent = transform;
-        colliderObj.transform.localPosition = Vector3.zero;
-        colliderObj.transform.localRotation = Quaternion.identity;
+        colliderObj.transform.localPosition = center;
+        colliderObj.transform.localScale = Vector3.one;
         colliderObj.layer = gameObject.layer;
+
+        colliderObj.AddComponent<FunctionMeshCollisionDetector>();
         
-        MeshCollider meshCollider = colliderObj.AddComponent<MeshCollider>();
-        meshCollider.sharedMesh = mesh;
-        meshCollider.convex = false; // Para malhas não-convexas
+        CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
+        capsule.radius = lineThickness * 1.5f; // Aumenta mais o raio para cobrir melhor
+        capsule.height = length + lineThickness * 3f; // Aumenta a altura também
+        capsule.direction = 2; // Z-axis
+        capsule.isTrigger = true;
+        
+        Vector3 direction = (pos2 - pos1).normalized;
+        if (direction != Vector3.zero)
+        {
+            colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+        }
         
         colliderObjects.Add(colliderObj);
     }
@@ -363,8 +470,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     {
         float z = parser.Evaluate(x);
         
-        // Aplica clamp se ativado
-        if (useZClamp)
+        if (useZClamp && IsValidValue(z))
         {
             z = Mathf.Clamp(z, zMin, zMax);
         }
@@ -473,31 +579,23 @@ public class FunctionMeshGenerator : MonoBehaviour
     {
         if (!showColliderGizmos) return;
         
-        // Desenha os colliders em verde semi-transparente
         Gizmos.color = new Color(0, 1, 0, 0.3f);
         
         foreach (GameObject obj in colliderObjects)
         {
             if (obj == null) continue;
             
-            BoxCollider box = obj.GetComponent<BoxCollider>();
-            if (box != null)
-            {
-                Gizmos.matrix = obj.transform.localToWorldMatrix;
-                Gizmos.DrawCube(box.center, box.size);
-            }
-            
-            SphereCollider sphere = obj.GetComponent<SphereCollider>();
-            if (sphere != null)
-            {
-                Gizmos.DrawSphere(obj.transform.position, sphere.radius);
-            }
-            
             CapsuleCollider capsule = obj.GetComponent<CapsuleCollider>();
             if (capsule != null)
             {
                 Gizmos.matrix = obj.transform.localToWorldMatrix;
-                Gizmos.DrawSphere(Vector3.zero, capsule.radius);
+                Gizmos.DrawWireSphere(Vector3.zero, capsule.radius);
+                
+                // Desenha a cápsula completa
+                Vector3 point1 = Vector3.forward * (capsule.height / 2f - capsule.radius);
+                Vector3 point2 = Vector3.back * (capsule.height / 2f - capsule.radius);
+                Gizmos.DrawWireSphere(point1, capsule.radius);
+                Gizmos.DrawWireSphere(point2, capsule.radius);
             }
         }
         
