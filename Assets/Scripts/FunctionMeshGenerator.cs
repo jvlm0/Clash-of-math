@@ -37,7 +37,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     private bool drawDiscontinuities = true;
 
     [SerializeField]
-    private float discontinuityLimit = 50f; // Limite vertical para desenhar descontinuidades
+    private float discontinuityLimit = 50f;
 
     [Header("Função Matemática")]
     [SerializeField]
@@ -179,7 +179,6 @@ public class FunctionMeshGenerator : MonoBehaviour
 
         float xStep = xRange / resolution;
 
-        // Calcula todos os pontos iniciais
         List<ValidPoint> allPoints = new List<ValidPoint>();
 
         for (int i = 0; i < pointCount; i++)
@@ -190,14 +189,12 @@ public class FunctionMeshGenerator : MonoBehaviour
             allPoints.Add(new ValidPoint(x, z, isValid));
         }
 
-        // Subdivide e detecta descontinuidades
         meshSegments = ProcessPointsWithDiscontinuities(allPoints);
 
         List<Vector3> verticesList = new List<Vector3>();
         List<Vector2> uvsList = new List<Vector2>();
         List<int> trianglesList = new List<int>();
 
-        // Gera malha para cada segmento
         foreach (var segment in meshSegments)
         {
             if (segment.points.Count < 2)
@@ -254,7 +251,6 @@ public class FunctionMeshGenerator : MonoBehaviour
                 continue;
             }
 
-            // Subdivide pontos se necessário
             if (currentSegment.points.Count > 0)
             {
                 ValidPoint lastPoint = currentSegment.points[currentSegment.points.Count - 1];
@@ -262,23 +258,23 @@ public class FunctionMeshGenerator : MonoBehaviour
                 Vector3 p2 = new Vector3(points[i].x, 0, points[i].z);
                 float distance = Vector3.Distance(p1, p2);
 
-                // Detecta descontinuidade
                 if (distance > discontinuityThreshold)
                 {
                     if (drawDiscontinuities)
                     {
-                        // Tenta encontrar pontos mais próximos da descontinuidade
                         float searchRange = (points[i].x - lastPoint.x) / 4f;
 
                         ValidPoint refinedLastPoint = lastPoint;
                         ValidPoint refinedNextPoint = points[i];
 
                         // Refina o último ponto válido antes da descontinuidade
+                        // CORREÇÃO: Adiciona verificação de limite
                         for (float offset = 0.01f; offset < searchRange; offset += 0.01f)
                         {
                             float testX = lastPoint.x + offset;
                             float testZ = CalculateFunction(testX);
-                            if (IsValidValue(testZ))
+                            
+                            if (IsValidValue(testZ) && Mathf.Abs(testZ) <= discontinuityLimit)
                             {
                                 Vector3 testP = new Vector3(testX, 0, testZ);
                                 if (Vector3.Distance(p1, testP) < discontinuityThreshold)
@@ -297,11 +293,13 @@ public class FunctionMeshGenerator : MonoBehaviour
                         }
 
                         // Refina o primeiro ponto válido depois da descontinuidade
+                        // CORREÇÃO: Adiciona verificação de limite
                         for (float offset = 0.01f; offset < searchRange; offset += 0.01f)
                         {
                             float testX = points[i].x - offset;
                             float testZ = CalculateFunction(testX);
-                            if (IsValidValue(testZ))
+                            
+                            if (IsValidValue(testZ) && Mathf.Abs(testZ) <= discontinuityLimit)
                             {
                                 Vector3 testP = new Vector3(testX, 0, testZ);
                                 if (Vector3.Distance(p2, testP) < discontinuityThreshold)
@@ -319,62 +317,58 @@ public class FunctionMeshGenerator : MonoBehaviour
                             }
                         }
 
-                        // Atualiza o último ponto do segmento atual se foi refinado
+                        // CORREÇÃO: Clamp dos valores finais
+                        refinedLastPoint = new ValidPoint(
+                            refinedLastPoint.x,
+                            Mathf.Clamp(refinedLastPoint.z, -discontinuityLimit, discontinuityLimit),
+                            refinedLastPoint.isValid
+                        );
+                        
+                        refinedNextPoint = new ValidPoint(
+                            refinedNextPoint.x,
+                            Mathf.Clamp(refinedNextPoint.z, -discontinuityLimit, discontinuityLimit),
+                            refinedNextPoint.isValid
+                        );
+
                         if (refinedLastPoint.x != lastPoint.x)
                         {
-                            currentSegment.points[currentSegment.points.Count - 1] =
-                                refinedLastPoint;
+                            currentSegment.points[currentSegment.points.Count - 1] = refinedLastPoint;
                         }
 
-                        // Adiciona segmento atual
                         segments.Add(currentSegment);
 
-                        // Determina se estão em lados opostos (sinais diferentes)
                         bool oppositeSides = (refinedLastPoint.z > 0) != (refinedNextPoint.z > 0);
 
                         if (oppositeSides)
                         {
-                            // Estão em lados opostos - cria duas linhas verticais
                             bool goingUp = refinedLastPoint.z > 0;
                             bool comingFromUp = refinedNextPoint.z > 0;
 
-                            // Linha 1: do ponto atual até o limite
                             MeshSegment discSegment = new MeshSegment();
                             discSegment.isDiscontinuity = true;
 
                             float zLimit1 = goingUp ? discontinuityLimit : -discontinuityLimit;
 
-                            discSegment.points.Add(
-                                new ValidPoint(refinedLastPoint.x, refinedLastPoint.z, true)
-                            );
-                            discSegment.points.Add(
-                                new ValidPoint(refinedLastPoint.x, zLimit1, true)
-                            );
+                            discSegment.points.Add(new ValidPoint(refinedLastPoint.x, refinedLastPoint.z, true));
+                            discSegment.points.Add(new ValidPoint(refinedLastPoint.x, zLimit1, true));
 
                             segments.Add(discSegment);
 
-                            // Linha 2: do limite até o próximo ponto
                             MeshSegment discSegment2 = new MeshSegment();
                             discSegment2.isDiscontinuity = true;
 
                             float zLimit2 = comingFromUp ? discontinuityLimit : -discontinuityLimit;
 
-                            discSegment2.points.Add(
-                                new ValidPoint(refinedNextPoint.x, zLimit2, true)
-                            );
-                            discSegment2.points.Add(
-                                new ValidPoint(refinedNextPoint.x, refinedNextPoint.z, true)
-                            );
+                            discSegment2.points.Add(new ValidPoint(refinedNextPoint.x, zLimit2, true));
+                            discSegment2.points.Add(new ValidPoint(refinedNextPoint.x, refinedNextPoint.z, true));
 
                             segments.Add(discSegment2);
                         }
                         else
                         {
-                            // Mesmo lado - cria apenas uma linha vertical conectando os dois pontos
                             MeshSegment discSegment = new MeshSegment();
                             discSegment.isDiscontinuity = true;
 
-                            // Usa o X médio entre os dois pontos para a linha vertical
                             float midX = (refinedLastPoint.x + refinedNextPoint.x) / 2f;
 
                             discSegment.points.Add(new ValidPoint(midX, refinedLastPoint.z, true));
@@ -383,10 +377,8 @@ public class FunctionMeshGenerator : MonoBehaviour
                             segments.Add(discSegment);
                         }
 
-                        // Inicia novo segmento com o ponto refinado
                         currentSegment = new MeshSegment();
 
-                        // Se o ponto refinado é diferente do original, usa ele
                         if (refinedNextPoint.x != points[i].x)
                         {
                             currentSegment.points.Add(refinedNextPoint);
@@ -402,7 +394,6 @@ public class FunctionMeshGenerator : MonoBehaviour
                 }
                 else
                 {
-                    // Subdivide segmentos longos
                     if (distance > maxSegmentLength)
                     {
                         int subdivisions = Mathf.CeilToInt(distance / maxSegmentLength);
@@ -449,8 +440,6 @@ public class FunctionMeshGenerator : MonoBehaviour
 
         int baseVertexIndex = vertices.Count;
 
-        // Garantir que a linha sempre aponte para cima (Z positivo)
-        // Calcular a direção real da linha com base nos pontos
         Vector3 start = new Vector3(segment.points[0].x, 0, segment.points[0].z);
         Vector3 end = new Vector3(
             segment.points[segment.points.Count - 1].x,
@@ -459,15 +448,10 @@ public class FunctionMeshGenerator : MonoBehaviour
         );
 
         Vector3 lineDirection = (end - start).normalized;
-
-        // Se a linha está apontando para baixo (Z negativo), inverter a ordem dos pontos
         bool needsReverse = lineDirection.z < 0;
 
-        // A espessura deve ser sempre perpendicular à direção da linha
-        // Como as descontinuidades são verticais (no eixo Z), a perpendicular é no eixo X
         Vector3 perpendicular = new Vector3(1, 0, 0).normalized * lineThickness;
 
-        // Se precisar inverter, processar pontos de trás para frente
         int pointCount = segment.points.Count;
 
         for (int i = 0; i < pointCount; i++)
@@ -478,7 +462,6 @@ public class FunctionMeshGenerator : MonoBehaviour
 
             Vector3 centerPoint = new Vector3(x, 0, z);
 
-            // Adiciona vértices perpendiculares à linha vertical
             vertices.Add(centerPoint + perpendicular);
             vertices.Add(centerPoint - perpendicular);
 
@@ -487,7 +470,6 @@ public class FunctionMeshGenerator : MonoBehaviour
             uvs.Add(new Vector2(1, uvY));
         }
 
-        // Gerar triângulos
         for (int i = 0; i < pointCount - 1; i++)
         {
             int v = baseVertexIndex + i * 2;
@@ -621,7 +603,7 @@ public class FunctionMeshGenerator : MonoBehaviour
         CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
         capsule.radius = lineThickness * 1.5f;
         capsule.height = length + lineThickness * 2f;
-        capsule.direction = 2; // Z-axis
+        capsule.direction = 2;
         capsule.isTrigger = true;
 
         Vector3 direction = (pos2 - pos1).normalized;
@@ -638,7 +620,6 @@ public class FunctionMeshGenerator : MonoBehaviour
         if (segment.points.Count < 2)
             return;
 
-        // Calcula comprimento total do segmento
         float totalLength = 0f;
         for (int i = 1; i < segment.points.Count; i++)
         {
@@ -707,7 +688,7 @@ public class FunctionMeshGenerator : MonoBehaviour
         CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
         capsule.radius = lineThickness * 1.5f;
         capsule.height = length + lineThickness * 3f;
-        capsule.direction = 2; // Z-axis
+        capsule.direction = 2;
         capsule.isTrigger = true;
 
         Vector3 direction = (pos2 - pos1).normalized;
