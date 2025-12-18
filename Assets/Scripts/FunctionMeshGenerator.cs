@@ -27,15 +27,22 @@ public class FunctionMeshGenerator : MonoBehaviour
     private float zMax = 100f;
 
     [SerializeField]
-    private float maxSegmentLength = 1f; // Limita o comprimento máximo de cada segmento
+    private float maxSegmentLength = 1f;
 
     [SerializeField]
-    private float discontinuityThreshold = 5f; // Detecta descontinuidades (assíntotas)
+    private float discontinuityThreshold = 5f;
+
+    [Header("Descontinuidades")]
+    [SerializeField]
+    private bool drawDiscontinuities = true;
+
+    [SerializeField]
+    private float discontinuityLimit = 50f; // Limite vertical para desenhar descontinuidades
 
     [Header("Função Matemática")]
     [SerializeField]
     [TextArea(2, 5)]
-    public string mathExpression = "sin(x)";
+    public string mathExpression = "tan(x)";
 
     [Header("Animação de Propagação")]
     [SerializeField]
@@ -70,7 +77,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     private MathExpressionParser parser;
 
     private List<GameObject> colliderObjects = new List<GameObject>();
-    private List<ValidPoint> subdividedPoints = new List<ValidPoint>(); // Armazena pontos para colliders
+    private List<MeshSegment> meshSegments = new List<MeshSegment>();
 
     private bool isAnimating = false;
     private float currentXMin;
@@ -89,6 +96,12 @@ public class FunctionMeshGenerator : MonoBehaviour
             this.z = z;
             this.isValid = isValid;
         }
+    }
+
+    private class MeshSegment
+    {
+        public List<ValidPoint> points = new List<ValidPoint>();
+        public bool isDiscontinuity = false;
     }
 
     void Start()
@@ -177,31 +190,34 @@ public class FunctionMeshGenerator : MonoBehaviour
             allPoints.Add(new ValidPoint(x, z, isValid));
         }
 
-        // Subdivide segmentos muito longos
-        allPoints = SubdivideLongSegments(allPoints);
-        subdividedPoints = allPoints; // Armazena para uso nos colliders
+        // Subdivide e detecta descontinuidades
+        meshSegments = ProcessPointsWithDiscontinuities(allPoints);
 
         List<Vector3> verticesList = new List<Vector3>();
         List<Vector2> uvsList = new List<Vector2>();
         List<int> trianglesList = new List<int>();
 
-        // Processa pontos válidos em sequências contínuas
-        for (int i = 0; i < allPoints.Count - 1; i++)
+        // Gera malha para cada segmento
+        foreach (var segment in meshSegments)
         {
-            if (!allPoints[i].isValid || !allPoints[i + 1].isValid)
+            if (segment.points.Count < 2)
                 continue;
 
-            int startIdx = i;
-            int endIdx = i;
-
-            while (endIdx < allPoints.Count - 1 && allPoints[endIdx + 1].isValid)
+            if (segment.isDiscontinuity)
             {
-                endIdx++;
+                GenerateDiscontinuityMesh(segment, verticesList, uvsList, trianglesList);
             }
-
-            GenerateSegmentMesh(allPoints, startIdx, endIdx, verticesList, uvsList, trianglesList);
-
-            i = endIdx;
+            else
+            {
+                GenerateSegmentMesh(
+                    segment.points,
+                    0,
+                    segment.points.Count - 1,
+                    verticesList,
+                    uvsList,
+                    trianglesList
+                );
+            }
         }
 
         if (verticesList.Count > 0)
@@ -221,69 +237,269 @@ public class FunctionMeshGenerator : MonoBehaviour
         }
     }
 
-    List<ValidPoint> SubdivideLongSegments(List<ValidPoint> points)
+    List<MeshSegment> ProcessPointsWithDiscontinuities(List<ValidPoint> points)
     {
-        List<ValidPoint> result = new List<ValidPoint>();
+        List<MeshSegment> segments = new List<MeshSegment>();
+        MeshSegment currentSegment = new MeshSegment();
 
         for (int i = 0; i < points.Count; i++)
         {
-            result.Add(points[i]);
-
-            // Se não é o último ponto e ambos são válidos
-            if (i < points.Count - 1 && points[i].isValid && points[i + 1].isValid)
+            if (!points[i].isValid)
             {
-                Vector3 p1 = new Vector3(points[i].x, 0, points[i].z);
-                Vector3 p2 = new Vector3(points[i + 1].x, 0, points[i + 1].z);
+                if (currentSegment.points.Count > 0)
+                {
+                    segments.Add(currentSegment);
+                    currentSegment = new MeshSegment();
+                }
+                continue;
+            }
+
+            // Subdivide pontos se necessário
+            if (currentSegment.points.Count > 0)
+            {
+                ValidPoint lastPoint = currentSegment.points[currentSegment.points.Count - 1];
+                Vector3 p1 = new Vector3(lastPoint.x, 0, lastPoint.z);
+                Vector3 p2 = new Vector3(points[i].x, 0, points[i].z);
                 float distance = Vector3.Distance(p1, p2);
 
-                // Detecta descontinuidade (assíntota)
+                // Detecta descontinuidade
                 if (distance > discontinuityThreshold)
                 {
-                    // Marca o ponto atual como fim de segmento
-                    result[result.Count - 1] = new ValidPoint(points[i].x, points[i].z, false);
-                    continue;
-                }
-
-                // Se o segmento é muito longo, subdivide
-                if (distance > maxSegmentLength)
-                {
-                    int subdivisions = Mathf.CeilToInt(distance / maxSegmentLength);
-
-                    for (int j = 1; j < subdivisions; j++)
+                    if (drawDiscontinuities)
                     {
-                        float t = (float)j / subdivisions;
-                        float newX = Mathf.Lerp(points[i].x, points[i + 1].x, t);
-                        float newZ = CalculateFunction(newX);
+                        // Tenta encontrar pontos mais próximos da descontinuidade
+                        float searchRange = (points[i].x - lastPoint.x) / 4f;
 
-                        if (IsValidValue(newZ))
+                        ValidPoint refinedLastPoint = lastPoint;
+                        ValidPoint refinedNextPoint = points[i];
+
+                        // Refina o último ponto válido antes da descontinuidade
+                        for (float offset = 0.01f; offset < searchRange; offset += 0.01f)
                         {
-                            // Verifica se não está criando uma descontinuidade
-                            Vector3 lastPoint = new Vector3(
-                                result[result.Count - 1].x,
-                                0,
-                                result[result.Count - 1].z
-                            );
-                            Vector3 newPoint = new Vector3(newX, 0, newZ);
-
-                            if (Vector3.Distance(lastPoint, newPoint) < discontinuityThreshold)
+                            float testX = lastPoint.x + offset;
+                            float testZ = CalculateFunction(testX);
+                            if (IsValidValue(testZ))
                             {
-                                result.Add(new ValidPoint(newX, newZ, true));
+                                Vector3 testP = new Vector3(testX, 0, testZ);
+                                if (Vector3.Distance(p1, testP) < discontinuityThreshold)
+                                {
+                                    refinedLastPoint = new ValidPoint(testX, testZ, true);
+                                }
+                                else
+                                {
+                                    break;
+                                }
                             }
                             else
                             {
                                 break;
                             }
                         }
+
+                        // Refina o primeiro ponto válido depois da descontinuidade
+                        for (float offset = 0.01f; offset < searchRange; offset += 0.01f)
+                        {
+                            float testX = points[i].x - offset;
+                            float testZ = CalculateFunction(testX);
+                            if (IsValidValue(testZ))
+                            {
+                                Vector3 testP = new Vector3(testX, 0, testZ);
+                                if (Vector3.Distance(p2, testP) < discontinuityThreshold)
+                                {
+                                    refinedNextPoint = new ValidPoint(testX, testZ, true);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        // Atualiza o último ponto do segmento atual se foi refinado
+                        if (refinedLastPoint.x != lastPoint.x)
+                        {
+                            currentSegment.points[currentSegment.points.Count - 1] =
+                                refinedLastPoint;
+                        }
+
+                        // Adiciona segmento atual
+                        segments.Add(currentSegment);
+
+                        // Determina se estão em lados opostos (sinais diferentes)
+                        bool oppositeSides = (refinedLastPoint.z > 0) != (refinedNextPoint.z > 0);
+
+                        if (oppositeSides)
+                        {
+                            // Estão em lados opostos - cria duas linhas verticais
+                            bool goingUp = refinedLastPoint.z > 0;
+                            bool comingFromUp = refinedNextPoint.z > 0;
+
+                            // Linha 1: do ponto atual até o limite
+                            MeshSegment discSegment = new MeshSegment();
+                            discSegment.isDiscontinuity = true;
+
+                            float zLimit1 = goingUp ? discontinuityLimit : -discontinuityLimit;
+
+                            discSegment.points.Add(
+                                new ValidPoint(refinedLastPoint.x, refinedLastPoint.z, true)
+                            );
+                            discSegment.points.Add(
+                                new ValidPoint(refinedLastPoint.x, zLimit1, true)
+                            );
+
+                            segments.Add(discSegment);
+
+                            // Linha 2: do limite até o próximo ponto
+                            MeshSegment discSegment2 = new MeshSegment();
+                            discSegment2.isDiscontinuity = true;
+
+                            float zLimit2 = comingFromUp ? discontinuityLimit : -discontinuityLimit;
+
+                            discSegment2.points.Add(
+                                new ValidPoint(refinedNextPoint.x, zLimit2, true)
+                            );
+                            discSegment2.points.Add(
+                                new ValidPoint(refinedNextPoint.x, refinedNextPoint.z, true)
+                            );
+
+                            segments.Add(discSegment2);
+                        }
                         else
                         {
-                            break;
+                            // Mesmo lado - cria apenas uma linha vertical conectando os dois pontos
+                            MeshSegment discSegment = new MeshSegment();
+                            discSegment.isDiscontinuity = true;
+
+                            // Usa o X médio entre os dois pontos para a linha vertical
+                            float midX = (refinedLastPoint.x + refinedNextPoint.x) / 2f;
+
+                            discSegment.points.Add(new ValidPoint(midX, refinedLastPoint.z, true));
+                            discSegment.points.Add(new ValidPoint(midX, refinedNextPoint.z, true));
+
+                            segments.Add(discSegment);
                         }
+
+                        // Inicia novo segmento com o ponto refinado
+                        currentSegment = new MeshSegment();
+
+                        // Se o ponto refinado é diferente do original, usa ele
+                        if (refinedNextPoint.x != points[i].x)
+                        {
+                            currentSegment.points.Add(refinedNextPoint);
+                        }
+                        currentSegment.points.Add(points[i]);
+                    }
+                    else
+                    {
+                        segments.Add(currentSegment);
+                        currentSegment = new MeshSegment();
+                        currentSegment.points.Add(points[i]);
                     }
                 }
+                else
+                {
+                    // Subdivide segmentos longos
+                    if (distance > maxSegmentLength)
+                    {
+                        int subdivisions = Mathf.CeilToInt(distance / maxSegmentLength);
+
+                        for (int j = 1; j < subdivisions; j++)
+                        {
+                            float t = (float)j / subdivisions;
+                            float newX = Mathf.Lerp(lastPoint.x, points[i].x, t);
+                            float newZ = CalculateFunction(newX);
+
+                            if (IsValidValue(newZ))
+                            {
+                                currentSegment.points.Add(new ValidPoint(newX, newZ, true));
+                            }
+                        }
+                    }
+
+                    currentSegment.points.Add(points[i]);
+                }
+            }
+            else
+            {
+                currentSegment.points.Add(points[i]);
             }
         }
 
-        return result;
+        if (currentSegment.points.Count > 0)
+        {
+            segments.Add(currentSegment);
+        }
+
+        return segments;
+    }
+
+    void GenerateDiscontinuityMesh(
+        MeshSegment segment,
+        List<Vector3> vertices,
+        List<Vector2> uvs,
+        List<int> triangles
+    )
+    {
+        if (segment.points.Count < 2)
+            return;
+
+        int baseVertexIndex = vertices.Count;
+
+        // Garantir que a linha sempre aponte para cima (Z positivo)
+        // Calcular a direção real da linha com base nos pontos
+        Vector3 start = new Vector3(segment.points[0].x, 0, segment.points[0].z);
+        Vector3 end = new Vector3(
+            segment.points[segment.points.Count - 1].x,
+            0,
+            segment.points[segment.points.Count - 1].z
+        );
+
+        Vector3 lineDirection = (end - start).normalized;
+
+        // Se a linha está apontando para baixo (Z negativo), inverter a ordem dos pontos
+        bool needsReverse = lineDirection.z < 0;
+
+        // A espessura deve ser sempre perpendicular à direção da linha
+        // Como as descontinuidades são verticais (no eixo Z), a perpendicular é no eixo X
+        Vector3 perpendicular = new Vector3(1, 0, 0).normalized * lineThickness;
+
+        // Se precisar inverter, processar pontos de trás para frente
+        int pointCount = segment.points.Count;
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            int idx = needsReverse ? (pointCount - 1 - i) : i;
+            float x = segment.points[idx].x;
+            float z = segment.points[idx].z;
+
+            Vector3 centerPoint = new Vector3(x, 0, z);
+
+            // Adiciona vértices perpendiculares à linha vertical
+            vertices.Add(centerPoint + perpendicular);
+            vertices.Add(centerPoint - perpendicular);
+
+            float uvY = (float)i / (pointCount - 1);
+            uvs.Add(new Vector2(0, uvY));
+            uvs.Add(new Vector2(1, uvY));
+        }
+
+        // Gerar triângulos
+        for (int i = 0; i < pointCount - 1; i++)
+        {
+            int v = baseVertexIndex + i * 2;
+
+            triangles.Add(v);
+            triangles.Add(v + 1);
+            triangles.Add(v + 2);
+
+            triangles.Add(v + 1);
+            triangles.Add(v + 3);
+            triangles.Add(v + 2);
+        }
     }
 
     void GenerateSegmentMesh(
@@ -322,7 +538,6 @@ public class FunctionMeshGenerator : MonoBehaviour
                 forward = new Vector3(x - prevX, 0, z - prevZ).normalized;
             }
 
-            // Garante que forward não é zero
             if (forward.magnitude < 0.001f)
             {
                 forward = Vector3.forward;
@@ -361,115 +576,123 @@ public class FunctionMeshGenerator : MonoBehaviour
     {
         ClearColliders();
 
-        if (subdividedPoints.Count < 2)
-            return;
-
-        // Identifica segmentos contínuos (sem descontinuidades)
-        List<List<int>> continuousSegments = new List<List<int>>();
-        List<int> currentSegment = new List<int>();
-
-        for (int i = 0; i < subdividedPoints.Count; i++)
+        foreach (var segment in meshSegments)
         {
-            if (subdividedPoints[i].isValid)
+            if (segment.points.Count < 2)
+                continue;
+
+            if (segment.isDiscontinuity)
             {
-                currentSegment.Add(i);
+                GenerateDiscontinuityCollider(segment);
             }
             else
             {
-                if (currentSegment.Count > 1)
-                {
-                    continuousSegments.Add(new List<int>(currentSegment));
-                }
-                currentSegment.Clear();
+                GenerateSegmentColliders(segment);
             }
-        }
-
-        // Adiciona o último segmento se existir
-        if (currentSegment.Count > 1)
-        {
-            continuousSegments.Add(currentSegment);
-        }
-
-        // Cria colliders para cada segmento contínuo
-        foreach (var segment in continuousSegments)
-        {
-            GenerateCollidersForSegment(segment);
         }
     }
 
-    void GenerateCollidersForSegment(List<int> segmentIndices)
+    void GenerateDiscontinuityCollider(MeshSegment segment)
     {
-        if (segmentIndices.Count < 2)
+        if (segment.points.Count < 2)
+            return;
+
+        Vector3 pos1 = new Vector3(segment.points[0].x, 0, segment.points[0].z);
+        Vector3 pos2 = new Vector3(
+            segment.points[segment.points.Count - 1].x,
+            0,
+            segment.points[segment.points.Count - 1].z
+        );
+
+        float length = Vector3.Distance(pos1, pos2);
+        if (length < 0.01f)
+            return;
+
+        Vector3 center = (pos1 + pos2) / 2f;
+
+        GameObject colliderObj = new GameObject($"DiscCollider_{colliderObjects.Count}");
+        colliderObj.transform.parent = transform;
+        colliderObj.transform.localPosition = center;
+        colliderObj.transform.localScale = Vector3.one;
+        colliderObj.layer = gameObject.layer;
+
+        colliderObj.AddComponent<FunctionMeshCollisionDetector>();
+
+        CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
+        capsule.radius = lineThickness * 1.5f;
+        capsule.height = length + lineThickness * 2f;
+        capsule.direction = 2; // Z-axis
+        capsule.isTrigger = true;
+
+        Vector3 direction = (pos2 - pos1).normalized;
+        if (direction != Vector3.zero)
+        {
+            colliderObj.transform.localRotation = Quaternion.LookRotation(direction);
+        }
+
+        colliderObjects.Add(colliderObj);
+    }
+
+    void GenerateSegmentColliders(MeshSegment segment)
+    {
+        if (segment.points.Count < 2)
             return;
 
         // Calcula comprimento total do segmento
         float totalLength = 0f;
-        for (int i = 1; i < segmentIndices.Count; i++)
+        for (int i = 1; i < segment.points.Count; i++)
         {
-            int idx1 = segmentIndices[i - 1];
-            int idx2 = segmentIndices[i];
-
-            Vector3 p1 = new Vector3(subdividedPoints[idx1].x, 0, subdividedPoints[idx1].z);
-            Vector3 p2 = new Vector3(subdividedPoints[idx2].x, 0, subdividedPoints[idx2].z);
+            Vector3 p1 = new Vector3(segment.points[i - 1].x, 0, segment.points[i - 1].z);
+            Vector3 p2 = new Vector3(segment.points[i].x, 0, segment.points[i].z);
             totalLength += Vector3.Distance(p1, p2);
         }
 
-        // Calcula quantos colliders criar baseado no comprimento
         int numColliders = Mathf.Max(1, Mathf.CeilToInt(totalLength / maxSegmentLength));
-        numColliders = Mathf.Min(numColliders, segmentIndices.Count - 1);
+        numColliders = Mathf.Min(numColliders, segment.points.Count - 1);
 
-        // Divide os índices uniformemente
-        float step = (float)(segmentIndices.Count - 1) / numColliders;
+        float step = (float)(segment.points.Count - 1) / numColliders;
 
         for (int i = 0; i < numColliders; i++)
         {
-            int startIdx = segmentIndices[Mathf.RoundToInt(i * step)];
-            int endIdx = segmentIndices[Mathf.RoundToInt((i + 1) * step)];
+            int startIdx = Mathf.RoundToInt(i * step);
+            int endIdx = Mathf.RoundToInt((i + 1) * step);
 
-            if (startIdx != endIdx)
+            if (
+                startIdx != endIdx
+                && startIdx < segment.points.Count
+                && endIdx < segment.points.Count
+            )
             {
-                CreateCapsuleCollider(startIdx, endIdx);
+                CreateCapsuleCollider(segment.points, startIdx, endIdx);
             }
         }
     }
 
-    void CreateCapsuleCollider(int startIdx, int endIdx)
+    void CreateCapsuleCollider(List<ValidPoint> points, int startIdx, int endIdx)
     {
-        if (!subdividedPoints[startIdx].isValid || !subdividedPoints[endIdx].isValid)
-            return;
+        Vector3 pos1 = new Vector3(points[startIdx].x, 0, points[startIdx].z);
+        Vector3 pos2 = new Vector3(points[endIdx].x, 0, points[endIdx].z);
 
-        Vector3 pos1 = new Vector3(subdividedPoints[startIdx].x, 0, subdividedPoints[startIdx].z);
-        Vector3 pos2 = new Vector3(subdividedPoints[endIdx].x, 0, subdividedPoints[endIdx].z);
-
-        // Calcula o centro e comprimento real seguindo a curva
         float curveLength = 0f;
         Vector3 centerSum = Vector3.zero;
         int pointCount = 0;
 
         for (int i = startIdx; i <= endIdx; i++)
         {
-            if (subdividedPoints[i].isValid)
-            {
-                Vector3 p = new Vector3(subdividedPoints[i].x, 0, subdividedPoints[i].z);
-                centerSum += p;
-                pointCount++;
+            Vector3 p = new Vector3(points[i].x, 0, points[i].z);
+            centerSum += p;
+            pointCount++;
 
-                if (i > startIdx && subdividedPoints[i - 1].isValid)
-                {
-                    Vector3 prevP = new Vector3(
-                        subdividedPoints[i - 1].x,
-                        0,
-                        subdividedPoints[i - 1].z
-                    );
-                    curveLength += Vector3.Distance(prevP, p);
-                }
+            if (i > startIdx)
+            {
+                Vector3 prevP = new Vector3(points[i - 1].x, 0, points[i - 1].z);
+                curveLength += Vector3.Distance(prevP, p);
             }
         }
 
         Vector3 center = pointCount > 0 ? centerSum / pointCount : (pos1 + pos2) / 2f;
         float length = curveLength > 0 ? curveLength : Vector3.Distance(pos1, pos2);
 
-        // Pula segmentos muito pequenos
         if (length < 0.01f)
             return;
 
@@ -482,8 +705,8 @@ public class FunctionMeshGenerator : MonoBehaviour
         colliderObj.AddComponent<FunctionMeshCollisionDetector>();
 
         CapsuleCollider capsule = colliderObj.AddComponent<CapsuleCollider>();
-        capsule.radius = lineThickness * 1.5f; // Aumenta mais o raio para cobrir melhor
-        capsule.height = length + lineThickness * 3f; // Aumenta a altura também
+        capsule.radius = lineThickness * 1.5f;
+        capsule.height = length + lineThickness * 3f;
         capsule.direction = 2; // Z-axis
         capsule.isTrigger = true;
 
@@ -618,6 +841,15 @@ public class FunctionMeshGenerator : MonoBehaviour
             }
             Debug.Log($"Colliders: {(enableColliders ? "Ativados" : "Desativados")}");
         }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            drawDiscontinuities = !drawDiscontinuities;
+            GenerateMesh();
+            Debug.Log(
+                $"Desenhar Descontinuidades: {(drawDiscontinuities ? "Ativado" : "Desativado")}"
+            );
+        }
     }
 
     void OnDrawGizmos()
@@ -638,7 +870,6 @@ public class FunctionMeshGenerator : MonoBehaviour
                 Gizmos.matrix = obj.transform.localToWorldMatrix;
                 Gizmos.DrawWireSphere(Vector3.zero, capsule.radius);
 
-                // Desenha a cápsula completa
                 Vector3 point1 = Vector3.forward * (capsule.height / 2f - capsule.radius);
                 Vector3 point2 = Vector3.back * (capsule.height / 2f - capsule.radius);
                 Gizmos.DrawWireSphere(point1, capsule.radius);
