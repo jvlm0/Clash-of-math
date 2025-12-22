@@ -13,6 +13,6 @@ public interface IAnimController {
 
     public void Idle();
 
-    public void GetDamage();
+    public void GetDamage(float damageAmount);
 
 }
