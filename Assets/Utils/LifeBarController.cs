@@ -9,26 +9,33 @@ public class LifeBarController : MonoBehaviour
     [SerializeField]
     private Transform lifeBarFill;
     private float totalLife;
+    private float currentLife;
 
-    public void SetTotalLife(float life)
-    {
-        totalLife = life;
-    }
+    [SerializeField] private bool isIncavas = false;
 
-    public void UpdateLifeBar(float currentLife)
-    {
+
+    public void UpdateLifeBar(float damage)
+    {   
+        currentLife -= damage;
+        if (currentLife < 0)
+            currentLife = 0;    
         float lifePercentage = currentLife / totalLife;
-        lifePercentage = Mathf.Clamp01(lifePercentage);
 
         lifeBarFill.localScale = new Vector3(lifePercentage, 1f, 1f);
     }
 
     // Start is called before the first frame update
-    void Start() { }
+    void Start()
+    {
+        totalLife = GetComponentInParent<StatusController>().hp;
+        currentLife = totalLife;
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (isIncavas)
+            return;
         // Rotaciona a barra de vida para olhar para a câmera
         transform.LookAt(cameraToLookAt.transform);
 
