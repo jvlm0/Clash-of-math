@@ -1,20 +1,23 @@
 using UnityEngine;
 
-public class PlayerAnimController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IAnimController
 {
+    LifeBarController lifeBarController;
     private Animator animator;
+
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        lifeBarController = GetComponent<LifeBarController>();
     }
 
-    public void walk()
+    public void Walk()
     {
         animator.SetBool(AnimContants.walkBool, true);
     }
 
-    public void idle()
+    public void Idle()
     {
         animator.SetBool(AnimContants.walkBool, false);
     }
@@ -34,18 +37,24 @@ public class PlayerAnimController : MonoBehaviour
         animator.SetTrigger(AnimContants.jumpTrigger);
     }
 
-    public void die()
+    public void Death()
     {
         animator.SetTrigger(AnimContants.deathTrigger);
     }
 
-    public void attack()
+    public void Attack()
     {
         animator.SetTrigger(AnimContants.standingAttackTrigger);
     }
 
-    public void run()
+    public void Run()
     {
         animator.SetBool(AnimContants.runBool, true);
-    }  
+    }
+
+    public void GetDamage(float damageAmount)
+    {
+        Debug.Log("Player received damage: " + damageAmount);  
+        lifeBarController.UpdateLifeBar(damageAmount);
+    }
 }
