@@ -25,6 +25,8 @@ public class EnemyChaseAndAttack : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.stoppingDistance = attackRange;
         npcController = GetComponent<NpcController>();
+
+        agent.speed = GetComponent<StatusController>().speed;
     }
 
     void Update()
@@ -140,6 +142,19 @@ public class EnemyChaseAndAttack : MonoBehaviour
     public void RemoveEnemy(Transform enemy)
     {
         enemyList.Remove(enemy);
+    }
+
+
+    public void FreezeStopNpc()
+    {
+        agent.isStopped = true;
+        agent.speed = 0f;
+    }
+
+    public void ContinueUnfreezeNpc()
+    {
+        agent.isStopped = false;
+        agent.speed = GetComponent<StatusController>().speed;
     }
 
     void OnDrawGizmosSelected()
