@@ -11,6 +11,10 @@ public class StatusController : MonoBehaviour
     
     public float hp = 100.0f;
 
+    public float speed = 3.5f;
+
+    public float attackSpeed = 1.0f;
+
     
     public LayerMask targetLayer;
 }
