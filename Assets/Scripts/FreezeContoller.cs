@@ -116,11 +116,11 @@ public class FreezeController : MonoBehaviour
             Freeze();
     }
 
-    public void FreezeWithCoroutine()
+    public void FreezeWithCoroutine(float freezeTime = 2f)
     {  
         Freeze();
         timeToUnfreeze++;
-        StartCoroutine(WaitToUnfreeze(2f));
+        StartCoroutine(WaitToUnfreeze(freezeTime));
     }
 
     private IEnumerator WaitToUnfreeze(float waitTime)
