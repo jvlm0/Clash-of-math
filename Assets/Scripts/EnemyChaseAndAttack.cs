@@ -20,12 +20,18 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
     private NpcController npcController;
 
+    private float distanceToTarget;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        attackRange = GetComponent<StatusController>().attackRange;
+
+
         agent.stoppingDistance = attackRange;
         npcController = GetComponent<NpcController>();
-
+        agent.stoppingDistance = attackRange;
         agent.speed = GetComponent<StatusController>().speed;
     }
 
@@ -34,11 +40,24 @@ public class EnemyChaseAndAttack : MonoBehaviour
         updateTimer += Time.deltaTime;
         attackTimer += Time.deltaTime;
 
+
+        // Calcula distância real até o alvo
+        if (currentTarget == null)
+        {
+            FindNearestEnemy();
+        }
+        
+        distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
         // Atualiza alvo mais próximo em intervalos
         if (updateTimer >= targetUpdateRate)
         {
             updateTimer = 0f;
-            FindNearestEnemy();
+            if (distanceToTarget > attackRange)
+                FindNearestEnemy();
+            else
+            {
+                currentTarget = GetComponent<MeleeAtack>().canAttack();
+            }
         }
 
         if (currentTarget == null)
@@ -48,8 +67,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             return;
         }
 
-        // Calcula distância real até o alvo
-        float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
+        
 
         // Se está no range de ataque
         if (distanceToTarget <= attackRange)
@@ -64,7 +82,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             if (attackTimer >= attackCooldown)
             {
                 attackTimer = 0f;
-                Attack();
+                npcController.Attack();
                 Debug.Log("Npc atacando");
             }
         }
@@ -93,6 +111,15 @@ public class EnemyChaseAndAttack : MonoBehaviour
         float minDistance = Mathf.Infinity;
         Transform nearest = null;
 
+        if (currentTarget != null)
+        {
+            float distToCurrent = Vector3.Distance(transform.position, currentTarget.position);
+            if (distToCurrent <= attackRange)
+            {
+                return;
+            }
+        }
+
         foreach (Transform enemy in enemyList)
         {
             float dist = Vector3.Distance(transform.position, enemy.position);
@@ -108,10 +135,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
         currentTarget = nearest;
     }
 
-    void Attack()
-    {
-        npcController.Attack();
-    }
+    
 
     void FaceTarget()
     {

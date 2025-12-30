@@ -57,4 +57,5 @@ public class PlayerController : MonoBehaviour, IAnimController
         Debug.Log("Player received damage: " + damageAmount);  
         lifeBarController.UpdateLifeBar(damageAmount);
     }
+
 }
