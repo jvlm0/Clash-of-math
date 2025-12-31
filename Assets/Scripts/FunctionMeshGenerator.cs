@@ -78,6 +78,7 @@ public class FunctionMeshGenerator : MonoBehaviour
     [SerializeField]
     [Tooltip("Atualizar colliders durante animação (pode causar lag)")]
     private bool updateCollidersWhileAnimating = false;
+    bool endPropagation = false;
 
     public enum AnimationDirection
     {
@@ -626,6 +627,7 @@ public class FunctionMeshGenerator : MonoBehaviour
                             GenerateColliders();
                         }
                         Debug.Log("Propagação completa!");
+                        GetComponent<FunctionPrefabSpawner>()?.SpawnPrefabs();
                     }
                     break;
 
