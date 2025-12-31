@@ -10,7 +10,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
     public float targetUpdateRate = 0.3f;
 
     [Header("Ataque")]
-    public float attackRange = 1.5f;
+    private float attackRange;
     public float attackCooldown = 1.2f;
 
     private NavMeshAgent agent;

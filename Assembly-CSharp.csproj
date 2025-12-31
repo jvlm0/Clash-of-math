@@ -75,7 +75,6 @@
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Scripts\StatusController.cs" />
-    <Compile Include="Assets\Scripts\NPCHorde.cs" />
     <Compile Include="Assets\Scripts\MeleeAttackSystem.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\Scripts\EnemyChaseAndAttack.cs" />

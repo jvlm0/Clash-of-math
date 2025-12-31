@@ -121,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
             // Executa o ataque (mesmo sem target)
-            GetComponent<IAtackHandler>()?.Atack();
+            //GetComponent<IAtackHandler>()?.Atack();
         }
     }
 
@@ -161,11 +161,16 @@ public class PlayerMovement : MonoBehaviour
     // Corrotina para rotacionar suavemente em direção ao alvo
     IEnumerator RotateTowardsTarget()
     {
+
+        Debug.Log("Rotacionando para o alvo de ataque " + currentTarget?.name);
+
         if (currentTarget == null)
         {
             isAttacking = false;
             yield break;
         }
+
+        
 
         float rotationTime = 0f;
         float maxRotationTime = 0.3f; // Tempo máximo para girar (ajuste conforme necessário)

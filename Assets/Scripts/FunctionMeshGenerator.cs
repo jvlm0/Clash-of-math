@@ -684,7 +684,7 @@ public class FunctionMeshGenerator : MonoBehaviour
             Debug.Log($"Colliders: {(enableColliders ? "Ativados" : "Desativados")}");
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             drawDiscontinuities = !drawDiscontinuities;
             GenerateMesh();

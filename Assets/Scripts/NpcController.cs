@@ -59,8 +59,7 @@ public class NpcController : MonoBehaviour, IAnimController
     public void GetDamage(float damageAmount)
     {
         animator.SetTrigger("GetDamage");
-        currentLife -= damageAmount;
-        GetComponentInChildren<LifeBarController>().UpdateLifeBar(currentLife);
+        GetComponentInChildren<LifeBarController>().UpdateLifeBar(damageAmount);
     }
 
     private void OnAttackEnd()

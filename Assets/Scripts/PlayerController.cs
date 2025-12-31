@@ -12,6 +12,21 @@ public class PlayerController : MonoBehaviour, IAnimController
         lifeBarController = GetComponent<LifeBarController>();
     }
 
+
+    public void GetAnimDuration(string animName)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.IsName(animName))
+        {
+            float animDuration = stateInfo.length;
+            Debug.Log("Duração da animação " + animName + ": " + animDuration + " segundos");
+        }
+        else
+        {
+            Debug.Log("Animação " + animName + " não está sendo reproduzida atualmente.");
+        }
+    }
+
     public void Walk()
     {
         animator.SetBool(AnimContants.walkBool, true);
@@ -54,7 +69,7 @@ public class PlayerController : MonoBehaviour, IAnimController
 
     public void GetDamage(float damageAmount)
     {
-        Debug.Log("Player received damage: " + damageAmount);  
+        Debug.Log("Player received damage: " + damageAmount);
         lifeBarController.UpdateLifeBar(damageAmount);
     }
 

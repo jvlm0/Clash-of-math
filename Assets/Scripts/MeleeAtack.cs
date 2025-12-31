@@ -4,10 +4,26 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
 {
     public bool rotate = false;
     private Transform currentTarget = null;
-    
+
+    private float nextAttackTime;
+
+    private Animator animator;
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     public Transform canAttack()
     {
+        if (Time.time < nextAttackTime)
+        {   
+            if (gameObject.CompareTag("Player"))
+                Debug.Log("Não ataca pq está em cooldown");
+            return null;
+        }
+           
+
         currentTarget = MeleeAttackSystem.GetAttackTarget(
             transform,
             currentTarget,
@@ -15,32 +31,33 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
             GetComponent<StatusController>().targetLayer
         );
 
+        if (currentTarget == null)
+        {
+            Debug.Log("Nenhum alvo disponível para ataque");
+        }
+
         return currentTarget;
     }
 
     public void Atack()
     {
-        
         if (currentTarget != null)
         {
             GetComponent<IAnimController>()?.Attack();
-            
 
-            if (rotate)
-            {
-                Vector3 direction = (currentTarget.position - transform.position).normalized;
-                direction.y = 0; // Mantém a rotação apenas no eixo Y
-                if (direction != Vector3.zero)
-                {
-                    Quaternion lookRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = lookRotation;
-                }
-            }
+            float animLength = animator.GetCurrentAnimatorStateInfo(0).length;
+            float normalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+
+            float remainingTime = animLength * (1f - normalizedTime);
+
+            nextAttackTime = Time.time + remainingTime;
         }
     }
 
     public void OnHitFrame()
     {
-        currentTarget.GetComponent<IAnimController>()?.GetDamage(GetComponent<StatusController>().damage);
+        currentTarget
+            .GetComponent<IAnimController>()
+            ?.GetDamage(GetComponent<StatusController>().damage);
     }
 }
