@@ -121,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
             }
 
             // Executa o ataque (mesmo sem target)
-            //GetComponent<IAtackHandler>()?.Atack();
+            GetComponent<IAtackHandler>()?.Atack();
         }
     }
 
