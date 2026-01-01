@@ -452,6 +452,45 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 242167550}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &260430231 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1940098064602988, guid: 4bb3ae919a4b33d4cb054a3d37a92221, type: 3}
+  m_PrefabInstance: {fileID: 808749780}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &271982649 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+  m_PrefabInstance: {fileID: 553591182915195094}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &271982655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271982649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bfe0bae431b2074c916deb9d3fad88b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  functionGenerator: {fileID: 0}
+  prefabToSpawn: {fileID: 260430231}
+  numberOfPrefabs: 12
+  spawnMode: 3
+  spawnDistance: 1
+  snapTolerance: 0.1
+  spawnOnStart: 0
+  updateDuringAnimation: 0
+  heightOffset: 0.5
+  alignToFunctionSlope: 1
+  additionalRotation: 0
+  randomizeScale: 0
+  scaleRange: {x: 0.8, y: 1.2}
+  randomizeRotation: 0
+  rotationRange: {x: -15, y: 15}
+  useParentObject: 1
+  parentName: SpawnedPrefabs
 --- !u!1001 &277978954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8262,7 +8301,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 271982655}
   m_SourcePrefab: {fileID: 100100000, guid: 68559344866ffaf4db81746a8804a309, type: 3}
 --- !u!1001 &7331028021253580252
 PrefabInstance:

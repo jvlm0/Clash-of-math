@@ -20,12 +20,8 @@ public class FunctionPrefabSpawner : MonoBehaviour
     private SpawnMode spawnMode = SpawnMode.EvenlySpaced;
 
     [SerializeField]
-    [Tooltip("Distância entre prefabs (apenas para modo ByDistance)")]
-    private float spawnDistance = 1f;
-
-    [SerializeField]
-    [Tooltip("Tolerância para arredondamento de posição (0 = sem arredondamento)")]
-    private float snapTolerance = 0.1f;
+    [Tooltip("Distância entre prefabs (calculada automaticamente no modo ByDistance)")]
+    private float calculatedDistance = 0f;
 
     [SerializeField]
     private bool spawnOnStart = false;
@@ -70,7 +66,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
         EvenlySpaced,      // Distribui uniformemente pelos índices dos pontos
         EveryNthPoint,     // A cada N pontos
         RandomPoints,      // Pontos aleatórios
-        ByDistance         // A cada X unidades de distância ao longo da curva
+        ByDistanceAuto     // Distribui X prefabs uniformemente ao longo da distância real da curva
     }
 
     private List<GameObject> spawnedObjects = new List<GameObject>();
@@ -152,6 +148,29 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
         int totalSpawned = 0;
 
+        // Para o modo ByDistanceAuto, primeiro calcula o comprimento total
+        if (spawnMode == SpawnMode.ByDistanceAuto)
+        {
+            float totalLength = 0f;
+            
+            foreach (var segment in meshSegments)
+            {
+                var pointsProperty = segment.GetType().GetField("points");
+                var points = pointsProperty.GetValue(segment) as System.Collections.IList;
+
+                if (points == null || points.Count < 2)
+                    continue;
+
+                totalLength += CalculateSegmentLength(points);
+            }
+
+            // Calcula a distância entre prefabs
+            calculatedDistance = numberOfPrefabs > 1 ? totalLength / (numberOfPrefabs - 1) : 0f;
+            
+            Debug.Log($"Comprimento total da curva: {totalLength:F2} unidades");
+            Debug.Log($"Distância calculada entre prefabs: {calculatedDistance:F2} unidades");
+        }
+
         // Spawna prefabs em cada segmento
         foreach (var segment in meshSegments)
         {
@@ -163,9 +182,9 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
             List<int> selectedIndices;
             
-            if (spawnMode == SpawnMode.ByDistance)
+            if (spawnMode == SpawnMode.ByDistanceAuto)
             {
-                selectedIndices = SelectPointsByDistance(points);
+                selectedIndices = SelectPointsByDistance(points, ref totalSpawned);
             }
             else
             {
@@ -182,7 +201,9 @@ public class FunctionPrefabSpawner : MonoBehaviour
                 float z = (float)zField.GetValue(point);
 
                 SpawnPrefabAt(x, z, index, points);
-                totalSpawned++;
+                
+                if (spawnMode != SpawnMode.ByDistanceAuto)
+                    totalSpawned++;
             }
         }
 
@@ -249,18 +270,22 @@ public class FunctionPrefabSpawner : MonoBehaviour
         return indices;
     }
 
-    List<int> SelectPointsByDistance(System.Collections.IList points)
+    List<int> SelectPointsByDistance(System.Collections.IList points, ref int totalSpawned)
     {
         List<int> indices = new List<int>();
         
-        if (points.Count < 2)
+        if (points.Count < 2 || calculatedDistance <= 0f)
             return indices;
 
         // Sempre inclui o primeiro ponto
         indices.Add(0);
+        totalSpawned++;
+        
+        // Se já atingiu a quantidade desejada, retorna
+        if (totalSpawned >= numberOfPrefabs)
+            return indices;
         
         float accumulatedDistance = 0f;
-        float targetDistance = spawnDistance;
         
         for (int i = 1; i < points.Count; i++)
         {
@@ -278,43 +303,43 @@ public class FunctionPrefabSpawner : MonoBehaviour
             
             accumulatedDistance += segmentDistance;
             
-            // Verifica se atingiu a distância alvo
-            if (accumulatedDistance >= targetDistance)
+            // Verifica se atingiu a distância calculada
+            if (accumulatedDistance >= calculatedDistance)
             {
-                // Se está dentro da tolerância de arredondamento
-                if (snapTolerance > 0f)
-                {
-                    float distanceError = accumulatedDistance - targetDistance;
-                    
-                    // Se o erro for pequeno o suficiente, spawna aqui
-                    if (distanceError <= snapTolerance)
-                    {
-                        indices.Add(i);
-                        accumulatedDistance = 0f;
-                    }
-                    // Se passou muito da distância, volta um ponto
-                    else if (distanceError > spawnDistance * 0.5f && i > 0)
-                    {
-                        indices.Add(i - 1);
-                        // Recalcula a distância acumulada a partir do ponto anterior
-                        accumulatedDistance = segmentDistance;
-                    }
-                    else
-                    {
-                        indices.Add(i);
-                        accumulatedDistance = 0f;
-                    }
-                }
-                else
-                {
-                    // Sem arredondamento, spawna no ponto mais próximo
-                    indices.Add(i);
-                    accumulatedDistance = 0f;
-                }
+                indices.Add(i);
+                accumulatedDistance = 0f;
+                totalSpawned++;
+                
+                // Se já atingiu a quantidade desejada, para
+                if (totalSpawned >= numberOfPrefabs)
+                    break;
             }
         }
         
         return indices;
+    }
+
+    float CalculateSegmentLength(System.Collections.IList points)
+    {
+        float length = 0f;
+        
+        for (int i = 1; i < points.Count; i++)
+        {
+            var currentPoint = points[i];
+            var prevPoint = points[i - 1];
+            
+            float currentX = (float)currentPoint.GetType().GetField("x").GetValue(currentPoint);
+            float currentZ = (float)currentPoint.GetType().GetField("z").GetValue(currentPoint);
+            float prevX = (float)prevPoint.GetType().GetField("x").GetValue(prevPoint);
+            float prevZ = (float)prevPoint.GetType().GetField("z").GetValue(prevPoint);
+            
+            Vector3 p1 = new Vector3(prevX, 0, prevZ);
+            Vector3 p2 = new Vector3(currentX, 0, currentZ);
+            
+            length += Vector3.Distance(p1, p2);
+        }
+        
+        return length;
     }
 
     Vector3 GetPointPosition(object point)
