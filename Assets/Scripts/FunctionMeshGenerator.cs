@@ -418,7 +418,18 @@ public class FunctionMeshGenerator : MonoBehaviour
 
     bool IsValidValue(float value)
     {
-        return !float.IsNaN(value) && !float.IsInfinity(value);
+        if (float.IsNaN(value) || float.IsInfinity(value))
+        return false;
+    
+        // Se useZClamp estiver ativo, verifica se o valor está dentro dos limites
+        if (useZClamp)
+        {
+            return value >= zMin && value <= zMax;
+        }
+    
+    return true;
+
+        
     }
 
     void GenerateColliders()
@@ -564,10 +575,10 @@ public class FunctionMeshGenerator : MonoBehaviour
     {
         float z = parser.Evaluate(x);
 
-        if (useZClamp && IsValidValue(z))
-        {
-            z = Mathf.Clamp(z, zMin, zMax);
-        }
+        //if (useZClamp && IsValidValue(z))
+        //{
+        //    z = Mathf.Clamp(z, zMin, zMax);
+        //}
 
         return z;
     }
