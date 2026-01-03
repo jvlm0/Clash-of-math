@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Scripts\StatusController.cs" />
+    <Compile Include="Assets\Scripts\PortalExpressionsController.cs" />
     <Compile Include="Assets\Scripts\MeleeAttackSystem.cs" />
     <Compile Include="Assets\Scripts\FunctionPrefabSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />

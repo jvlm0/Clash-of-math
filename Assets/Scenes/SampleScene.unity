@@ -478,8 +478,7 @@ MonoBehaviour:
   prefabToSpawn: {fileID: 260430231}
   numberOfPrefabs: 12
   spawnMode: 3
-  spawnDistance: 1
-  snapTolerance: 0.1
+  calculatedDistance: 0
   spawnOnStart: 0
   updateDuringAnimation: 0
   heightOffset: 0.5
@@ -4323,6 +4322,7 @@ GameObject:
   m_Component:
   - component: {fileID: 946089392}
   - component: {fileID: 946089391}
+  - component: {fileID: 946089393}
   m_Layer: 0
   m_Name: PortalSpawn
   m_TagString: Untagged
@@ -4344,28 +4344,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalPrefab: {fileID: 1763209629664047247, guid: 0a1d68bd8d564fc4fbbae39573695d5e, type: 3}
   numberOfPortalPairs: 5
-  blueColor: {r: 0.5294118, g: 0.6862745, b: 0.9607843, a: 0.74509805}
-  redColor: {r: 1, g: 0.2, b: 0.2, a: 0.7647059}
   startPoint: {fileID: 1742070725}
   endPoint: {fileID: 1601106519}
   distanceBetweenPairPortals: 15
   verticalOffset: 0
   horizontalOffset: 5
-  bluePortalTexts:
-  - 2x
-  - x^2
-  - sin(x)
-  - +3
-  - log(x)
-  - 2^x
-  redPortalTexts:
-  - x/2
-  - sqrt(x)
-  - cos(x)
-  - ln(x)
-  - tan(x)
-  - -7
-  showDebugInfo: 1
 --- !u!4 &946089392
 Transform:
   m_ObjectHideFlags: 0
@@ -4381,6 +4364,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &946089393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946089390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b733ef50b34523645978ea6d5d7219af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bluePortalTexts:
+  - sin(x)
+  - tan(x)
+  - x
+  - +3
+  - x^2
+  - 2x
+  - 2^x
+  redPortalTexts:
+  - x/2
+  - 1/x
+  - -1
+  - +2
+  - cos(x)
+  - sqrt(x)
+  - log(x)
+  blueColor: {r: 0.5294118, g: 0.6862745, b: 0.9607843, a: 0.7058824}
+  redColor: {r: 1, g: 0.2, b: 0.2, a: 0.7058824}
 --- !u!1 &957114617
 GameObject:
   m_ObjectHideFlags: 0
@@ -8293,6 +8306,18 @@ PrefabInstance:
     - target: {fileID: 1297849469946062273, guid: 68559344866ffaf4db81746a8804a309, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2447270897274174269, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+      propertyPath: xMax
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2447270897274174269, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+      propertyPath: xMin
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2447270897274174269, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+      propertyPath: mathExpression
+      value: x^2
       objectReference: {fileID: 0}
     - target: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
       propertyPath: m_Name

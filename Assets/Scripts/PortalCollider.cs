@@ -24,11 +24,13 @@ public class PortalCollider : MonoBehaviour
                 return;
             }
             Debug.Log("Colidiu com: " + other.name);
-
-            GetComponentInParent<UniquePairPortalCollider>().SetPortalState();
-            string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
-            Debug.Log("Equação coletada: " + expresion);
-            EquationController.instance.AppendEquation(expresion);
+            if (GetComponentInParent<Portal>().isTextPortal)
+            {
+                GetComponentInParent<UniquePairPortalCollider>().SetPortalState();
+                string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
+                Debug.Log("Equação coletada: " + expresion);
+                EquationController.instance.AppendEquation(expresion);
+            }
             Destroy(gameObject.transform.parent.gameObject, 0.2f);
         }
     }
