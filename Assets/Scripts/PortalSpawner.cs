@@ -98,12 +98,7 @@ public class PortalSpawner : MonoBehaviour
             return false;
         }
         
-        
-        if (numberOfPortalPairs <= 0)
-        {
-            Debug.LogError("Number of Portal Pairs deve ser maior que 0!");
-            return false;
-        }
+    
         
         return true;
     }
@@ -136,6 +131,7 @@ public class PortalSpawner : MonoBehaviour
     {
         // Decidir aleatoriamente qual portal (esquerdo ou direito) será azul ou vermelho
         bool leftIsBlue = Random.Range(0, 2) == 0;
+        bool isExpressionPortal = Random.Range(0f, 1f) < 0.7f;
         
         // Calcular posições dos portais do par (separados no eixo X)
         Vector3 leftPosition = centerPosition - Vector3.right * (distanceBetweenPairPortals / 2f);
@@ -159,13 +155,13 @@ public class PortalSpawner : MonoBehaviour
 
         if (leftIsBlue)
         {
-            leftPortalScript.ConfigureBluePortal();
-            rightPortalScript.ConfigureRedPortal();
+            leftPortalScript.InitPortal(true, isExpressionPortal);
+            rightPortalScript.InitPortal(false, isExpressionPortal);
         }
         else
         {
-            leftPortalScript.ConfigureRedPortal();
-            rightPortalScript.ConfigureBluePortal();
+            leftPortalScript.InitPortal(false, isExpressionPortal);
+            rightPortalScript.InitPortal(true, isExpressionPortal);
         }
     }
 

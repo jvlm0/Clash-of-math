@@ -1,25 +1,34 @@
-using UnityEngine;
-using TMPro;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 // Script para o prefab do portal
 public class Portal : MonoBehaviour
 {
     [Header("Componentes")]
-    [SerializeField] private MeshRenderer quadRenderer;
-    [SerializeField] private GameObject textMesh;
-    [SerializeField] private MeshRenderer pilarRenderer;
-    [SerializeField] private Image troopIcon;
-    [SerializeField] private TextMeshProUGUI expressionText;
-    [SerializeField] private TextMeshProUGUI troopCountText;
-    
-    public bool isTextPortal = true;
-    
-    private Material quadMaterial;
+    [SerializeField]
+    private MeshRenderer quadRenderer;
 
     
-    
+    [SerializeField]
+    private MeshRenderer pilarRenderer;
+
+    [SerializeField]
+    private Image troopIcon;
+
+    [SerializeField]
+    private TextMeshProUGUI expressionText;
+
+    [SerializeField]
+    private TextMeshProUGUI troopCountText;
+
+    public bool isTextPortal = true;
+
+    private Material quadMaterial;
+
+    public GameObject troopPrefab;
+
     private void Awake()
     {
         if (quadRenderer != null)
@@ -28,12 +37,8 @@ public class Portal : MonoBehaviour
         }
     }
 
+    public void Start() { }
 
-    public void Start()
-    {
-    
-    }
-    
     public void SetColor(Color color)
     {
         if (quadMaterial != null)
@@ -42,33 +47,18 @@ public class Portal : MonoBehaviour
         }
     }
 
-
-    
-    
     public void SetText(string text)
     {
-        if (textMesh != null)
+        if (expressionText != null)
         {
             expressionText.text = text;
-            textMesh.SetActive(true);
+            expressionText.gameObject.SetActive(true);
             troopIcon.gameObject.SetActive(false);
             troopCountText.gameObject.SetActive(false);
         }
     }
 
-
-    public void SetTroopInfo(Sprite icon, int count)
-    {
-        if (troopIcon != null && troopCountText != null)
-        {
-            troopIcon.sprite = icon;
-            troopCountText.text = count.ToString();
-            textMesh.SetActive(false);
-        }
-    }
-
-
-     // Método para obter a altura do portal
+    // Método para obter a altura do portal
     public float GetPortalHeight()
     {
         if (pilarRenderer != null)
@@ -82,30 +72,49 @@ public class Portal : MonoBehaviour
     {
         if (quadRenderer != null)
         {
-            return quadRenderer.bounds.size.x + pilarRenderer.bounds.size.x*2;
+            return quadRenderer.bounds.size.x + pilarRenderer.bounds.size.x * 2;
         }
         return 0f;
     }
 
-
-
-
-    private void ConfigurePortal(Color color, bool isBlue)
+    private void ConfigurePortal(bool isBlue)
     {
-        SetColor(color);
+        
         string text = PortalExpressionsController.Instance.GetRandomText(isBlue);
         SetText(text);
+        isTextPortal = true;
+    }
+
+    private void ConfigureTroopPortal()
+    {
         
+        isTextPortal = false;
+        (troopPrefab, troopIcon.sprite) = PortalExpressionsController.Instance.GetRandomTroop();
+        int troopCount = Random.Range(1, 6); // Exemplo: número aleatório entre 1 e 5
+        troopCountText.text = troopCount.ToString();
+
+        troopCountText.gameObject.SetActive(true);
+        troopIcon.gameObject.SetActive(true);
+        expressionText.gameObject.SetActive(false);
         
     }
 
-    public void ConfigureRedPortal()
-    {
-        ConfigurePortal(PortalExpressionsController.Instance.redColor, false);
-    }
 
-    public void ConfigureBluePortal()
-    {
-        ConfigurePortal(PortalExpressionsController.Instance.blueColor, true);
+    public void InitPortal(bool isBlue, bool isExpressionPortal = true)
+    {   
+
+        if (isBlue)
+        {
+            SetColor(PortalExpressionsController.Instance.blueColor);
+        } else {   
+            SetColor(PortalExpressionsController.Instance.redColor);
+        }
+
+        if (isExpressionPortal)
+        {
+            ConfigurePortal(true);
+        } else {
+            ConfigureTroopPortal();
+        }
     }
 }
