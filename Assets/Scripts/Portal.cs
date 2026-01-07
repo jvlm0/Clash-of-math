@@ -21,7 +21,7 @@ public class Portal : MonoBehaviour
     private TextMeshProUGUI expressionText;
 
     [SerializeField]
-    private TextMeshProUGUI troopCountText;
+    public TextMeshProUGUI troopCountText;
 
     public bool isTextPortal = true;
 

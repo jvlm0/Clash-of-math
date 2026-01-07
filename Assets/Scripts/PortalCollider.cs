@@ -24,12 +24,20 @@ public class PortalCollider : MonoBehaviour
                 return;
             }
             Debug.Log("Colidiu com: " + other.name);
-            if (GetComponentInParent<Portal>().isTextPortal)
+            if (GetComponent<Portal>().isTextPortal)
             {
                 GetComponentInParent<UniquePairPortalCollider>().SetPortalState();
                 string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
                 Debug.Log("Equação coletada: " + expresion);
                 EquationController.instance.AppendEquation(expresion);
+                
+            } else
+            {
+                FunctionPrefabSpawner.prefabCountPairs.Add(new PrefabCountPair
+                {
+                    prefab = GetComponent<Portal>().troopPrefab,
+                    count = GetComponent<Portal>().troopCountText.text != "" ? int.Parse(GetComponent<Portal>().troopCountText.text) : 0
+                });
             }
             Destroy(gameObject.transform.parent.gameObject, 0.2f);
         }

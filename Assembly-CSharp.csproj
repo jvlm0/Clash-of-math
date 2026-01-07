@@ -90,6 +90,7 @@
     <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
+    <Compile Include="Assets\Utils\PrefabCountPair.cs" />
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
     <Compile Include="Assets\Scripts\IAtackHandler.cs" />
     <Compile Include="Assets\Scripts\UniquePairPortalCollider.cs" />

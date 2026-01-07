@@ -31,7 +31,7 @@ public class PortalExpressionsController : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+           
         }
         else
         {
@@ -43,11 +43,13 @@ public class PortalExpressionsController : MonoBehaviour
             portalPrefabs[e.key] = e.value;
         }
 
+        InitializeLists();
+
     }
 
     void Start()
     {
-        InitializeLists();
+        
     }
 
     private void InitializeLists()

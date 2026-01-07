@@ -60,6 +60,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     [SerializeField]
     private string parentName = "SpawnedPrefabs";
+    public static List<PrefabCountPair> prefabCountPairs = new List<PrefabCountPair>();
 
     public enum SpawnMode
     {
@@ -71,6 +72,32 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     private List<GameObject> spawnedObjects = new List<GameObject>();
     private Transform parentTransform;
+
+    private void SetPrefabTotalCount()
+    {
+        int total = 0;
+        foreach (var pair in prefabCountPairs)
+        {
+            total += pair.count;
+        }
+        numberOfPrefabs = total;
+    }
+
+    private int currentPrefabIndex = 0;   
+    private GameObject nextPrefab()
+    {   
+        if (prefabCountPairs[currentPrefabIndex].count == 0)
+        {
+            currentPrefabIndex++;
+            if (currentPrefabIndex >= prefabCountPairs.Count)
+            {
+                Debug.LogWarning("Todos os prefabs foram usados.");
+                return null;
+            }
+        } 
+        prefabCountPairs[currentPrefabIndex].count--;
+        return prefabCountPairs[currentPrefabIndex].prefab;
+    }
 
     void Start()
     {
@@ -120,12 +147,8 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     public void SpawnPrefabs()
     {
-        if (prefabToSpawn == null)
-        {
-            Debug.LogError("Nenhum prefab atribuído para spawnar!");
-            return;
-        }
-
+        SetPrefabTotalCount();
+        
         ClearPrefabs();
 
         // Acessa os segmentos da malha através de reflexão
@@ -353,6 +376,8 @@ public class FunctionPrefabSpawner : MonoBehaviour
     {
         Vector3 position = new Vector3(x, heightOffset, z);
         
+        prefabToSpawn = nextPrefab();
+
         GameObject instance = Instantiate(prefabToSpawn, transform.TransformPoint(position), Quaternion.identity);
 
         if (useParentObject && parentTransform != null)
