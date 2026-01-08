@@ -43,7 +43,12 @@ public class FunctionCanvasAxisRenderer : MonoBehaviour
     private int labelFontSize = 14;
 
     [SerializeField]
-    private float labelOffset = 20f;
+    [Tooltip("Distância dos labels do eixo X")]
+    private float labelOffsetX = 25f;
+
+    [SerializeField]
+    [Tooltip("Distância dos labels do eixo Y")]
+    private float labelOffsetY = 35f;
 
     [SerializeField]
     [Tooltip("Número aproximado de marcações em cada eixo")]
@@ -246,14 +251,14 @@ public class FunctionCanvasAxisRenderer : MonoBehaviour
             float canvasX = MathToCanvasX(x);
             
             // Posiciona abaixo do eixo X, ou no fundo se o eixo estiver muito em cima
-            float labelY = xAxisY - labelOffset;
+            float labelY = xAxisY - labelOffsetX;
             if (xAxisY > rect.yMax - 50f)
             {
                 labelY = rect.yMin + 15f;
             }
             else if (xAxisY < rect.yMin + 50f)
             {
-                labelY = xAxisY + labelOffset;
+                labelY = xAxisY + labelOffsetX;
             }
 
             CreateLabel($"Label_X_{x}", 
@@ -270,10 +275,10 @@ public class FunctionCanvasAxisRenderer : MonoBehaviour
             float canvasY = MathToCanvasY(y);
             
             // Posiciona à esquerda do eixo Y, ou na borda se o eixo estiver muito à esquerda
-            float labelX = yAxisX - labelOffset;
+            float labelX = yAxisX - labelOffsetY;
             if (yAxisX < rect.xMin + 50f)
             {
-                labelX = yAxisX + labelOffset;
+                labelX = yAxisX + labelOffsetY;
             }
             else if (yAxisX > rect.xMax - 50f)
             {
