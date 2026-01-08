@@ -420,8 +420,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 217.02466, y: 91.17926}
+  m_SizeDelta: {x: 155, y: 155}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1568564375
 MonoBehaviour:
@@ -436,15 +436,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolution: 100
-  xMin: -20
-  xMax: 20
-  yMin: -50
-  yMax: 50
+  xMin: -10
+  xMax: 10
+  yMin: -100
+  yMax: 100
+  useAdaptiveViewport: 1
+  absoluteYMax: 10
+  absoluteYMin: -10
+  viewportPadding: 0.2
+  minViewportRange: 2
   lineThickness: 2
   lineColor: {r: 0, g: 1, b: 1, a: 1}
   maxSegmentLength: 3
   maxDrawSegmentLength: 10
-  mathExpression: x^2
+  mathExpression: sin(x)
   animateOnStart: 1
   propagationSpeed: 2
   direction: 2

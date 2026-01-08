@@ -21,6 +21,31 @@ public class FunctionCanvasGenerator : MonoBehaviour
     [SerializeField]
     private float yMax = 5f;
 
+    [Header("Viewport Adaptativo")]
+    [SerializeField]
+    [Tooltip("Ativa o ajuste automático dos limites de Y baseado nos valores da função")]
+    private bool useAdaptiveViewport = true;
+
+    [SerializeField]
+    [Tooltip("Limite absoluto máximo de Y (funções que chegam aqui usam este valor)")]
+    private float absoluteYMax = 10f;
+
+    [SerializeField]
+    [Tooltip("Limite absoluto mínimo de Y (funções que chegam aqui usam este valor)")]
+    private float absoluteYMin = -10f;
+
+    [SerializeField]
+    [Range(0f, 2f)]
+    [Tooltip("Margem adicional em relação aos valores encontrados (0 = sem margem, 1 = 100% de margem)")]
+    private float viewportPadding = 0.2f;
+
+    [SerializeField]
+    [Tooltip("Limites de Y mínimos para evitar viewport muito comprimido")]
+    private float minViewportRange = 2f;
+
+    private float activeYMin;
+    private float activeYMax;
+
     [SerializeField]
     private float lineThickness = 2f;
 
@@ -91,6 +116,10 @@ public class FunctionCanvasGenerator : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         parser = new MathExpressionParser(mathExpression);
 
+        // Inicializa limites ativos
+        activeYMin = yMin;
+        activeYMax = yMax;
+
         if (animateOnStart)
         {
             StartPropagation();
@@ -153,7 +182,47 @@ public class FunctionCanvasGenerator : MonoBehaviour
         float firstMultiple = Mathf.Ceil(currentXMin / piStep) * piStep;
         float lastMultiple = Mathf.Floor(currentXMax / piStep) * piStep;
 
+        // Primeira passagem: coleta todos os pontos válidos
+        List<float> validYValues = new List<float>();
+
         // Gera pontos nos múltiplos de pi
+        for (float x = firstMultiple; x <= lastMultiple; x += piStep)
+        {
+            if (x >= currentXMin && x <= currentXMax)
+            {
+                float y = CalculateFunction(x);
+                if (IsFiniteValue(y))
+                {
+                    validYValues.Add(y);
+                }
+            }
+        }
+
+        // Adiciona pontos nas extremidades
+        float yStart = CalculateFunction(currentXMin);
+        if (IsFiniteValue(yStart))
+        {
+            validYValues.Add(yStart);
+        }
+
+        float yEnd = CalculateFunction(currentXMax);
+        if (IsFiniteValue(yEnd))
+        {
+            validYValues.Add(yEnd);
+        }
+
+        // Calcula viewport adaptativo
+        if (useAdaptiveViewport && validYValues.Count > 0)
+        {
+            CalculateAdaptiveViewport(validYValues);
+        }
+        else
+        {
+            activeYMin = yMin;
+            activeYMax = yMax;
+        }
+
+        // Segunda passagem: gera pontos usando os limites calculados
         for (float x = firstMultiple; x <= lastMultiple; x += piStep)
         {
             if (x >= currentXMin && x <= currentXMax)
@@ -188,6 +257,11 @@ public class FunctionCanvasGenerator : MonoBehaviour
                 continue;
 
             CreateLineForSegment(segment.points);
+        }
+
+        if (useAdaptiveViewport)
+        {
+            Debug.Log($"Viewport adaptativo: Y [{activeYMin:F2}, {activeYMax:F2}]");
         }
     }
 
@@ -309,13 +383,79 @@ public class FunctionCanvasGenerator : MonoBehaviour
         
         // Normaliza as coordenadas matemáticas para [0, 1]
         float normalizedX = Mathf.InverseLerp(xMin, xMax, mathX);
-        float normalizedY = Mathf.InverseLerp(yMin, yMax, mathY);
+        float normalizedY = Mathf.InverseLerp(activeYMin, activeYMax, mathY);
 
         // Converte para coordenadas do Canvas
         float canvasX = Mathf.Lerp(rect.xMin, rect.xMax, normalizedX);
         float canvasY = Mathf.Lerp(rect.yMin, rect.yMax, normalizedY);
 
         return new Vector2(canvasX, canvasY);
+    }
+
+    void CalculateAdaptiveViewport(List<float> validYValues)
+    {
+        if (validYValues.Count == 0)
+        {
+            activeYMin = yMin;
+            activeYMax = yMax;
+            return;
+        }
+
+        float minY = float.MaxValue;
+        float maxY = float.MinValue;
+        bool hitAbsoluteLimit = false;
+
+        // Encontra os valores mínimo e máximo, respeitando limites absolutos
+        foreach (float y in validYValues)
+        {
+            // Verifica se atingiu os limites absolutos
+            if (y <= absoluteYMin || y >= absoluteYMax)
+            {
+                hitAbsoluteLimit = true;
+            }
+
+            // Clamp aos limites absolutos
+            float clampedY = Mathf.Clamp(y, absoluteYMin, absoluteYMax);
+            
+            if (clampedY < minY) minY = clampedY;
+            if (clampedY > maxY) maxY = clampedY;
+        }
+
+        // Se atingiu os limites absolutos, usa eles
+        if (hitAbsoluteLimit)
+        {
+            activeYMin = absoluteYMin;
+            activeYMax = absoluteYMax;
+        }
+        else
+        {
+            // Calcula o range dos valores
+            float range = maxY - minY;
+
+            // Garante um range mínimo
+            if (range < minViewportRange)
+            {
+                float center = (minY + maxY) / 2f;
+                float halfRange = minViewportRange / 2f;
+                minY = center - halfRange;
+                maxY = center + halfRange;
+                range = minViewportRange;
+            }
+
+            // Adiciona padding (margem)
+            float padding = range * viewportPadding;
+            activeYMin = minY - padding;
+            activeYMax = maxY + padding;
+
+            // Garante que não ultrapasse os limites absolutos
+            activeYMin = Mathf.Max(activeYMin, absoluteYMin);
+            activeYMax = Mathf.Min(activeYMax, absoluteYMax);
+        }
+    }
+
+    bool IsFiniteValue(float value)
+    {
+        return !float.IsNaN(value) && !float.IsInfinity(value);
     }
 
     float CalculateFunction(float x)
@@ -325,7 +465,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
     bool IsValidValue(float value)
     {
-        return !float.IsNaN(value) && !float.IsInfinity(value) && value >= yMin && value <= yMax;
+        return !float.IsNaN(value) && !float.IsInfinity(value) && value >= activeYMin && value <= activeYMax;
     }
 
     void ClearLines()
