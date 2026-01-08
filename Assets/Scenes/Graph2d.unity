@@ -397,6 +397,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1568564374}
   - component: {fileID: 1568564375}
+  - component: {fileID: 1568564376}
   m_Layer: 5
   m_Name: GameObject
   m_TagString: Untagged
@@ -453,6 +454,32 @@ MonoBehaviour:
   animateOnStart: 1
   propagationSpeed: 2
   direction: 2
+--- !u!114 &1568564376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1568564373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba0023f98c17eb4399251b62b796b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axisColor: {r: 1, g: 1, b: 1, a: 1}
+  axisThickness: 2
+  gridColor: {r: 1, g: 1, b: 1, a: 0.2}
+  gridThickness: 1
+  showGrid: 1
+  tickLength: 10
+  tickColor: {r: 1, g: 1, b: 1, a: 1}
+  tickThickness: 2
+  labelPrefab: {fileID: 0}
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 14
+  labelOffset: 20
+  targetTickCount: 10
+  numberFormat: F1
 --- !u!1 &2115345125
 GameObject:
   m_ObjectHideFlags: 0

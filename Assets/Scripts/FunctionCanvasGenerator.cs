@@ -86,6 +86,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
     private RectTransform rectTransform;
     private MathExpressionParser parser;
     private List<UILineRenderer> lineRenderers = new List<UILineRenderer>();
+    private FunctionCanvasAxisRenderer axisRenderer;
     
     private bool isAnimating = false;
     private float currentXMin;
@@ -115,6 +116,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         parser = new MathExpressionParser(mathExpression);
+        axisRenderer = GetComponent<FunctionCanvasAxisRenderer>();
 
         // Inicializa limites ativos
         activeYMin = yMin;
@@ -164,6 +166,14 @@ public class FunctionCanvasGenerator : MonoBehaviour
     public void ResetPropagation()
     {
         StartPropagation();
+    }
+
+    public void GetCurrentBounds(out float outXMin, out float outXMax, out float outYMin, out float outYMax)
+    {
+        outXMin = currentXMin;
+        outXMax = currentXMax;
+        outYMin = activeYMin;
+        outYMax = activeYMax;
     }
 
     void GenerateGraph()
@@ -262,6 +272,12 @@ public class FunctionCanvasGenerator : MonoBehaviour
         if (useAdaptiveViewport)
         {
             Debug.Log($"Viewport adaptativo: Y [{activeYMin:F2}, {activeYMax:F2}]");
+        }
+
+        // Atualiza os eixos se o componente existir
+        if (axisRenderer != null)
+        {
+            axisRenderer.UpdateAxis(currentXMin, currentXMax, activeYMin, activeYMax);
         }
     }
 
