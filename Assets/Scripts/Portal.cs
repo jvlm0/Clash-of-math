@@ -77,20 +77,18 @@ public class Portal : MonoBehaviour
         return 0f;
     }
 
-    private void ConfigurePortal(bool isBlue)
+    private void ConfigurePortal(string text)
     {
-        
-        string text = PortalExpressionsController.Instance.GetRandomText(isBlue);
         SetText(text);
         isTextPortal = true;
     }
 
-    private void ConfigureTroopPortal()
+    private void ConfigureTroopPortal(GameObject troopPrefab, int troopCount, Sprite troopSprite)
     {
         
         isTextPortal = false;
-        (troopPrefab, troopIcon.sprite) = PortalExpressionsController.Instance.GetRandomTroop();
-        int troopCount = Random.Range(1, 6); // Exemplo: número aleatório entre 1 e 5
+        this.troopPrefab = troopPrefab;
+        troopIcon.sprite = troopSprite;
         troopCountText.text = troopCount.ToString();
 
         troopCountText.gameObject.SetActive(true);
@@ -100,7 +98,7 @@ public class Portal : MonoBehaviour
     }
 
 
-    public void InitPortal(bool isBlue, bool isExpressionPortal = true)
+    public void InitPortal(bool isBlue, string text = "", GameObject troopPrefab = null, int troopCount = 0, Sprite troopSprite = null)
     {   
 
         if (isBlue)
@@ -110,11 +108,11 @@ public class Portal : MonoBehaviour
             SetColor(PortalExpressionsController.Instance.redColor);
         }
 
-        if (isExpressionPortal)
+        if (text != "")
         {
-            ConfigurePortal(true);
+            ConfigurePortal(text);
         } else {
-            ConfigureTroopPortal();
+            ConfigureTroopPortal(troopPrefab, troopCount, troopSprite);
         }
     }
 }

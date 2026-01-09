@@ -23,7 +23,13 @@ public class PortalExpressionsController : MonoBehaviour
     private List<GameObject> availablePrefabs;
     private List<Sprite> availableSprites;
 
+
+    public List<PortalPairExpression> portalPairExpressions = new List<PortalPairExpression>();
+
+    public List<PortalInfo> enemyPortals = new List<PortalInfo>();
+
     public static PortalExpressionsController Instance;
+
 
 
     void Awake()
@@ -49,6 +55,63 @@ public class PortalExpressionsController : MonoBehaviour
 
     void Start()
     {
+        
+    }
+
+
+    public void InitPairPortals(Portal leftPortal, Portal rightPortal, bool rightIsBlue, bool isExpressionPortal)
+    {
+        PortalPairExpression portalPair = new PortalPairExpression();
+        bool enemyChoice = Random.Range(0,2) == 1 ? true : false;
+        
+        portalPair.bluePortal = new PortalInfo();
+        portalPair.redPortal = new PortalInfo();
+
+        if (isExpressionPortal)
+        {   
+            portalPair.bluePortal.isExpressionPortal = true;
+            portalPair.redPortal.isExpressionPortal = true;
+            portalPair.bluePortal.portalText = GetRandomText(true);
+            portalPair.redPortal.portalText = GetRandomText(false);
+
+            if (rightIsBlue)
+            {
+                rightPortal.InitPortal(rightIsBlue, portalPair.bluePortal.portalText, null, 0, null);
+                leftPortal.InitPortal(!rightIsBlue, portalPair.redPortal.portalText, null, 0, null);
+            } else
+            {
+                rightPortal.InitPortal(rightIsBlue, portalPair.redPortal.portalText, null, 0, null);
+                leftPortal.InitPortal(!rightIsBlue, portalPair.bluePortal.portalText, null, 0, null);
+            }
+            
+        }
+        else {
+            portalPair.bluePortal.isExpressionPortal = false;
+            portalPair.redPortal.isExpressionPortal = false;
+            (portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopSprite) = GetRandomTroop();
+            (portalPair.redPortal.portalPrefab, portalPair.redPortal.troopSprite) = GetRandomTroop();
+
+            if (rightIsBlue)
+            {
+                rightPortal.InitPortal(rightIsBlue, "", portalPair.bluePortal.portalPrefab, Random.Range(7,12), portalPair.bluePortal.troopSprite);
+                leftPortal.InitPortal(!rightIsBlue, "", portalPair.redPortal.portalPrefab, Random.Range(4,8), portalPair.redPortal.troopSprite);
+            } 
+            else
+            {
+                rightPortal.InitPortal(rightIsBlue, "", portalPair.redPortal.portalPrefab, Random.Range(4,8), portalPair.redPortal.troopSprite);
+                leftPortal.InitPortal(!rightIsBlue, "", portalPair.bluePortal.portalPrefab, Random.Range(7,12), portalPair.bluePortal.troopSprite);
+            }
+        }
+
+        if (enemyChoice)
+        {
+            enemyPortals.Add(portalPair.bluePortal);
+        } 
+        else
+        {
+            enemyPortals.Add(portalPair.redPortal);
+        }
+        
         
     }
 

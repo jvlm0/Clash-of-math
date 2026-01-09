@@ -25,6 +25,7 @@ public class PortalSpawner : MonoBehaviour
     private void Start()
     {
         SpawnPortals();
+        
     }
     
     [ContextMenu("Gerar Portais")]
@@ -153,16 +154,8 @@ public class PortalSpawner : MonoBehaviour
         Portal leftPortalScript = leftPortal.GetComponent<Portal>();
         Portal rightPortalScript = rightPortal.GetComponent<Portal>();
 
-        if (leftIsBlue)
-        {
-            leftPortalScript.InitPortal(true, isExpressionPortal);
-            rightPortalScript.InitPortal(false, isExpressionPortal);
-        }
-        else
-        {
-            leftPortalScript.InitPortal(false, isExpressionPortal);
-            rightPortalScript.InitPortal(true, isExpressionPortal);
-        }
+
+        PortalExpressionsController.Instance.InitPairPortals(leftPortalScript, rightPortalScript, !leftIsBlue, isExpressionPortal);
     }
 
 

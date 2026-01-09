@@ -68,11 +68,13 @@
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
     <Compile Include="Assets\Scripts\IAnimController.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
+    <Compile Include="Assets\Utils\PortalPairExpression.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\Scripts\MathExpressionParser.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshCollisionDetector.cs" />
     <Compile Include="Assets\Scripts\Portal.cs" />
+    <Compile Include="Assets\Utils\PortalInfo.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Scripts\StatusController.cs" />
     <Compile Include="Assets\Scripts\PortalExpressionsController.cs" />
