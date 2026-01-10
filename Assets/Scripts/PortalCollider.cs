@@ -8,6 +8,7 @@ public class PortalCollider : MonoBehaviour
     [Header("Componentes")]
     [SerializeField]
     private GameObject textObject;
+    private static int countPortal;
 
     // Start is called before the first frame update
     void Start() { }
@@ -23,6 +24,8 @@ public class PortalCollider : MonoBehaviour
             {
                 return;
             }
+            
+            PortalExpressionsController.Instance.GetEnemyEquationOnIPortal(++countPortal);
             Debug.Log("Colidiu com: " + other.name);
             if (GetComponent<Portal>().isTextPortal)
             {
@@ -30,6 +33,7 @@ public class PortalCollider : MonoBehaviour
                 string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
                 Debug.Log("Equação coletada: " + expresion);
                 EquationController.instance.AppendEquation(expresion);
+                
                 
             } else
             {

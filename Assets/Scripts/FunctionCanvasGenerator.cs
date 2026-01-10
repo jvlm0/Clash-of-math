@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -497,6 +498,16 @@ public class FunctionCanvasGenerator : MonoBehaviour
             }
         }
         lineRenderers.Clear();
+    }
+
+
+    public void UpdateGraph(string mathExpression)
+    {
+        parser = new MathExpressionParser(mathExpression);
+        currentXMin = xMin;
+        currentXMax = xMax;
+        GenerateGraph();
+        Debug.Log($"Gráfico atualizado com: {mathExpression}");
     }
 
     void Update()

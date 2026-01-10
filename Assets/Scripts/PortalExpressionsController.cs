@@ -13,6 +13,8 @@ public class PortalExpressionsController : MonoBehaviour
     public Color blueColor = new Color(0.2f, 0.4f, 1f);
     public Color redColor = new Color(1f, 0.2f, 0.2f);
 
+    [Header("Função no canvas")]
+    public FunctionCanvasGenerator functionCanvasGenerator; 
 
     [Header("Tropas dos portais")]
     [SerializeField] private List<GameObjectSpritePair> portalTroopPairs = new List<GameObjectSpritePair>();
@@ -111,9 +113,44 @@ public class PortalExpressionsController : MonoBehaviour
         {
             enemyPortals.Add(portalPair.redPortal);
         }
-        
-        
     }
+
+
+    public void GetEnemyEquationOnIPortal(int iPortal)
+    {
+        string r = "";
+        iPortal++;
+
+        if (iPortal >  enemyPortals.Count) return;
+
+        for (int i = 0;  i < iPortal; i++)
+        {
+            if (enemyPortals[i].isExpressionPortal)
+            {
+                if (enemyPortals[i].portalText[0] == '+' || enemyPortals[i].portalText[0] == '-')
+                {
+                    r+=enemyPortals[i].portalText;
+                } else
+                {
+                    
+                if (r == "") 
+                {
+                    r = enemyPortals[i].portalText;
+                }
+                else 
+                {
+                    r = $"({r}){enemyPortals[i].portalText}";
+                }    
+                    
+                }
+            }    
+        }
+        //Debug.Log($"Atual equação do inimigo no portal {iPortal}: {r}");
+        if (r != "")
+        functionCanvasGenerator.UpdateGraph(r);
+
+    }
+
 
     private void InitializeLists()
     {
