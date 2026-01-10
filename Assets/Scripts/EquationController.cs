@@ -46,8 +46,8 @@ public class EquationController : MonoBehaviour
         }
         else
         {
-            currentEquation += "*" + equation;
-        }
+            currentEquation = "("+currentEquation+")" + equation;
+         }
         Debug.Log("Equação atual: " + currentEquation);
 
         
