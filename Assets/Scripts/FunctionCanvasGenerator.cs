@@ -76,12 +76,30 @@ public class FunctionCanvasGenerator : MonoBehaviour
     [SerializeField]
     private AnimationDirection direction = AnimationDirection.FromCenter;
 
+    [Header("Transição de Funções")]
+    [SerializeField]
+    [Tooltip("Velocidade da transição entre funções (0 = instantâneo)")]
+    private float transitionSpeed = 1.5f;
+
+    [SerializeField]
+    [Tooltip("Tipo de curva de transição")]
+    private TransitionEasing transitionEasing = TransitionEasing.EaseInOut;
+
     public enum AnimationDirection
     {
         FromLeft,
         FromRight,
         FromCenter,
         ToBoth,
+    }
+
+    public enum TransitionEasing
+    {
+        Linear,
+        EaseIn,
+        EaseOut,
+        EaseInOut,
+        Smooth
     }
 
     private RectTransform rectTransform;
@@ -93,6 +111,13 @@ public class FunctionCanvasGenerator : MonoBehaviour
     private float currentXMin;
     private float currentXMax;
     private float animationProgress = 0f;
+
+    // Transição de funções
+    private bool isTransitioning = false;
+    private float transitionProgress = 0f;
+    private MathExpressionParser previousParser;
+    private string previousExpression;
+    private string targetExpression;
 
     private struct ValidPoint
     {
@@ -477,7 +502,48 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
     float CalculateFunction(float x)
     {
+        // Durante transição, interpola entre as duas funções
+        if (isTransitioning && previousParser != null)
+        {
+            float t = ApplyEasing(transitionProgress, transitionEasing);
+            
+            float yPrevious = previousParser.Evaluate(x);
+            float yCurrent = parser.Evaluate(x);
+            
+            // Se algum valor for inválido, usa apenas o válido
+            if (!IsFiniteValue(yPrevious)) return yCurrent;
+            if (!IsFiniteValue(yCurrent)) return yPrevious;
+            
+            return Mathf.Lerp(yPrevious, yCurrent, t);
+        }
+        
         return parser.Evaluate(x);
+    }
+
+    float ApplyEasing(float t, TransitionEasing easing)
+    {
+        switch (easing)
+        {
+            case TransitionEasing.Linear:
+                return t;
+            
+            case TransitionEasing.EaseIn:
+                return t * t;
+            
+            case TransitionEasing.EaseOut:
+                return 1f - (1f - t) * (1f - t);
+            
+            case TransitionEasing.EaseInOut:
+                return t < 0.5f 
+                    ? 2f * t * t 
+                    : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
+            
+            case TransitionEasing.Smooth:
+                return t * t * (3f - 2f * t);
+            
+            default:
+                return t;
+        }
     }
 
     bool IsValidValue(float value)
@@ -500,18 +566,71 @@ public class FunctionCanvasGenerator : MonoBehaviour
         lineRenderers.Clear();
     }
 
-
-    public void UpdateGraph(string mathExpression)
+    /// <summary>
+    /// Atualiza o gráfico com uma nova função, com transição suave
+    /// </summary>
+    public void UpdateGraph(string newMathExpression)
     {
-        parser = new MathExpressionParser(mathExpression);
+        if (transitionSpeed <= 0f)
+        {
+            // Transição instantânea
+            parser = new MathExpressionParser(newMathExpression);
+            mathExpression = newMathExpression;
+            currentXMin = xMin;
+            currentXMax = xMax;
+            GenerateGraph();
+            Debug.Log($"Gráfico atualizado instantaneamente com: {newMathExpression}");
+        }
+        else
+        {
+            // Inicia transição suave
+            previousParser = parser;
+            previousExpression = mathExpression;
+            targetExpression = newMathExpression;
+            
+            parser = new MathExpressionParser(newMathExpression);
+            mathExpression = newMathExpression;
+            
+            isTransitioning = true;
+            transitionProgress = 0f;
+            
+            Debug.Log($"Iniciando transição de '{previousExpression}' para '{targetExpression}'");
+        }
+    }
+
+    /// <summary>
+    /// Atualiza o gráfico sem transição
+    /// </summary>
+    public void UpdateGraphInstant(string newMathExpression)
+    {
+        parser = new MathExpressionParser(newMathExpression);
+        mathExpression = newMathExpression;
         currentXMin = xMin;
         currentXMax = xMax;
+        isTransitioning = false;
         GenerateGraph();
-        Debug.Log($"Gráfico atualizado com: {mathExpression}");
+        Debug.Log($"Gráfico atualizado instantaneamente com: {newMathExpression}");
     }
 
     void Update()
     {
+        // Atualiza transição de funções
+        if (isTransitioning)
+        {
+            transitionProgress += Time.deltaTime * transitionSpeed;
+            
+            if (transitionProgress >= 1f)
+            {
+                transitionProgress = 1f;
+                isTransitioning = false;
+                previousParser = null;
+                Debug.Log($"Transição completa para: {mathExpression}");
+            }
+            
+            GenerateGraph();
+        }
+        
+        // Atualiza animação de propagação
         if (isAnimating)
         {
             animationProgress += Time.deltaTime * propagationSpeed;
@@ -578,6 +697,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
             parser = new MathExpressionParser(mathExpression);
             currentXMin = xMin;
             currentXMax = xMax;
+            isTransitioning = false;
             GenerateGraph();
             Debug.Log($"Gráfico atualizado com: {mathExpression}");
         }
