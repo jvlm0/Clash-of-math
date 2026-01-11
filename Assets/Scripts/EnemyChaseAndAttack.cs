@@ -93,7 +93,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             agent.SetDestination(currentTarget.position);
             npcController.Run();
 
-            Debug.Log($"Npc correndo - Distância: {distanceToTarget:F2}");
+            //Debug.Log($"Npc correndo - Distância: {distanceToTarget:F2}");
         }
     }
 

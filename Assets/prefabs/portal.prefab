@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1763209629664047247}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: -6.1773, y: 5.0139, z: 175.53821}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -36,7 +36,7 @@ Transform:
   - {fileID: 7397066756926652505}
   - {fileID: 8459800893964661560}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1397831654633055439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,12 +50,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quadRenderer: {fileID: 1166817760142818783}
-  textMesh: {fileID: 7453834975045580109}
   pilarRenderer: {fileID: 7607243639638127206}
   troopIcon: {fileID: 8953059581041053620}
   expressionText: {fileID: 5618421452181460261}
   troopCountText: {fileID: 402305247111697926}
   isTextPortal: 1
+  troopPrefab: {fileID: 0}
 --- !u!65 &2047940299278134671
 BoxCollider:
   m_ObjectHideFlags: 0

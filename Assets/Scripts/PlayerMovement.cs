@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        Vector3 inputDir = new Vector3(-horizontal, 0f, -vertical);
+        Vector3 inputDir = new Vector3(horizontal, 0f, vertical);
 
         // Só movimenta se não estiver no ar E não estiver atacando
         if (!isLaunched && !isAttacking)
@@ -302,7 +302,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJumpStartFinished()
     {
-        Vector3 launchDirection = -Vector3.forward;
+        Vector3 launchDirection = Vector3.forward;
         Launch(launchDirection);
         controller.center = new Vector3(0, jumpCenterY, 0);
     }
