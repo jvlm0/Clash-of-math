@@ -8,6 +8,8 @@ public class EquationController : MonoBehaviour
     public static EquationController instance;
     public GameObject functionMeshPrefab;
 
+    public FunctionCanvasGenerator playerFunctionCanvas;
+
     //private string[] operators = { "+", "-", "*", "/", "^" };
 
     void Awake()
@@ -47,10 +49,10 @@ public class EquationController : MonoBehaviour
         else
         {
             currentEquation = "("+currentEquation+")" + equation;
-         }
+        }
         Debug.Log("Equação atual: " + currentEquation);
 
-        
+        playerFunctionCanvas.UpdateGraph(currentEquation);
     }
 
     public void SpawnFunctionMesh(Vector3 position)
