@@ -6,11 +6,7 @@ public class FunctionCanvasManager : MonoBehaviour
     public FunctionCanvasGenerator enemyFunction;
     public FunctionCanvasGenerator playerFunction;
 
-    float yMin,
-        yMax;
-
-
-
+    float yMin, yMax;
 
     public void UpdateFunctions(
         FunctionCanvasGenerator f1,
@@ -20,44 +16,37 @@ public class FunctionCanvasManager : MonoBehaviour
         bool inst = false
     )
     {
-        float pYMin,
-            pYMax,
-            eYMin,
-            eYMax;
-        f1.useAdaptiveViewport = true;
-        f1.UpdateGraphInstant(expression);
-
-        (pYMin, pYMax) = f1.GetYLimits();
-
-        f2.useAdaptiveViewport = true;
-        f2.UpdateGraphInstant(expression2);
-
-        (eYMin, eYMax) = f2.GetYLimits();
+        // CALCULA os limites sem atualizar visualmente
+        (float pYMin, float pYMax) = f1.CalculateYLimitsForExpression(expression);
+        (float eYMin, float eYMax) = f2.CalculateYLimitsForExpression(expression2);
 
         Debug.Log($"Limite função player pYMin {pYMin} pYMax {pYMax}");
         Debug.Log($"Limite função inimigo eYMin {eYMin} eYMax {eYMax}");
 
+        // Determina os limites unificados
         yMin = Mathf.Min(pYMin, eYMin);
         yMax = Mathf.Max(pYMax, eYMax);
 
+        // Desabilita viewport adaptativo e define limites manualmente
         f1.useAdaptiveViewport = false;
         f2.useAdaptiveViewport = false;
 
-        
         f1.SetYLimits(yMin, yMax);
         f2.SetYLimits(yMin, yMax);
 
-        if (!inst) {
+        // Agora sim, atualiza os gráficos COM ou SEM transição
+        if (!inst)
+        {
             f1.UpdateGraph(expression);
             f2.UpdateGraph(expression2);
-        } else
+        }
+        else
         {
             f1.UpdateGraphInstant(expression);
             f2.UpdateGraphInstant(expression2);
         }
 
         Debug.Log($"AdaptiveViewPort f1 {f1.useAdaptiveViewport}  f2 {f2.useAdaptiveViewport}");
-        
     }
 
     public void UpdateEnemyFunction(string expression, string expression2 = "")

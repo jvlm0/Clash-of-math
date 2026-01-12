@@ -194,6 +194,107 @@ public class FunctionCanvasGenerator : MonoBehaviour
         this.yMax = yMax;
     }
 
+
+    /// <summary>
+    /// Calcula os limites Y para uma expressão sem atualizar o gráfico visualmente
+    /// </summary>
+    public (float, float) CalculateYLimitsForExpression(string expression)
+    {
+
+        if (expression == "")
+        {
+            expression = this.mathExpression;
+        }
+
+        // Cria um parser temporário
+        MathExpressionParser tempParser = new MathExpressionParser(expression);
+
+        List<float> validYValues = new List<float>();
+
+        // Calcula pontos para análise
+        float piStep = Mathf.PI / resolution;
+        float firstMultiple = Mathf.Ceil(xMin / piStep) * piStep;
+        float lastMultiple = Mathf.Floor(xMax / piStep) * piStep;
+
+        // Coleta valores Y válidos
+        for (float x = firstMultiple; x <= lastMultiple; x += piStep)
+        {
+            if (x >= xMin && x <= xMax)
+            {
+                float y = tempParser.Evaluate(x);
+                if (IsFiniteValue(y))
+                {
+                    validYValues.Add(y);
+                }
+            }
+        }
+
+        // Adiciona pontos nas extremidades
+        float yStart = tempParser.Evaluate(xMin);
+        if (IsFiniteValue(yStart))
+        {
+            validYValues.Add(yStart);
+        }
+
+        float yEnd = tempParser.Evaluate(xMax);
+        if (IsFiniteValue(yEnd))
+        {
+            validYValues.Add(yEnd);
+        }
+
+        // Calcula limites adaptativos
+        if (validYValues.Count == 0)
+        {
+            return (yMin, yMax);
+        }
+
+        float minY = float.MaxValue;
+        float maxY = float.MinValue;
+        bool hitAbsoluteLimit = false;
+
+        foreach (float y in validYValues)
+        {
+            if (y <= absoluteYMin || y >= absoluteYMax)
+            {
+                hitAbsoluteLimit = true;
+            }
+
+            float clampedY = Mathf.Clamp(y, absoluteYMin, absoluteYMax);
+
+            if (clampedY < minY)
+                minY = clampedY;
+            if (clampedY > maxY)
+                maxY = clampedY;
+        }
+
+        if (hitAbsoluteLimit)
+        {
+            return (absoluteYMin, absoluteYMax);
+        }
+        else
+        {
+            float range = maxY - minY;
+
+            if (range < minViewportRange)
+            {
+                float center = (minY + maxY) / 2f;
+                float halfRange = minViewportRange / 2f;
+                minY = center - halfRange;
+                maxY = center + halfRange;
+                range = minViewportRange;
+            }
+
+            float padding = range * viewportPadding;
+            float calculatedYMin = minY - padding;
+            float calculatedYMax = maxY + padding;
+
+            calculatedYMin = Mathf.Max(calculatedYMin, absoluteYMin);
+            calculatedYMax = Mathf.Min(calculatedYMax, absoluteYMax);
+
+            return (calculatedYMin, calculatedYMax);
+        }
+    }
+
     public void ResetPropagation()
     {
         StartPropagation();
