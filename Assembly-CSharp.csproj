@@ -89,8 +89,8 @@
     <Compile Include="Assets\Scripts\EquationController.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
-    <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasManager.cs" />
+    <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
     <Compile Include="Assets\Utils\PrefabCountPair.cs" />

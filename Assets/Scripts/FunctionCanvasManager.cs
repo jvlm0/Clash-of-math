@@ -34,6 +34,9 @@ public class FunctionCanvasManager : MonoBehaviour
 
         (eYMin, eYMax) = f2.GetYLimits();
 
+        Debug.Log($"Limite função player pYMin {pYMin} pYMax {pYMax}");
+        Debug.Log($"Limite função inimigo eYMin {eYMin} eYMax {eYMax}");
+
         yMin = Mathf.Min(pYMin, eYMin);
         yMax = Mathf.Max(pYMax, eYMax);
 

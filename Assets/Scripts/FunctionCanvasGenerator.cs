@@ -190,8 +190,8 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
     public void SetYLimits(float yMin, float yMax)
     {
-        activeYMin = yMin;
-        activeYMax = yMax;
+        this.yMin = yMin;
+        this.yMax = yMax;
     }
 
     public void ResetPropagation()
