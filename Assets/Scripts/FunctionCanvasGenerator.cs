@@ -23,9 +23,8 @@ public class FunctionCanvasGenerator : MonoBehaviour
     private float yMax = 5f;
 
     [Header("Viewport Adaptativo")]
-    [SerializeField]
     [Tooltip("Ativa o ajuste automático dos limites de Y baseado nos valores da função")]
-    private bool useAdaptiveViewport = true;
+    public bool useAdaptiveViewport = true;
 
     [SerializeField]
     [Tooltip("Limite absoluto máximo de Y (funções que chegam aqui usam este valor)")]
@@ -37,7 +36,9 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
     [SerializeField]
     [Range(0f, 2f)]
-    [Tooltip("Margem adicional em relação aos valores encontrados (0 = sem margem, 1 = 100% de margem)")]
+    [Tooltip(
+        "Margem adicional em relação aos valores encontrados (0 = sem margem, 1 = 100% de margem)"
+    )]
     private float viewportPadding = 0.2f;
 
     [SerializeField]
@@ -99,14 +100,14 @@ public class FunctionCanvasGenerator : MonoBehaviour
         EaseIn,
         EaseOut,
         EaseInOut,
-        Smooth
+        Smooth,
     }
 
     private RectTransform rectTransform;
     private MathExpressionParser parser;
     private List<UILineRenderer> lineRenderers = new List<UILineRenderer>();
     private FunctionCanvasAxisRenderer axisRenderer;
-    
+
     private bool isAnimating = false;
     private float currentXMin;
     private float currentXMax;
@@ -138,7 +139,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
         public List<ValidPoint> points = new List<ValidPoint>();
     }
 
-    void Start()
+    void Awake() // MUDAR DE Start() PARA Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         parser = new MathExpressionParser(mathExpression);
@@ -148,18 +149,11 @@ public class FunctionCanvasGenerator : MonoBehaviour
         activeYMin = yMin;
         activeYMax = yMax;
 
-        if (animateOnStart)
-        {
-            StartPropagation();
-        }
-        else
-        {
-            currentXMin = xMin;
-            currentXMax = xMax;
-            GenerateGraph();
-            Debug.Log($"Gráfico gerado usando: {mathExpression}");
-        }
+        currentXMin = xMin;
+        currentXMax = xMax;
     }
+
+    
 
     public void StartPropagation()
     {
@@ -189,12 +183,28 @@ public class FunctionCanvasGenerator : MonoBehaviour
         Debug.Log($"Iniciando propagação da função: {mathExpression}");
     }
 
+    public (float, float) GetYLimits()
+    {
+        return (activeYMin, activeYMax);
+    }
+
+    public void SetYLimits(float yMin, float yMax)
+    {
+        activeYMin = yMin;
+        activeYMax = yMax;
+    }
+
     public void ResetPropagation()
     {
         StartPropagation();
     }
 
-    public void GetCurrentBounds(out float outXMin, out float outXMax, out float outYMin, out float outYMax)
+    public void GetCurrentBounds(
+        out float outXMin,
+        out float outXMax,
+        out float outYMin,
+        out float outYMax
+    )
     {
         outXMin = currentXMin;
         outXMax = currentXMax;
@@ -391,7 +401,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
     {
         GameObject lineObj = new GameObject("GraphLine");
         lineObj.transform.SetParent(transform, false);
-        
+
         // Adiciona RectTransform (necessário para UI)
         RectTransform lineRect = lineObj.AddComponent<RectTransform>();
         lineRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -422,7 +432,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
     Vector2 MathToCanvasPosition(float mathX, float mathY)
     {
         Rect rect = rectTransform.rect;
-        
+
         // Normaliza as coordenadas matemáticas para [0, 1]
         float normalizedX = Mathf.InverseLerp(xMin, xMax, mathX);
         float normalizedY = Mathf.InverseLerp(activeYMin, activeYMax, mathY);
@@ -458,9 +468,11 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
             // Clamp aos limites absolutos
             float clampedY = Mathf.Clamp(y, absoluteYMin, absoluteYMax);
-            
-            if (clampedY < minY) minY = clampedY;
-            if (clampedY > maxY) maxY = clampedY;
+
+            if (clampedY < minY)
+                minY = clampedY;
+            if (clampedY > maxY)
+                maxY = clampedY;
         }
 
         // Se atingiu os limites absolutos, usa eles
@@ -506,17 +518,19 @@ public class FunctionCanvasGenerator : MonoBehaviour
         if (isTransitioning && previousParser != null)
         {
             float t = ApplyEasing(transitionProgress, transitionEasing);
-            
+
             float yPrevious = previousParser.Evaluate(x);
             float yCurrent = parser.Evaluate(x);
-            
+
             // Se algum valor for inválido, usa apenas o válido
-            if (!IsFiniteValue(yPrevious)) return yCurrent;
-            if (!IsFiniteValue(yCurrent)) return yPrevious;
-            
+            if (!IsFiniteValue(yPrevious))
+                return yCurrent;
+            if (!IsFiniteValue(yCurrent))
+                return yPrevious;
+
             return Mathf.Lerp(yPrevious, yCurrent, t);
         }
-        
+
         return parser.Evaluate(x);
     }
 
@@ -526,21 +540,19 @@ public class FunctionCanvasGenerator : MonoBehaviour
         {
             case TransitionEasing.Linear:
                 return t;
-            
+
             case TransitionEasing.EaseIn:
                 return t * t;
-            
+
             case TransitionEasing.EaseOut:
                 return 1f - (1f - t) * (1f - t);
-            
+
             case TransitionEasing.EaseInOut:
-                return t < 0.5f 
-                    ? 2f * t * t 
-                    : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
-            
+                return t < 0.5f ? 2f * t * t : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
+
             case TransitionEasing.Smooth:
                 return t * t * (3f - 2f * t);
-            
+
             default:
                 return t;
         }
@@ -548,7 +560,10 @@ public class FunctionCanvasGenerator : MonoBehaviour
 
     bool IsValidValue(float value)
     {
-        return !float.IsNaN(value) && !float.IsInfinity(value) && value >= activeYMin && value <= activeYMax;
+        return !float.IsNaN(value)
+            && !float.IsInfinity(value)
+            && value >= activeYMin
+            && value <= activeYMax;
     }
 
     void ClearLines()
@@ -571,6 +586,11 @@ public class FunctionCanvasGenerator : MonoBehaviour
     /// </summary>
     public void UpdateGraph(string newMathExpression)
     {
+        if (newMathExpression == "")
+        {
+            newMathExpression = mathExpression;
+        }
+
         if (transitionSpeed <= 0f)
         {
             // Transição instantânea
@@ -587,13 +607,13 @@ public class FunctionCanvasGenerator : MonoBehaviour
             previousParser = parser;
             previousExpression = mathExpression;
             targetExpression = newMathExpression;
-            
+
             parser = new MathExpressionParser(newMathExpression);
             mathExpression = newMathExpression;
-            
+
             isTransitioning = true;
             transitionProgress = 0f;
-            
+
             Debug.Log($"Iniciando transição de '{previousExpression}' para '{targetExpression}'");
         }
     }
@@ -603,8 +623,15 @@ public class FunctionCanvasGenerator : MonoBehaviour
     /// </summary>
     public void UpdateGraphInstant(string newMathExpression)
     {
+        if (newMathExpression == "")
+        {
+            newMathExpression = mathExpression;
+        }
+
         parser = new MathExpressionParser(newMathExpression);
+
         mathExpression = newMathExpression;
+
         currentXMin = xMin;
         currentXMax = xMax;
         isTransitioning = false;
@@ -618,7 +645,7 @@ public class FunctionCanvasGenerator : MonoBehaviour
         if (isTransitioning)
         {
             transitionProgress += Time.deltaTime * transitionSpeed;
-            
+
             if (transitionProgress >= 1f)
             {
                 transitionProgress = 1f;
@@ -626,10 +653,10 @@ public class FunctionCanvasGenerator : MonoBehaviour
                 previousParser = null;
                 Debug.Log($"Transição completa para: {mathExpression}");
             }
-            
+
             GenerateGraph();
         }
-        
+
         // Atualiza animação de propagação
         if (isAnimating)
         {

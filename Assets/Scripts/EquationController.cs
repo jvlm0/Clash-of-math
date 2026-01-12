@@ -8,7 +8,7 @@ public class EquationController : MonoBehaviour
     public static EquationController instance;
     public GameObject functionMeshPrefab;
 
-    public FunctionCanvasGenerator playerFunctionCanvas;
+    public FunctionCanvasManager playerFunctionManager;
 
     //private string[] operators = { "+", "-", "*", "/", "^" };
 
@@ -52,7 +52,7 @@ public class EquationController : MonoBehaviour
         }
         Debug.Log("Equação atual: " + currentEquation);
 
-        playerFunctionCanvas.UpdateGraph(currentEquation);
+        playerFunctionManager.UpdatePlayerFunction(currentEquation);
     }
 
     public void SpawnFunctionMesh(Vector3 position)

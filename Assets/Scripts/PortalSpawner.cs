@@ -26,6 +26,7 @@ public class PortalSpawner : MonoBehaviour
     {
         SpawnPortals();
         PortalExpressionsController.Instance.GetEnemyEquationOnIPortal(0);
+        Debug.Log("PortalExpressionsController.Instance.GetEnemyEquationOnIPortal(0);");
         
     }
     
