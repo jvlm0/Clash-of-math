@@ -16,6 +16,11 @@ public class PortalExpressionsController : MonoBehaviour
     [Header("Função no canvas")]
     public FunctionCanvasManager functionCanvasManager; 
 
+    [Header("Função malha prefab")]
+    public GameObject functionMeshPrefab;
+
+    public Transform transformFunctionPos;
+
     [Header("Tropas dos portais")]
     [SerializeField] private List<GameObjectSpritePair> portalTroopPairs = new List<GameObjectSpritePair>();
     private Dictionary<GameObject, Sprite> portalPrefabs;
@@ -116,12 +121,31 @@ public class PortalExpressionsController : MonoBehaviour
     }
 
 
-    public void GetEnemyEquationOnIPortal(int iPortal)
+    public string AppendExpression(string currentExpression, string expToAppend)
+    {
+        if (expToAppend[0] == '+' || expToAppend[0] == '-')
+        {
+            currentExpression+=expToAppend;
+        } 
+        else
+        {     
+            if (currentExpression == "") 
+            {
+                currentExpression = expToAppend;
+            }
+            else 
+            {
+                currentExpression = $"({currentExpression}){expToAppend}";
+            }    
+        }
+
+        return currentExpression;
+    }
+
+    public void GetEnemyEquationOnIPortal(int iPortal, bool draw = true)
     {
         string r = "";
-        
-        
-        
+
         iPortal++;
 
         if (iPortal >  enemyPortals.Count) return;
@@ -130,31 +154,27 @@ public class PortalExpressionsController : MonoBehaviour
         {
             if (enemyPortals[i].isExpressionPortal)
             {
-                if (enemyPortals[i].portalText[0] == '+' || enemyPortals[i].portalText[0] == '-')
-                {
-                    r+=enemyPortals[i].portalText;
-                } else
-                {
-                    
-                if (r == "") 
-                {
-                    r = enemyPortals[i].portalText;
-                }
-                else 
-                {
-                    r = $"({r}){enemyPortals[i].portalText}";
-                }    
-                    
-                }
+                r = AppendExpression(r, enemyPortals[i].portalText);
             }    
         }
         Debug.Log($"Atual equação do inimigo no portal {iPortal}: {r}");
-        if (r != "") {
+        if (r != "" && draw) {
             functionCanvasManager.UpdateEnemyFunction(r);   
         }
 
-        
+        if (!draw)
+        {
+            GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position, Quaternion.identity);
+            FunctionMeshGenerator meshGenerator = functionMesh.GetComponent<FunctionMeshGenerator>();
+            meshGenerator.mathExpression = r;
+        }
 
+    }
+
+
+    public void DrawEnemyMeshFuction()
+    {
+        GetEnemyEquationOnIPortal(enemyPortals.Count-1, false);
     }
 
 
