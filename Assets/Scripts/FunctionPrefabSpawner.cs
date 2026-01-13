@@ -60,7 +60,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     [SerializeField]
     private string parentName = "SpawnedPrefabs";
-    public static List<PrefabCountPair> prefabCountPairs = new List<PrefabCountPair>();
+    public List<PrefabCountPair> prefabCountPairs = new List<PrefabCountPair>();
 
     public enum SpawnMode
     {

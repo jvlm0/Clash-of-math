@@ -25,30 +25,24 @@ public class EquationController : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    void Start() { }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 
     public void AppendEquation(string equation)
     {
-        
         if (equation.StartsWith('+') || equation.StartsWith('-'))
         {
             currentEquation += equation;
-        } else if (currentEquation == "")
+        }
+        else if (currentEquation == "")
         {
             currentEquation = equation;
         }
         else
         {
-            currentEquation = "("+currentEquation+")" + equation;
+            currentEquation = "(" + currentEquation + ")" + equation;
         }
         Debug.Log("Equação atual: " + currentEquation);
 
@@ -64,5 +58,6 @@ public class EquationController : MonoBehaviour
 
         meshGenerator.mathExpression = currentEquation;
 
-    }   
+        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = SpawnTroopsController.Instance.playerPrefabCountPairs;
+    }
 }

@@ -97,16 +97,18 @@ public class PortalExpressionsController : MonoBehaviour
             portalPair.redPortal.isExpressionPortal = false;
             (portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopSprite) = GetRandomTroop();
             (portalPair.redPortal.portalPrefab, portalPair.redPortal.troopSprite) = GetRandomTroop();
+            portalPair.bluePortal.troopCount = Random.Range(7,12);
+            portalPair.redPortal.troopCount = Random.Range(4,8);
 
             if (rightIsBlue)
             {
-                rightPortal.InitPortal(rightIsBlue, "", portalPair.bluePortal.portalPrefab, Random.Range(7,12), portalPair.bluePortal.troopSprite);
-                leftPortal.InitPortal(!rightIsBlue, "", portalPair.redPortal.portalPrefab, Random.Range(4,8), portalPair.redPortal.troopSprite);
+                rightPortal.InitPortal(rightIsBlue, "", portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopCount, portalPair.bluePortal.troopSprite);
+                leftPortal.InitPortal(!rightIsBlue, "", portalPair.redPortal.portalPrefab, portalPair.redPortal.troopCount, portalPair.redPortal.troopSprite);
             } 
             else
             {
-                rightPortal.InitPortal(rightIsBlue, "", portalPair.redPortal.portalPrefab, Random.Range(4,8), portalPair.redPortal.troopSprite);
-                leftPortal.InitPortal(!rightIsBlue, "", portalPair.bluePortal.portalPrefab, Random.Range(7,12), portalPair.bluePortal.troopSprite);
+                rightPortal.InitPortal(rightIsBlue, "", portalPair.redPortal.portalPrefab, portalPair.redPortal.troopCount, portalPair.redPortal.troopSprite);
+                leftPortal.InitPortal(!rightIsBlue, "", portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopCount, portalPair.bluePortal.troopSprite);
             }
         }
 
@@ -174,7 +176,30 @@ public class PortalExpressionsController : MonoBehaviour
 
     public void DrawEnemyMeshFuction()
     {
-        GetEnemyEquationOnIPortal(enemyPortals.Count-1, false);
+        string r = "";
+        for (int i = 0;  i < enemyPortals.Count; i++)
+        {
+            if (enemyPortals[i].isExpressionPortal)
+            {
+                r = AppendExpression(r, enemyPortals[i].portalText);
+            } 
+            else
+            {
+                SpawnTroopsController.Instance.enemyPlayerPrefabCountPairs.Add(new PrefabCountPair
+                {
+                    prefab = enemyPortals[i].portalPrefab,
+                    count = enemyPortals[i].troopCount
+                });
+            }
+        }
+        
+
+        GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,Quaternion.identity);
+        FunctionMeshGenerator meshGenerator = functionMesh.GetComponent<FunctionMeshGenerator>();
+        meshGenerator.mathExpression = r;
+
+        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = SpawnTroopsController.Instance.enemyPlayerPrefabCountPairs;
+        
     }
 
 
