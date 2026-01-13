@@ -78,7 +78,6 @@
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Scripts\StatusController.cs" />
     <Compile Include="Assets\Scripts\PortalExpressionsController.cs" />
-    <Compile Include="Assets\Scripts\SpawnTroopsController.cs" />
     <Compile Include="Assets\Scripts\MeleeAttackSystem.cs" />
     <Compile Include="Assets\Scripts\FunctionPrefabSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
@@ -92,6 +91,7 @@
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasManager.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
+    <Compile Include="Assets\Scripts\SpawnController.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
     <Compile Include="Assets\Utils\PrefabCountPair.cs" />

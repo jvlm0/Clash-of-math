@@ -38,7 +38,7 @@ public class PortalCollider : MonoBehaviour
             } 
             else
             {
-                SpawnTroopsController.Instance.playerPrefabCountPairs.Add(new PrefabCountPair
+                SpawnController.Instance.playerPrefabCountPairs.Add(new PrefabCountPair
                 {
                     prefab = GetComponent<Portal>().troopPrefab,
                     count = GetComponent<Portal>().troopCountText.text != "" ? int.Parse(GetComponent<Portal>().troopCountText.text) : 0

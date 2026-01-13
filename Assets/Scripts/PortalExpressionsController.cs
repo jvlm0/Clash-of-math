@@ -185,7 +185,7 @@ public class PortalExpressionsController : MonoBehaviour
             } 
             else
             {
-                SpawnTroopsController.Instance.enemyPlayerPrefabCountPairs.Add(new PrefabCountPair
+                SpawnController.Instance.enemyPrefabCountPairs.Add(new PrefabCountPair
                 {
                     prefab = enemyPortals[i].portalPrefab,
                     count = enemyPortals[i].troopCount
@@ -194,11 +194,7 @@ public class PortalExpressionsController : MonoBehaviour
         }
         
 
-        GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,Quaternion.identity);
-        FunctionMeshGenerator meshGenerator = functionMesh.GetComponent<FunctionMeshGenerator>();
-        meshGenerator.mathExpression = r;
-
-        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = SpawnTroopsController.Instance.enemyPlayerPrefabCountPairs;
+        SpawnController.Instance.SpawnEnemyMesh(r);
         
     }
 

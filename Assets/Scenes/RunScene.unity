@@ -3204,7 +3204,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6a56a10f89ace4c8adfd8f96e484df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crackMaterial: {fileID: 2100000, guid: b48a73df7ff8c8d4cb63cd600b6f843f, type: 2}
+  crackMaterial: {fileID: 0}
   centerX: 0.5
   centerY: 0.5
   angle: 0
@@ -5063,7 +5063,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefabCountPairs: []
-  enemyPlayerPrefabCountPairs: []
+  enemyPrefabCountPairs: []
+  functionMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+  transformFunctionPos: {fileID: 2077043541}
 --- !u!4 &1579054330
 Transform:
   m_ObjectHideFlags: 0
