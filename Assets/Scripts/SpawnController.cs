@@ -7,11 +7,24 @@ public class SpawnController : MonoBehaviour
 
     public List<PrefabCountPair> enemyPrefabCountPairs = new List<PrefabCountPair>();
 
-    public GameObject functionMeshPrefab;
+    public GameObject functionEnemyMeshPrefab;
+
+    public GameObject functionPlayerMeshPrefab;
 
     public static SpawnController Instance;
 
-    public Transform transformFunctionPos; 
+    public Transform transformFunctionPos;
+
+
+    public LayerMask playerLayerMask;
+
+    public LayerMask enemyLayerMask;
+
+    public Camera cameraToLookAt;
+
+    public int enemyPrefabLayer;
+    public int playerPrefabLayer;
+
 
     void Awake()
     {
@@ -25,19 +38,26 @@ public class SpawnController : MonoBehaviour
         }
     }
 
-    public void SpawnEnemyMesh(string expression)
+    public void SpawnMesh(GameObject functionMeshPrefab, string expression, List<PrefabCountPair> prefabCountPairs, LayerMask layerMask, int layer)
     {
         GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,Quaternion.identity);
+
         functionMesh.GetComponent<FunctionMeshGenerator>().mathExpression = expression;
 
-        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = enemyPrefabCountPairs;
+        
+        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = prefabCountPairs;
+        functionMesh.GetComponent<FunctionPrefabSpawner>().targetLayer = layerMask;
+        functionMesh.GetComponent<FunctionPrefabSpawner>().cameraToLookAt = cameraToLookAt;
+        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabsLayer = layer;
+    }
+
+    public void SpawnEnemyMesh(string expression)
+    {
+        SpawnMesh(functionEnemyMeshPrefab, expression, enemyPrefabCountPairs, playerLayerMask, enemyPrefabLayer);
     }
 
     public void SpawnPlayerMesh(string expression)
     {
-        GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,Quaternion.identity);
-        functionMesh.GetComponent<FunctionMeshGenerator>().mathExpression = expression;
-
-        functionMesh.GetComponent<FunctionPrefabSpawner>().prefabCountPairs = playerPrefabCountPairs;
+        SpawnMesh(functionPlayerMeshPrefab, expression, playerPrefabCountPairs, enemyLayerMask, playerPrefabLayer);
     }
 }

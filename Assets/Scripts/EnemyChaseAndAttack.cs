@@ -1,12 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
 
 public class EnemyChaseAndAttack : MonoBehaviour
 {
     [Header("Detecção")]
-    public List<Transform> enemyList = new List<Transform>();
-    //public float detectionRadius = 15f;
+    public float detectionRadius = 50f;
     public float targetUpdateRate = 0.3f;
 
     [Header("Ataque")]
@@ -28,7 +27,6 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
         attackRange = GetComponent<StatusController>().attackRange;
 
-
         agent.stoppingDistance = attackRange;
         npcController = GetComponent<NpcController>();
         agent.stoppingDistance = attackRange;
@@ -40,13 +38,13 @@ public class EnemyChaseAndAttack : MonoBehaviour
         updateTimer += Time.deltaTime;
         attackTimer += Time.deltaTime;
 
-
+        FindNearestEnemy();
         // Calcula distância real até o alvo
         if (currentTarget == null)
         {
-            FindNearestEnemy();
+            return;
         }
-        
+
         distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
         // Atualiza alvo mais próximo em intervalos
         if (updateTimer >= targetUpdateRate)
@@ -66,8 +64,6 @@ public class EnemyChaseAndAttack : MonoBehaviour
             agent.ResetPath();
             return;
         }
-
-        
 
         // Se está no range de ataque
         if (distanceToTarget <= attackRange)
@@ -99,18 +95,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
     void FindNearestEnemy()
     {
-        // Remove inimigos nulos da lista (caso tenham sido destruídos)
-        enemyList.RemoveAll(enemy => enemy == null);
-
-        if (enemyList.Count == 0)
-        {
-            currentTarget = null;
-            return;
-        }
-
-        float minDistance = Mathf.Infinity;
-        Transform nearest = null;
-
+        // Se já temos um alvo válido dentro do alcance, mantém ele
         if (currentTarget != null)
         {
             float distToCurrent = Vector3.Distance(transform.position, currentTarget.position);
@@ -120,22 +105,35 @@ public class EnemyChaseAndAttack : MonoBehaviour
             }
         }
 
-        foreach (Transform enemy in enemyList)
-        {
-            float dist = Vector3.Distance(transform.position, enemy.position);
+        // Detecta todos os colliders na layer de inimigos dentro do raio
+        Collider[] enemiesInRange = Physics.OverlapSphere(
+            transform.position,
+            detectionRadius,
+            GetComponent<StatusController>().targetLayer
+        );
 
-            // Verifica se está dentro do raio de detecção
+        if (enemiesInRange.Length == 0)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        float minDistance = Mathf.Infinity;
+        Transform nearest = null;
+
+        foreach (Collider enemyCollider in enemiesInRange)
+        {
+            float dist = Vector3.Distance(transform.position, enemyCollider.transform.position);
+
             if (dist < minDistance)
             {
                 minDistance = dist;
-                nearest = enemy;
+                nearest = enemyCollider.transform;
             }
         }
 
         currentTarget = nearest;
     }
-
-    
 
     void FaceTarget()
     {
@@ -152,22 +150,6 @@ public class EnemyChaseAndAttack : MonoBehaviour
             );
         }
     }
-
-    // Método público para adicionar inimigos dinamicamente
-    public void AddEnemy(Transform enemy)
-    {
-        if (!enemyList.Contains(enemy))
-        {
-            enemyList.Add(enemy);
-        }
-    }
-
-    // Método público para remover inimigos
-    public void RemoveEnemy(Transform enemy)
-    {
-        enemyList.Remove(enemy);
-    }
-
 
     public void FreezeStopNpc()
     {
@@ -189,18 +171,6 @@ public class EnemyChaseAndAttack : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
 
-        // Desenha linhas para cada inimigo na lista
-        if (enemyList != null)
-        {
-            Gizmos.color = Color.cyan;
-            foreach (Transform enemy in enemyList)
-            {
-                if (enemy != null)
-                {
-                    Gizmos.DrawLine(transform.position, enemy.position);
-                }
-            }
-        }
 
         // Destaca o alvo atual
         if (currentTarget != null)

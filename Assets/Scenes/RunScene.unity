@@ -2517,6 +2517,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skeleton2
       objectReference: {fileID: 0}
+    - target: {fileID: 1940098064602988, guid: 4bb3ae919a4b33d4cb054a3d37a92221, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4100277288231850, guid: 4bb3ae919a4b33d4cb054a3d37a92221, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0.0000017044272
@@ -2939,9 +2943,9 @@ MonoBehaviour:
   portalTroopPairs:
   - key: {fileID: 1562803277841577437, guid: 1e0237e637093f746b25f4f029d4f38a, type: 3}
     value: {fileID: 21300000, guid: 71e576a675ffd834eac608617968d28f, type: 3}
-  - key: {fileID: 1940098064602988, guid: 4bb3ae919a4b33d4cb054a3d37a92221, type: 3}
+  - key: {fileID: 1940098064602988, guid: cef4a5589e7a5e64d996e7fd24b53f7f, type: 3}
     value: {fileID: 21300000, guid: 8e6e56d6034e867409cc30adbb06e1fb, type: 3}
-  - key: {fileID: 1011237800896726, guid: 2b4bda023baf11846a7062827593eb49, type: 3}
+  - key: {fileID: 1011237800896726, guid: a6e84b8c82f20a44f8cd7edc4ae067d7, type: 3}
     value: {fileID: 21300000, guid: 6461832e5132b8a4c9b3bdf8df9e57f0, type: 3}
 --- !u!1 &957114617
 GameObject:
@@ -3852,6 +3856,10 @@ PrefabInstance:
     - target: {fileID: 1011237800896726, guid: 2b4bda023baf11846a7062827593eb49, type: 3}
       propertyPath: m_Name
       value: Skeleton3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1011237800896726, guid: 2b4bda023baf11846a7062827593eb49, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4412064007046010, guid: 2b4bda023baf11846a7062827593eb49, type: 3}
       propertyPath: m_LocalScale.x
@@ -5066,6 +5074,15 @@ MonoBehaviour:
   enemyPrefabCountPairs: []
   functionMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
   transformFunctionPos: {fileID: 2077043541}
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  cameraToLookAt: {fileID: 1920991565}
+  enemyPrefabLayer: 0
+  playerPrefabLayer: 0
 --- !u!4 &1579054330
 Transform:
   m_ObjectHideFlags: 0

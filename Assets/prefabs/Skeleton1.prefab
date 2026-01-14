@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 5150736196445404834}
   - component: {fileID: 1863283129647403583}
   - component: {fileID: 3373611921656383652}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Skeleton1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -827,7 +827,7 @@ MonoBehaviour:
   attackSpeed: 1
   targetLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
 --- !u!195 &5150736196445404834
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -862,8 +862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76580760f7f76374993fc925e2577382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyList:
-  - {fileID: 0}
+  detectionRadius: 50
   targetUpdateRate: 0.3
   attackCooldown: 1.2
 --- !u!114 &3373611921656383652

@@ -62,6 +62,12 @@ public class FunctionPrefabSpawner : MonoBehaviour
     private string parentName = "SpawnedPrefabs";
     public List<PrefabCountPair> prefabCountPairs = new List<PrefabCountPair>();
 
+    public LayerMask targetLayer;
+
+    public Camera cameraToLookAt;
+
+    public int prefabsLayer;
+
     public enum SpawnMode
     {
         EvenlySpaced,      // Distribui uniformemente pelos índices dos pontos
@@ -96,6 +102,11 @@ public class FunctionPrefabSpawner : MonoBehaviour
             }
         } 
         prefabCountPairs[currentPrefabIndex].count--;
+        prefabCountPairs[currentPrefabIndex].prefab.GetComponent<StatusController>().targetLayer = targetLayer;
+
+        prefabCountPairs[currentPrefabIndex].prefab.GetComponentInChildren<LifeBarController>().cameraToLookAt = cameraToLookAt;
+
+        prefabCountPairs[currentPrefabIndex].prefab.layer = prefabsLayer;
         return prefabCountPairs[currentPrefabIndex].prefab;
     }
 
@@ -133,16 +144,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
             UpdatePrefabPositions();
         }
 
-        // Atalhos do teclado
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SpawnPrefabs();
-        }
-
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            ClearPrefabs();
-        }
+       
     }
 
     public void SpawnPrefabs()
