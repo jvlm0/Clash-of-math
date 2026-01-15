@@ -4,12 +4,24 @@ using UnityEngine;
 
 public class FunctionMeshCollisionDetector : MonoBehaviour
 {
+    public bool freezeEffect = true;
     private static HashSet<Collider> collidersInside = new HashSet<Collider>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (collidersInside.Count == 0)
         {
+            if (freezeEffect)
+            {
+                other.GetComponent<FreezeController>()?.FreezeWithCoroutine();
+            }
+
+            other.GetComponentInChildren<IAnimController>().GetDamage(10f);
+
+            
+
+
+            
             
             Debug.Log("Trigger ENTER (como se fosse um só)");
         }
