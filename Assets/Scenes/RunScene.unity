@@ -5072,7 +5072,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefabCountPairs: []
   enemyPrefabCountPairs: []
-  functionMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+  functionEnemyMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+  functionPlayerMeshPrefab: {fileID: 2493868926683609179, guid: 4a7e11b4ca052c445b2484930ad4f356, type: 3}
   transformFunctionPos: {fileID: 2077043541}
   playerLayerMask:
     serializedVersion: 2
@@ -5081,8 +5082,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   cameraToLookAt: {fileID: 1920991565}
-  enemyPrefabLayer: 0
-  playerPrefabLayer: 0
+  enemyPrefabLayer: 9
+  playerPrefabLayer: 6
 --- !u!4 &1579054330
 Transform:
   m_ObjectHideFlags: 0
