@@ -9,7 +9,7 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (collidersInside.Count == 0)
+        if (!collidersInside.Contains(other))
         {
             if (freezeEffect)
             {
@@ -17,11 +17,6 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
             }
 
             other.GetComponentInChildren<IAnimController>().GetDamage(10f);
-
-            
-
-
-            
             
             Debug.Log("Trigger ENTER (como se fosse um só)");
         }
