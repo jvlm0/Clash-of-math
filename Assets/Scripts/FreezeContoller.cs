@@ -248,19 +248,19 @@ public class FreezeController : MonoBehaviour
         // Copiar cor principal
         if (freeze.HasProperty("_Color"))
         {
-            // Tentar color do material original
-            Color originalColor = original.color;
-            
-            // Se a cor for preta (0,0,0) ou muito escura, usar branco por padrão
-            // Isso acontece quando o shader não usa cor base
-            if (originalColor.r < 0.1f && originalColor.g < 0.1f && originalColor.b < 0.1f)
+            // Verificar se o material original também tem a propriedade _Color
+            if (original.HasProperty("_Color"))
             {
-                originalColor = Color.white;
-                Debug.Log("Original color was black, using white instead");
+                Color originalColor = original.color;
+                freeze.SetColor("_Color", originalColor);
+                Debug.Log($"Set color: {originalColor}");
             }
-            
-            freeze.SetColor("_Color", originalColor);
-            Debug.Log($"Set color: {originalColor}");
+            else
+            {
+                // Material original não tem _Color, usar branco por padrão
+                freeze.SetColor("_Color", Color.white);
+                Debug.Log("Original material doesn't have _Color property, using white instead");
+            }
         }
     }
     
