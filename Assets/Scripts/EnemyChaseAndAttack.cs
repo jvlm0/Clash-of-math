@@ -35,6 +35,12 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
     void Update()
     {
+
+        if (!GameController.Instance.IsBattleStart)
+        {
+            return;
+        }
+
         updateTimer += Time.deltaTime;
         attackTimer += Time.deltaTime;
 
