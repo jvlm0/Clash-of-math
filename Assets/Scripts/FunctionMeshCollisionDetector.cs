@@ -7,16 +7,20 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
     public bool freezeEffect = true;
     private static HashSet<Collider> collidersInside = new HashSet<Collider>();
 
+    public int targetLayer = 9;
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (!collidersInside.Contains(other))
         {
-            if (freezeEffect)
+            if (freezeEffect && other.gameObject.layer == targetLayer)
             {
                 other.GetComponent<FreezeController>()?.FreezeWithCoroutine();
+                other.GetComponentInChildren<IAnimController>().GetDamage(10f);
             }
 
-            other.GetComponentInChildren<IAnimController>().GetDamage(10f);
+            
             
             Debug.Log("Trigger ENTER (como se fosse um só)");
         }
