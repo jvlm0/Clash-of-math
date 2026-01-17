@@ -18,7 +18,7 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
             {
                 other.GetComponent<FreezeController>()?.FreezeWithCoroutine();
                 other.GetComponentInChildren<IAnimController>().GetDamage(10f);
-            }
+            }   
 
             
             

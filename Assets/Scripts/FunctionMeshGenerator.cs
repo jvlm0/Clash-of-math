@@ -537,7 +537,10 @@ public class FunctionMeshGenerator : MonoBehaviour
         colliderObj.transform.localScale = Vector3.one;
         colliderObj.layer = gameObject.layer;
 
-        colliderObj.AddComponent<FunctionMeshCollisionDetector>();
+        
+        var collisionDetector =  colliderObj.AddComponent<FunctionMeshCollisionDetector>();
+        collisionDetector.targetLayer = GetComponent<FunctionMeshCollisionDetector>().targetLayer;
+        collisionDetector.freezeEffect = GetComponent<FunctionMeshCollisionDetector>().freezeEffect;
 
         BoxCollider box = colliderObj.AddComponent<BoxCollider>();
         box.size = size;
