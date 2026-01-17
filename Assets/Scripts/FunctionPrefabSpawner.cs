@@ -382,14 +382,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
         GameObject instance = Instantiate(prefabToSpawn, transform.TransformPoint(position), Quaternion.identity);
 
-        if (useParentObject && parentTransform != null)
-        {
-            instance.transform.parent = parentTransform;
-        }
-        else
-        {
-            instance.transform.parent = transform;
-        }
+        
 
         // Alinha com a inclinação da função usando pontos adjacentes
         if (alignToFunctionSlope && points.Count > 1)
