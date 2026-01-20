@@ -62,6 +62,8 @@ public class FunctionPrefabSpawner : MonoBehaviour
     private string parentName = "SpawnedPrefabs";
     public List<PrefabCountPair> prefabCountPairs = new List<PrefabCountPair>();
 
+    public bool spawnFromList = true;
+
     public LayerMask targetLayer;
 
     public Camera cameraToLookAt;
@@ -94,12 +96,13 @@ public class FunctionPrefabSpawner : MonoBehaviour
     {   
         if (prefabCountPairs[currentPrefabIndex].count == 0)
         {
-            currentPrefabIndex++;
+            
             if (currentPrefabIndex >= prefabCountPairs.Count)
             {
                 Debug.LogWarning("Todos os prefabs foram usados.");
                 return null;
             }
+            currentPrefabIndex++;
         } 
         prefabCountPairs[currentPrefabIndex].count--;
         prefabCountPairs[currentPrefabIndex].prefab.GetComponent<StatusController>().targetLayer = targetLayer;
@@ -149,6 +152,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     public void SpawnPrefabs()
     {
+        if (spawnFromList)
         SetPrefabTotalCount();
         
         ClearPrefabs();
@@ -378,9 +382,12 @@ public class FunctionPrefabSpawner : MonoBehaviour
     {
         Vector3 position = new Vector3(x, heightOffset, z);
         
-        prefabToSpawn = nextPrefab();
+        if (spawnFromList) 
+            prefabToSpawn = nextPrefab();
 
         GameObject instance = Instantiate(prefabToSpawn, transform.TransformPoint(position), Quaternion.identity);
+
+        
 
         
 

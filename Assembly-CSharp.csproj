@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\EnemyChaseAndAttack.cs" />
     <Compile Include="Assets\Scripts\NpcController.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
+    <Compile Include="Assets\Scripts\StackPrefabs.cs" />
     <Compile Include="Assets\Scripts\FollowCamera.cs" />
     <Compile Include="Assets\Scripts\MeleeAtack.cs" />
     <Compile Include="Assets\Scripts\EquationController.cs" />
