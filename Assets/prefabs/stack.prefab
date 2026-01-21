@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &589016813146529476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4235885677039606222}
+  - component: {fileID: 5548856426476022303}
+  m_Layer: 0
+  m_Name: stack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4235885677039606222
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589016813146529476}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 23.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5548856426476022303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589016813146529476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b105e5ea665b584f8200139c6b39fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabList:
+  - {fileID: 406072487076418763, guid: e6f51c0fd03bc604f9e97cd0b7126cd6, type: 3}
+  - {fileID: 406072487076418763, guid: ad3374b1c82ec1547b64bf808766e840, type: 3}
+  - {fileID: 406072487076418763, guid: 0cccc437f972ec947b2277c28b1bbd0a, type: 3}
+  - {fileID: 406072487076418763, guid: 5f6377da136c184459f9c3b5e89885c9, type: 3}
+  - {fileID: 406072487076418763, guid: dd8363a706b042749af2fa63b7e5af2e, type: 3}
+  - {fileID: 406072487076418763, guid: 578480e1cd46bc84caf5f3eb25fc25bf, type: 3}
+  scaleMultiplier: {x: 0.8, y: 0.8, z: 1}
+  spacing: 0
+  usePhysicsDelay: 1
+  physicsDelayTime: 0.1
+  startPoint: {fileID: 4235885677039606222}
+  levels: 1

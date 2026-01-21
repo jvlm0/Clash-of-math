@@ -10,18 +10,20 @@ public class StackPrefabs : MonoBehaviour
     [SerializeField] private Vector3 scaleMultiplier = new Vector3(0.8f, 0.8f, 0.8f);
     
     [Header("Configurações de Empilhamento")]
-    [SerializeField] private float spacing = 0f; // Espaçamento extra entre objetos
+    [SerializeField] private float spacing = 0.01f; // Pequeno espaçamento para evitar sobreposição de colliders
+    [SerializeField] private bool usePhysicsDelay = true; // Delay antes de ativar física
+    [SerializeField] private float physicsDelayTime = 0.1f; // Tempo de delay em segundos
     
     [Header("Ponto Inicial")]
     [SerializeField] private Transform startPoint; // Se null, usa a posição deste objeto
     
     private List<GameObject> stackedObjects = new List<GameObject>();
 
-
-     public int levels = 1;
+    
+    public int levels = 1;
     void Start()
     {
-        StackObjects(levels);
+        StackObjects(Random.Range(2, 4));
     }
 
     void Update()
@@ -32,7 +34,7 @@ public class StackPrefabs : MonoBehaviour
         }
     }
 
-    
+
     /// <summary>
     /// Empilha prefabs aleatórios da lista com escala decrescente
     /// </summary>
@@ -56,7 +58,8 @@ public class StackPrefabs : MonoBehaviour
             GameObject randomPrefab = prefabList[Random.Range(0, prefabList.Count)];
             
             // Instancia o prefab
-            GameObject obj = Instantiate(randomPrefab, currentPosition, Quaternion.identity, transform);
+            GameObject obj = Instantiate(randomPrefab, currentPosition, transform.rotation, transform);
+            obj.transform.Rotate(new Vector3(0, 90, 0));
             obj.name = $"{randomPrefab.name}_Level_{i + 1}";
             
             // Desativa todos os Rigidbodies para posicionamento
@@ -87,9 +90,25 @@ public class StackPrefabs : MonoBehaviour
         }
         
         // Ativa todos os Rigidbodies após terminar o empilhamento
-        EnableAllPhysics();
+        if (usePhysicsDelay)
+        {
+            StartCoroutine(EnablePhysicsWithDelay());
+        }
+        else
+        {
+            EnableAllPhysics();
+        }
         
         Debug.Log($"Empilhados {numberOfLevels} níveis com sucesso!");
+    }
+    
+    /// <summary>
+    /// Ativa física após um pequeno delay para estabilização
+    /// </summary>
+    private System.Collections.IEnumerator EnablePhysicsWithDelay()
+    {
+        yield return new WaitForSeconds(physicsDelayTime);
+        EnableAllPhysics();
     }
     
     private float GetObjectHeight(GameObject obj)
@@ -257,7 +276,16 @@ public class StackPrefabs : MonoBehaviour
         {
             if (obj != null)
             {
-                SetRigidbodiesActive(obj, true);
+                Rigidbody[] rigidbodies = obj.GetComponentsInChildren<Rigidbody>();
+                foreach (Rigidbody rb in rigidbodies)
+                {
+                    rb.isKinematic = false;
+                    // Reseta velocidades para evitar movimentos iniciais
+                    rb.velocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                    // Coloca o Rigidbody para "dormir" inicialmente
+                    rb.Sleep();
+                }
             }
         }
     }
@@ -281,8 +309,15 @@ public class StackPrefabs : MonoBehaviour
     /// </summary>
     private System.Collections.IEnumerator EnablePhysicsDelayed(GameObject obj)
     {
-        yield return null; // Espera um frame
-        SetRigidbodiesActive(obj, true);
+        yield return new WaitForSeconds(physicsDelayTime);
+        Rigidbody[] rigidbodies = obj.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.Sleep();
+        }
     }
     
     /// <summary>
