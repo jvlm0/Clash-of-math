@@ -236,6 +236,8 @@ public class FunctionPrefabSpawner : MonoBehaviour
             }
         }
 
+        if (!spawnFromList) SpawnOnStructureController.Instance.SpawnOnStructures();
+
         Debug.Log($"{totalSpawned} prefabs instanciados ao longo da função");
     }
 

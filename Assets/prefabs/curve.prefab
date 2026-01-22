@@ -132,13 +132,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   functionGenerator: {fileID: 0}
-  prefabToSpawn: {fileID: 0}
+  prefabToSpawn: {fileID: 589016813146529476, guid: bd82c3ab06b507f46ae5fa1d58ab7cbb, type: 3}
   numberOfPrefabs: 12
   spawnMode: 3
   calculatedDistance: 0
   spawnOnStart: 0
   updateDuringAnimation: 0
-  heightOffset: 0.5
+  heightOffset: 0
   alignToFunctionSlope: 1
   additionalRotation: 0
   randomizeScale: 0
@@ -148,6 +148,7 @@ MonoBehaviour:
   useParentObject: 1
   parentName: SpawnedPrefabs
   prefabCountPairs: []
+  spawnFromList: 0
   targetLayer:
     serializedVersion: 2
     m_Bits: 0

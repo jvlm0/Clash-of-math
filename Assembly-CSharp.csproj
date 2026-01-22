@@ -99,6 +99,7 @@
     <Compile Include="Assets\Utils\PrefabCountPair.cs" />
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasAxisRenderer.cs" />
+    <Compile Include="Assets\Scripts\SpawnOnStructureController.cs" />
     <Compile Include="Assets\Scripts\IAtackHandler.cs" />
     <Compile Include="Assets\Scripts\UniquePairPortalCollider.cs" />
     <Compile Include="Assets\Utils\LifeBarController.cs" />
@@ -107,6 +108,8 @@
     <Compile Include="Assets\Scripts\AnimContants.cs" />
     <Compile Include="Assets\Scripts\PortalSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
+    <Compile Include="Assets\Utils\ShuffleUtils.cs" />
+    <Compile Include="Assets\Scripts\StructureSlot.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
