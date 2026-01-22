@@ -206,21 +206,12 @@ public class PortalExpressionsController : MonoBehaviour
         availablePrefabs = new List<GameObject>(portalPrefabs.Keys);
 
         // Embaralhar as listas
-        ShuffleList(availableBlueTexts);
-        ShuffleList(availableRedTexts);
-        ShuffleList(availablePrefabs);
+        ShuffleUtils.ShuffleList(availableBlueTexts);
+        ShuffleUtils.ShuffleList(availableRedTexts);
+        ShuffleUtils.ShuffleList(availablePrefabs);
     }
 
-    private void ShuffleList<T>(List<T> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            T temp = list[i];
-            list[i] = list[j];
-            list[j] = temp;
-        }
-    }
+    
 
     public string GetRandomText(bool isBlue)
     {
@@ -231,7 +222,7 @@ public class PortalExpressionsController : MonoBehaviour
         if (sourceList.Count == 0)
         {
             sourceList.AddRange(originalList);
-            ShuffleList(sourceList);
+            ShuffleUtils.ShuffleList(sourceList);
         }
         
         // Pegar e remover o primeiro texto da lista
@@ -247,7 +238,7 @@ public class PortalExpressionsController : MonoBehaviour
         if (availablePrefabs.Count == 0)
         {
             availablePrefabs.AddRange(portalPrefabs.Keys);
-            ShuffleList(availablePrefabs);
+            ShuffleUtils.ShuffleList(availablePrefabs);
         }
         
         // Pegar e remover o primeiro prefab da lista
