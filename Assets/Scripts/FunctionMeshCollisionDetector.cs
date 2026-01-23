@@ -9,6 +9,8 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
 
     public int targetLayer = 9;
 
+    private float force = 10f;
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,6 +25,13 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
             
             
             Debug.Log("Trigger ENTER (como se fosse um só)");
+        }
+
+        Rigidbody rb = other.attachedRigidbody;
+        if (rb != null)
+        {
+            Vector3 dir = (other.transform.position).normalized;
+            rb.AddForce(dir * force, ForceMode.Impulse);
         }
 
         collidersInside.Add(other);

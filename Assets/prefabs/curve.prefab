@@ -114,7 +114,7 @@ MonoBehaviour:
   animateOnStart: 1
   propagationSpeed: 0.5
   direction: 2
-  enableColliders: 1
+  enableColliders: 0
   colliderResolution: 6
   colliderRadiusMultiplier: 1.2
   showColliderGizmos: 0
