@@ -51,7 +51,7 @@ MonoBehaviour:
   - {fileID: 406072487076418763, guid: 5f6377da136c184459f9c3b5e89885c9, type: 3}
   - {fileID: 406072487076418763, guid: dd8363a706b042749af2fa63b7e5af2e, type: 3}
   - {fileID: 406072487076418763, guid: 578480e1cd46bc84caf5f3eb25fc25bf, type: 3}
-  scaleMultiplier: {x: 0.8, y: 0.8, z: 1}
+  scaleMultiplier: {x: 1, y: 1, z: 1}
   spacing: 0
   usePhysicsDelay: 1
   physicsDelayTime: 0.1

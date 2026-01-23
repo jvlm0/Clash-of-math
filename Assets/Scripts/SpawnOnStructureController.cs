@@ -11,6 +11,8 @@ public class SpawnOnStructureController : MonoBehaviour
 
     public static SpawnOnStructureController Instance;
 
+    private float physicsDelayTime = 0.1f; 
+
     void Awake()
     {
         if (Instance == null)
@@ -45,8 +47,37 @@ public class SpawnOnStructureController : MonoBehaviour
             for (; j < pair.count; j++)
             {
                 Debug.Log($"Tamanho da lista de slots: {slotsToSpawnOn.Count} ");
-                Instantiate(pair.prefab, slotsToSpawnOn[j].transform.position, slotsToSpawnOn[j].transform.rotation);
+                var go =  Instantiate(pair.prefab, slotsToSpawnOn[j].transform.position, slotsToSpawnOn[j].transform.rotation);
+
+                go.GetComponent<NpcController>().DisableIa();
+                SetRigidbodiesActive(go, false);
+
+                StartCoroutine(EnablePhysicsDelayed(go));
             }
         }
     }
+    private void SetRigidbodiesActive(GameObject obj, bool active)
+    {
+        Rigidbody[] rigidbodies = obj.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = !active;
+        }
+    }
+
+
+    private System.Collections.IEnumerator EnablePhysicsDelayed(GameObject obj)
+    {
+        yield return new WaitForSeconds(physicsDelayTime);
+        Rigidbody[] rigidbodies = obj.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = false;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.Sleep();
+        }
+    }
+    
+   
 }

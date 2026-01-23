@@ -28199,6 +28199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0557ea0173663b045a87068fc7f3f8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGrounded: 0
 --- !u!114 &8550507061932756006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28331,7 +28332,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0

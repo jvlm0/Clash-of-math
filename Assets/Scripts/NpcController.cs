@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NpcController : MonoBehaviour, IAnimController
 {
@@ -11,10 +12,23 @@ public class NpcController : MonoBehaviour, IAnimController
 
     private bool canAttack = true;
 
+    public bool isGrounded = false;
+
+    private Vector3 velocity;
+
+    private float gravity = -9.81f;
+
+    private Rigidbody rb;
+
     void Start()
     {
         animator = GetComponent<Animator>();
         currentLife = GetComponent<StatusController>().hp;
+    }
+
+    void Update()
+    {
+        //HandleGravity();
     }
 
     public void Attack()
@@ -62,9 +76,43 @@ public class NpcController : MonoBehaviour, IAnimController
         GetComponentInChildren<LifeBarController>().UpdateLifeBar(damageAmount);
     }
 
+    public void DisableIa()
+    {
+        if (GetComponent<NavMeshAgent>() != null)
+        {
+            GetComponent<NavMeshAgent>().enabled = false;
+        }
+    }
+
+    public void EnableIa()
+    {
+        if (GetComponent<NavMeshAgent>() != null)
+        {
+            GetComponent<NavMeshAgent>().enabled = true;
+        }
+    }
+
     private void OnAttackEnd()
     {
         canAttack = true;
         Debug.Log("NPC pode atacar novamente");
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            EnableIa();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }
