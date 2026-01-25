@@ -59,7 +59,7 @@ public class StackPrefabs : MonoBehaviour
             
             // Instancia o prefab
             GameObject obj = Instantiate(randomPrefab, currentPosition, transform.rotation, transform);
-            obj.transform.Rotate(new Vector3(0, 90, 0));
+            //obj.transform.Rotate(new Vector3(0, 90, 0));
             obj.name = $"{randomPrefab.name}_Level_{i + 1}";
             
             // Desativa todos os Rigidbodies para posicionamento

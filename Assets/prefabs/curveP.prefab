@@ -110,7 +110,7 @@ MonoBehaviour:
   discontinuityThreshold: 100
   drawDiscontinuities: 0
   discontinuityLimit: 50
-  mathExpression: 1/x
+  mathExpression: tan(x)
   animateOnStart: 1
   propagationSpeed: 0.5
   direction: 2
@@ -162,6 +162,7 @@ MonoBehaviour:
   useParentObject: 1
   parentName: SpawnedPrefabs
   prefabCountPairs: []
+  spawnFromList: 1
   targetLayer:
     serializedVersion: 2
     m_Bits: 0
