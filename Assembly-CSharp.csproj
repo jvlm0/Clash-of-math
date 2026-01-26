@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\IAnimController.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
     <Compile Include="Assets\Utils\PortalPairExpression.cs" />
+    <Compile Include="Assets\Scripts\PlayerLauncher.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\Scripts\MathExpressionParser.cs" />

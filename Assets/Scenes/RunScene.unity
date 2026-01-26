@@ -970,14 +970,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 20
   turnSpeed: 10
-  horizontalJumpSpeed: 15
-  minAirTime: 0.3
-  maxAirTime: 3.2
-  verticalJumpSpeed: 40
-  jumpCenterY: 2.05
-  normalCenterY: 1.07
-  gravity: -25
-  minAnimSpeed: 0.2
   attackRotationSpeed: 15
   enemyLayer:
     serializedVersion: 2
@@ -2156,9 +2148,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 870557175}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 870557174}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       insertIndex: -1
@@ -2171,13 +2160,19 @@ PrefabInstance:
       addedObject: {fileID: 870557179}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 870557180}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 870557181}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 870557182}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870557184}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870557185}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 870557186}
   m_SourcePrefab: {fileID: 100100000, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
 --- !u!1001 &585445720
 PrefabInstance:
@@ -2747,7 +2742,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 2676d4b0a60bc974283d469dc0538a41, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -2769,45 +2764,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   turnSpeed: 10
-  horizontalJumpSpeed: 20
-  minAirTime: 0.3
-  maxAirTime: 3.2
-  verticalJumpSpeed: 40
-  jumpCenterY: 2.05
-  normalCenterY: 1.07
-  gravity: -25
-  minAnimSpeed: 0.2
   attackRotationSpeed: 15
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
   lockOnAngle: 60
---- !u!143 &870557175
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 870557172}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2.2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1.07, z: 0}
 --- !u!4 &870557177 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
@@ -2840,33 +2801,6 @@ MonoBehaviour:
   cameraToLookAt: {fileID: 0}
   lifeBarFill: {fileID: 292318489}
   isIncavas: 1
---- !u!54 &870557180
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 870557172}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 126
-  m_CollisionDetection: 0
 --- !u!114 &870557181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2900,6 +2834,78 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotate: 0
+--- !u!114 &870557184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870557172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a61be2d9767199349b678aafd5fa7419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  posicaoAlvo: {fileID: 2077043541}
+  horizontalJumpSpeed: 10
+  verticalJumpSpeed: 30
+  minAirTime: 0.3
+  maxAirTime: 3.2
+  minAnimSpeed: 0.2
+  groundCheckDistance: 0.2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2304
+--- !u!54 &870557185
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870557172}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &870557186
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870557172}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.4
+  m_Height: 2.2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.05, z: 0}
 --- !u!1 &946089390
 GameObject:
   m_ObjectHideFlags: 0
@@ -3206,7 +3212,7 @@ GameObject:
   - component: {fileID: 989432939}
   - component: {fileID: 989432938}
   - component: {fileID: 989432937}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: plane3 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3431,14 +3437,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   turnSpeed: 10
-  horizontalJumpSpeed: 15
-  minAirTime: 0.3
-  maxAirTime: 3.2
-  verticalJumpSpeed: 40
-  jumpCenterY: 2.05
-  normalCenterY: 1.07
-  gravity: -25
-  minAnimSpeed: 0.2
   attackRotationSpeed: 15
   enemyLayer:
     serializedVersion: 2
@@ -4661,14 +4659,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 6
   turnSpeed: 10
-  horizontalJumpSpeed: 10
-  minAirTime: 0.3
-  maxAirTime: 3.2
-  verticalJumpSpeed: 15
-  jumpCenterY: 2.05
-  normalCenterY: 1.07
-  gravity: -25
-  minAnimSpeed: 0.2
   attackRotationSpeed: 15
   enemyLayer:
     serializedVersion: 2
@@ -7547,6 +7537,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1855006700149997954, guid: 6e47e83be39b74046ac5a0b7398c2db7, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 1855006700149997954, guid: 6e47e83be39b74046ac5a0b7398c2db7, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0

@@ -11,7 +11,6 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
 
     private float force = 10f;
 
-
     private void OnTriggerEnter(Collider other)
     {
         if (!collidersInside.Contains(other))
@@ -20,18 +19,19 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
             {
                 other.GetComponent<FreezeController>()?.FreezeWithCoroutine();
                 other.GetComponentInChildren<IAnimController>().GetDamage(10f);
-            }   
+            }
 
-            
-            
             Debug.Log("Trigger ENTER (como se fosse um só)");
         }
 
-        Rigidbody rb = other.attachedRigidbody;
-        if (rb != null)
+        if (other.gameObject.CompareTag("Structure"))
         {
-            Vector3 dir = (other.transform.position).normalized;
-            rb.AddForce(dir * force, ForceMode.Impulse);
+            Rigidbody rb = other.attachedRigidbody;
+            if (rb != null)
+            {
+                Vector3 dir = (other.transform.position).normalized;
+                rb.AddForce(dir * force, ForceMode.Impulse);
+            }
         }
 
         collidersInside.Add(other);
@@ -43,11 +43,7 @@ public class FunctionMeshCollisionDetector : MonoBehaviour
 
         if (collidersInside.Count == 0)
         {
-            
             Debug.Log("Trigger EXIT");
         }
     }
-
-
-
 }
