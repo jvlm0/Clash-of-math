@@ -15,6 +15,8 @@ public class StatusController : MonoBehaviour
 
     public float attackSpeed = 1.0f;
 
+    public bool attackInArea = false;
+
     
     public LayerMask targetLayer;
 }
