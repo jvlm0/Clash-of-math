@@ -48,7 +48,7 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
             float animLength = animator.GetCurrentAnimatorStateInfo(0).length;
             float normalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
 
-            float remainingTime = animLength * (1f - normalizedTime);
+            float remainingTime = animLength * (1f - normalizedTime)/ GetComponent<StatusController>().attackSpeed;
 
             nextAttackTime = Time.time + remainingTime;
         }

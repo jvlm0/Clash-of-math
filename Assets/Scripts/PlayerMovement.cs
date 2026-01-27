@@ -61,7 +61,10 @@ public class PlayerMovement : MonoBehaviour
             if (inputDir.sqrMagnitude > 0.01f)
             {
                 animController.Run();
-                rb.MovePosition(transform.position + inputDir.normalized * speed * Time.deltaTime);
+                rb.MovePosition(transform.position 
+                                + inputDir.normalized 
+                                * GetComponent<StatusController>().speed 
+                                * Time.deltaTime);
 
                 Quaternion targetRotation = Quaternion.LookRotation(inputDir);
                 transform.rotation = Quaternion.Slerp(

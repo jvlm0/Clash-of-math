@@ -2816,11 +2816,11 @@ MonoBehaviour:
   attackRange: 5
   damage: 10
   hp: 100
-  speed: 3.5
-  attackSpeed: 1
+  speed: 10
+  attackSpeed: 2
   targetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 640
 --- !u!114 &870557182
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour, IAnimController
 
     public void Attack()
     {
+        animator.SetFloat("AttackSpeed", GetComponent<StatusController>().attackSpeed); 
         animator.SetTrigger(AnimContants.standingAttackTrigger);
     }
 
