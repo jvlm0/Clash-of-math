@@ -37,7 +37,7 @@ public class LifeBarController : MonoBehaviour
         if (isIncavas)
             return;
         // Rotaciona a barra de vida para olhar para a câmera
-        transform.LookAt(cameraToLookAt.transform);
+        transform.LookAt(GameController.Instance.cameraToLookAt.transform);
 
         Vector3 rotacao = transform.eulerAngles;
         rotacao.x = 0;

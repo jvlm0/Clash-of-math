@@ -642,6 +642,7 @@ public class FunctionMeshGenerator : MonoBehaviour
                         }
                         Debug.Log("Propagação completa!");
                         GetComponent<FunctionPrefabSpawner>()?.SpawnPrefabs();
+                        //Destroy(gameObject, 1f);
                     }
                     break;
 

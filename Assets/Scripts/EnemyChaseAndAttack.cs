@@ -36,6 +36,12 @@ public class EnemyChaseAndAttack : MonoBehaviour
     void Update()
     {
 
+        if (GameController.Instance.IsBattleStart && GetComponent<NavMeshAgent>().enabled == false)
+        {
+            transform.position += Vector3.forward * Time.deltaTime;
+            return;
+        }
+
         if (!GameController.Instance.IsBattleStart)
         {
             return;

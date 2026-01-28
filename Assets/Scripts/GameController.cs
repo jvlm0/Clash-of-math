@@ -8,6 +8,8 @@ public class GameController : MonoBehaviour
 
     public bool IsBattleStart = false;
 
+    public Camera cameraToLookAt;
+
 
     public static GameController Instance;
 
