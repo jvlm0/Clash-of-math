@@ -1124,7 +1124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 39.3
+      value: -177.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a08bdc387fe7ef42876df16a8fb81bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3935,6 +3935,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBattleStart: 0
+  cameraToLookAt: {fileID: 1920991565}
 --- !u!4 &1177383357
 Transform:
   m_ObjectHideFlags: 0
