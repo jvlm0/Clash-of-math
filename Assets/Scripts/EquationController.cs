@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EquationController : MonoBehaviour
 {
-    private string currentEquation = "";
+    public string currentEquation = "";
     public static EquationController instance;
     public GameObject functionMeshPrefab;
 
@@ -32,6 +32,7 @@ public class EquationController : MonoBehaviour
 
     public void AppendEquation(string equation)
     {
+        
         if (equation.StartsWith('+') || equation.StartsWith('-'))
         {
             currentEquation += equation;
@@ -44,9 +45,13 @@ public class EquationController : MonoBehaviour
         {
             currentEquation = "(" + currentEquation + ")" + equation;
         }
-        Debug.Log("Equação atual: " + currentEquation);
+        
+
+        
 
         playerFunctionManager.UpdatePlayerFunction(currentEquation);
+
+        
     }
 
     public void SpawnFunctionMesh(Vector3 position)

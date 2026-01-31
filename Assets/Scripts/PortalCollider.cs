@@ -33,8 +33,10 @@ public class PortalCollider : MonoBehaviour
                 string expresion = textObject.GetComponent<TextMeshProUGUI>().text;
                 Debug.Log("Equação coletada: " + expresion);
                 EquationController.instance.AppendEquation(expresion);
+
+                MathExpression.Instance.AddNext(expresion, expresion == PortalExpressionsController.Instance.GetEnemyEquationOnIPortalStr(countPortal-1));
                 
-                
+                Debug.Log("Equações: player: " + expresion + " | enemy: " + PortalExpressionsController.Instance.GetEnemyEquationOnIPortalStr(countPortal-1));
             } 
             else
             {

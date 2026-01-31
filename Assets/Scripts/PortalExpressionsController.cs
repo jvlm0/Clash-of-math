@@ -174,6 +174,13 @@ public class PortalExpressionsController : MonoBehaviour
     }
 
 
+
+    public string GetEnemyEquationOnIPortalStr(int iPortal, bool draw = true)
+    {
+        return enemyPortals[iPortal].portalText;
+    }
+
+
     public void DrawEnemyMeshFuction()
     {
         string r = "";

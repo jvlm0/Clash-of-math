@@ -17,7 +17,7 @@ public class PortalSpawner : MonoBehaviour
     [SerializeField] private float verticalOffset = 0f; // Ajuste vertical adicional se necessário
     [SerializeField] private float horizontalOffset = 3f; // Deslocamento horizontal aleatório dos pares
     
-    
+    private int numberOfExpressions = 0;
     
 
     private float portalHeight = 0f;
@@ -28,6 +28,8 @@ public class PortalSpawner : MonoBehaviour
         PortalExpressionsController.Instance.GetEnemyEquationOnIPortal(0);
         PortalExpressionsController.Instance.DrawEnemyMeshFuction();
         Debug.Log("PortalExpressionsController.Instance.GetEnemyEquationOnIPortal(0);");
+
+        MathExpression.Instance.numberOfTerms = numberOfExpressions;
         
     }
     
@@ -136,6 +138,11 @@ public class PortalSpawner : MonoBehaviour
         // Decidir aleatoriamente qual portal (esquerdo ou direito) será azul ou vermelho
         bool leftIsBlue = Random.Range(0, 2) == 0;
         bool isExpressionPortal = Random.Range(0f, 1f) < 0.7f;
+
+        if (isExpressionPortal)
+        {
+            numberOfExpressions++;
+        }
         
         // Calcular posições dos portais do par (separados no eixo X)
         Vector3 leftPosition = centerPosition - Vector3.right * (distanceBetweenPairPortals / 2f);

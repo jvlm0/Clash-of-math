@@ -65,11 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\ui\BlinkInterrogation.cs" />
     <Compile Include="Assets\Scripts\CenteredCrackController.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
     <Compile Include="Assets\Scripts\IAnimController.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
     <Compile Include="Assets\Utils\PortalPairExpression.cs" />
+    <Compile Include="Assets\Scripts\ui\MathExpression.cs" />
     <Compile Include="Assets\Scripts\PlayerLauncher.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
