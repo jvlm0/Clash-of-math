@@ -3262,10 +3262,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e34f4c1eac6e4459b265d66b251ccb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  multiplicationSymbol: {fileID: 2012849110154657406, guid: 0f6009ef743e34242b2ebf9c7ee0d091, type: 3}
-  plusSymbol: {fileID: 6851461830586089546, guid: 581790380f5540c4e8128ed10bb78abf, type: 3}
+  opertationSymbol: {fileID: 6851461830586089546, guid: 581790380f5540c4e8128ed10bb78abf, type: 3}
   expressionSymbol: {fileID: 6571390102490092102, guid: f2af28fea99835e429e443094ceb1192, type: 3}
   interrerogationSymbol: {fileID: 1486242748353772311, guid: 409045657e837914db949a2801931a3e, type: 3}
+  parentesesSymbol: {fileID: 6571390102490092102, guid: 0251a8bcf5de5b84a966affd0af1ed7f, type: 3}
+  fractionSymbol: {fileID: 6571390102490092102, guid: 080bfe2e73fb12b448e96f83c5a7e48f, type: 3}
+  scaleFactor: 0.8
+  blueExpressionSprite: {fileID: 21300000, guid: c2f38c4522c6cb2418e1e818cede3cdb, type: 3}
+  redExpressionSprite: {fileID: 21300000, guid: 5b3a1c4f2d2e1f846a6e76cd2c5aa23b, type: 3}
+  subSprite: {fileID: 21300000, guid: e7fc0fd3bd05b2648a7a1f3ca0ed556f, type: 3}
+  multiplicationSprite: {fileID: 21300000, guid: 2aba247252f56174aad1676deff1578e, type: 3}
+  plusSprite: {fileID: 21300000, guid: cd683b1f69f06664e8cd63841f3e2306, type: 3}
   numberOfTerms: 0
 --- !u!114 &970032917
 MonoBehaviour:
@@ -4343,6 +4350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e43aa3ddddda6c4a8c405b78f9cb9d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentEquation: 
   functionMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
   playerFunctionManager: {fileID: 957114622}
 --- !u!4 &1357754926
@@ -6022,6 +6030,10 @@ PrefabInstance:
     - target: {fileID: 3672222227859000874, guid: ab2e96111c7862546960ff99237c3f79, type: 3}
       propertyPath: yMin
       value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3672222227859000874, guid: ab2e96111c7862546960ff99237c3f79, type: 3}
+      propertyPath: resolution
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3672222227859000874, guid: ab2e96111c7862546960ff99237c3f79, type: 3}
       propertyPath: absoluteYMax

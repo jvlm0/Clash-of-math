@@ -49,13 +49,13 @@ public class FunctionCanvasManager : MonoBehaviour
         Debug.Log($"AdaptiveViewPort f1 {f1.useAdaptiveViewport}  f2 {f2.useAdaptiveViewport}");
     }
 
-    public void UpdateEnemyFunction(string expression, string expression2 = "")
+    public void UpdateEnemyFunction(string expression)
     {
-        UpdateFunctions(enemyFunction, playerFunction, expression, expression2);
+        UpdateFunctions(enemyFunction, playerFunction, expression);
     }
 
-    public void UpdatePlayerFunction(string expression, string expression2 = "", bool inst = false)
+    public void UpdatePlayerFunction(string expression)
     {
-        UpdateFunctions(playerFunction, enemyFunction, expression, expression2, inst);
+        UpdateFunctions(playerFunction, enemyFunction, expression);
     }
 }
