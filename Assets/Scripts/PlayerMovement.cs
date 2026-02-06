@@ -82,8 +82,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleAttack()
     {
-        if (Input.GetMouseButtonDown(0) && !launcher.IsLaunched() && !isAttacking)
-        {
+        //if (Input.GetMouseButtonDown(0) && !launcher.IsLaunched() && !isAttacking)
+        //{
             Transform targetEnemy = GetComponent<MeleeAtack>().canAttack();
 
             if (targetEnemy != null)
@@ -94,8 +94,8 @@ public class PlayerMovement : MonoBehaviour
                 GetComponent<IAnimController>()?.Attack();
             }
 
-            GetComponent<IAtackHandler>()?.Atack();
-        }
+            //GetComponent<IAtackHandler>()?.Atack();
+        //}
     }
 
     IEnumerator RotateTowardsTarget()
