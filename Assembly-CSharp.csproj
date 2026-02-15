@@ -65,18 +65,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Kevin Iglesias gun\Human Animations\Unity Demo Scenes\Human Soldier Animations\Scripts\HumanSoldierController.cs" />
     <Compile Include="Assets\Scripts\ui\BlinkInterrogation.cs" />
     <Compile Include="Assets\Scripts\CenteredCrackController.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
-    <Compile Include="Assets\Scripts\IAnimController.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DealDamageComponent.cs" />
     <Compile Include="Assets\Utils\PortalPairExpression.cs" />
+    <Compile Include="Assets\Scripts\interfaces\IAttackHandler.cs" />
     <Compile Include="Assets\Scripts\ui\MathExpression.cs" />
-    <Compile Include="Assets\Scripts\PlayerLauncher.cs" />
     <Compile Include="Assets\Scripts\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\Scripts\MathExpressionParser.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshCollisionDetector.cs" />
+    <Compile Include="Assets\Scripts\interfaces\IAnimController.cs" />
     <Compile Include="Assets\Scripts\Portal.cs" />
     <Compile Include="Assets\Utils\PortalInfo.cs" />
     <Compile Include="Assets\Scripts\CurveMeshGenerator.cs" />
@@ -84,9 +85,12 @@
     <Compile Include="Assets\Scripts\PortalExpressionsController.cs" />
     <Compile Include="Assets\Scripts\MeleeAttackSystem.cs" />
     <Compile Include="Assets\Scripts\FunctionPrefabSpawner.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\Player\DualGunController.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\Scripts\EnemyChaseAndAttack.cs" />
     <Compile Include="Assets\Scripts\NpcController.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMeeleAttackHandler.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DestroyMe.cs" />
     <Compile Include="Assets\Scripts\StackPrefabs.cs" />
     <Compile Include="Assets\Scripts\FollowCamera.cs" />
@@ -94,17 +98,20 @@
     <Compile Include="Assets\Scripts\EquationController.cs" />
     <Compile Include="Assets\Scripts\FunctionMeshGenerator.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
+    <Compile Include="Assets\Scripts\interfaces\IGunController.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasManager.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
     <Compile Include="Assets\Scripts\SpawnController.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerLauncher.cs" />
     <Compile Include="Assets\Scripts\ShockwaveShaderController.cs" />
+    <Compile Include="Assets\Kevin Iglesias gun\Human Animations\Scripts\SpineProxy.cs" />
     <Compile Include="Assets\Scripts\CrackController.cs" />
     <Compile Include="Assets\Utils\PrefabCountPair.cs" />
     <Compile Include="Assets\Scripts\AnimatedFunctionShockwave.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasAxisRenderer.cs" />
     <Compile Include="Assets\Scripts\SpawnOnStructureController.cs" />
-    <Compile Include="Assets\Scripts\IAtackHandler.cs" />
     <Compile Include="Assets\Scripts\UniquePairPortalCollider.cs" />
+    <Compile Include="Assets\Utils\RotateObject.cs" />
     <Compile Include="Assets\Utils\LifeBarController.cs" />
     <Compile Include="Assets\Utils\GameObjectSpritePair.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FloatingJoystick.cs" />
@@ -112,18 +119,19 @@
     <Compile Include="Assets\Scripts\PortalSpawner.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
     <Compile Include="Assets\Utils\ShuffleUtils.cs" />
+    <Compile Include="Assets\Kevin Iglesias gun\Human Animations\Unity Demo Scenes\Human Soldier Animations\Scripts\HumanSoldierChangeWeaponSMB.cs" />
+    <Compile Include="Assets\Scripts\interfaces\IAtackHandler.cs" />
     <Compile Include="Assets\Scripts\StructureSlot.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Scripts\FunctionCurveMesh.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\FreezeContoller.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Base\Joystick.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\DamageAreaCollider.cs" />
     <Compile Include="Assets\Scripts\PortalCollider.cs" />
     <Compile Include="Assets\Scripts\PrefabCircularRotation.cs" />
     <Compile Include="Assets\Joystick Pack\Examples\JoystickPlayerExample.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\CharacterSelector.cs" />
-    <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\FunctionCanvasGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +156,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\Free medieval weapons\README.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
