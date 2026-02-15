@@ -4,26 +4,38 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float speed = 6f;
-    [SerializeField] private float turnSpeed = 10f;
+    [SerializeField]
+    private float speed = 6f;
+
+    [SerializeField]
+    private float turnSpeed = 10f;
+
+    [SerializeField]
+    private LayerMask enemyLayer;
+
+    [SerializeField]
+    private float lockOnAngle = 60f;
+
+    private Transform currentTarget;
 
     [Header("Combat Settings")]
-    [SerializeField] private float attackRotationSpeed = 15f;
-    [SerializeField] private LayerMask enemyLayer;
-    [SerializeField] private float lockOnAngle = 60f;
+    [SerializeField]
+    private float attackRotationSpeed = 15f;
+
+    public bool IsAtacking { get; set; }
 
     private Rigidbody rb;
     private PlayerController animController;
     private PlayerLauncher launcher;
-    private bool isAttacking;
-    private Transform currentTarget;
+
+    private IAttackHandler attackHandler;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animController = GetComponent<PlayerController>();
         launcher = GetComponent<PlayerLauncher>();
-        
+
         if (rb != null)
         {
             rb.useGravity = true;
@@ -31,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
     }
-    
+
     void OnAnimatorMove()
     {
         // Delega o controle do Root Motion para o PlayerLauncher
@@ -40,7 +52,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        HandleAttack();
+        Transform targetEnemy = GetComponent<MeleeAtack>().canAttack();
+
+        if (targetEnemy != null)
+        {
+            currentTarget = targetEnemy;
+            IsAtacking = true;
+            attackHandler.HandleAttack();
+            StartCoroutine(RotateTowardsTarget());
+            GetComponent<IAnimController>()?.Attack();
+        }
+        
     }
 
     void FixedUpdate()
@@ -56,15 +78,17 @@ public class PlayerMovement : MonoBehaviour
         Vector3 inputDir = new Vector3(horizontal, 0f, vertical);
 
         // Só movimenta se não estiver no ar E não estiver atacando
-        if (!launcher.IsLaunched() && !isAttacking)
+        if (!launcher.IsLaunched() && !IsAtacking)
         {
             if (inputDir.sqrMagnitude > 0.01f)
             {
                 animController.Run();
-                rb.MovePosition(transform.position 
-                                + inputDir.normalized 
-                                * GetComponent<StatusController>().speed 
-                                * Time.deltaTime);
+                rb.MovePosition(
+                    transform.position
+                        + inputDir.normalized
+                            * GetComponent<StatusController>().speed
+                            * Time.deltaTime
+                );
 
                 Quaternion targetRotation = Quaternion.LookRotation(inputDir);
                 transform.rotation = Quaternion.Slerp(
@@ -80,29 +104,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void HandleAttack()
+    public void OnAttackFinished()
     {
-        //if (Input.GetMouseButtonDown(0) && !launcher.IsLaunched() && !isAttacking)
-        //{
-            Transform targetEnemy = GetComponent<MeleeAtack>().canAttack();
-
-            if (targetEnemy != null)
-            {
-                currentTarget = targetEnemy;
-                isAttacking = true;
-                StartCoroutine(RotateTowardsTarget());
-                GetComponent<IAnimController>()?.Attack();
-            }
-
-            //GetComponent<IAtackHandler>()?.Atack();
-        //}
+        IsAtacking = false;
+        currentTarget = null;
     }
 
     IEnumerator RotateTowardsTarget()
     {
         if (currentTarget == null)
         {
-            isAttacking = false;
+            IsAtacking = false;
             yield break;
         }
 
@@ -130,13 +142,7 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        isAttacking = false;
-        currentTarget = null;
-    }
-
-    public void OnAttackFinished()
-    {
-        isAttacking = false;
+        IsAtacking = false;
         currentTarget = null;
     }
 
@@ -150,7 +156,8 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if (GetComponent<StatusController>() == null) return;
+        if (GetComponent<StatusController>() == null)
+            return;
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, GetComponent<StatusController>().attackRange);

@@ -5,11 +5,31 @@ public class PlayerController : MonoBehaviour, IAnimController
     LifeBarController lifeBarController;
     private Animator animator;
 
+  
 
+
+
+    public enum AttackMode
+    {
+        HammerBelt,
+        OnePistol,
+        TwoPistol,
+        Meele
+    }
+
+    private int baseLayer;
     void Start()
     {
         animator = GetComponent<Animator>();
         lifeBarController = GetComponent<LifeBarController>();
+
+        baseLayer = animator.GetLayerIndex("Base");
+
+        
+        
+
+       
+
     }
 
 
@@ -60,7 +80,11 @@ public class PlayerController : MonoBehaviour, IAnimController
     public void Attack()
     {
         animator.SetFloat("AttackSpeed", GetComponent<StatusController>().attackSpeed); 
-        animator.SetTrigger(AnimContants.standingAttackTrigger);
+        animator.SetTrigger("Attack");
+
+        GetComponent<IGunController>()?.Attack();
+
+        
     }
 
     public void Run()
@@ -72,6 +96,47 @@ public class PlayerController : MonoBehaviour, IAnimController
     {
         Debug.Log("Player received damage: " + damageAmount);
         lifeBarController.UpdateLifeBar(damageAmount);
+    }
+
+    public void SetAttackMode(AttackMode attackMode)
+    {
+        int i = -1;
+        if (attackMode == AttackMode.OnePistol)
+        {
+            i = animator.GetLayerIndex("OnePistol");
+            animator.SetLayerWeight(i, 1f);
+        } 
+        else if (attackMode == AttackMode.TwoPistol)
+        {
+            i = animator.GetLayerIndex("TwoPistol");
+            animator.SetLayerWeight(i, 1f);  
+        }
+        else if (attackMode == AttackMode.HammerBelt)
+        {
+            
+        }
+        else if (attackMode == AttackMode.Meele)
+        {
+            i = animator.GetLayerIndex("Meele");
+            animator.SetLayerWeight(i, 1f);
+        }
+
+        
+            
+        DisableOthers(i);
+    }
+
+
+    private void DisableOthers(int a)
+    {
+        int end = animator.layerCount;          
+
+        for (int i = 0; i < end; i++)
+        {
+            if (i == a || i == baseLayer) continue;
+
+            animator.SetLayerWeight(i, 0);
+        }
     }
 
 }
