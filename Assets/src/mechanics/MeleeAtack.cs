@@ -14,6 +14,8 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
 
     private Animator animator;
 
+    bool isAttacking = false;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -21,7 +23,8 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
 
     public Transform canAttack()
     {
-        if (Time.time < nextAttackTime)
+        //Debug.Log($"Time.time {Time.time} < nextAttackTime {nextAttackTime}");
+        if (Time.time < nextAttackTime || isAttacking)
         {
             if (gameObject.CompareTag("Player"))
                 Debug.Log("Não ataca pq está em cooldown");
@@ -40,6 +43,10 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
         {
             Debug.Log("Nenhum alvo disponível para ataque");
         }
+        else
+        {
+            Atack();
+        }
 
         return currentTarget;
     }
@@ -49,15 +56,25 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
         if (currentTarget != null)
         {
             GetComponent<IAnimController>()?.Attack();
-
-            float animLength = animator.GetCurrentAnimatorStateInfo(0).length;
-            float normalizedTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
-
-            float remainingTime =
-                animLength * (1f - normalizedTime) / GetComponent<StatusController>().attackSpeed;
-
-            nextAttackTime = Time.time + remainingTime;
+            StartCoroutine(SetNextAttackTimeAfterTransition());
+            isAttacking = true;
         }
+    }
+
+    private IEnumerator SetNextAttackTimeAfterTransition()
+    {
+        // Aguarda a transição para o próximo estado
+        yield return null; // Espera 1 frame
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        
+
+        float animLength = stateInfo.length;
+        float remainingTime = animLength / GetComponent<StatusController>().attackSpeed;
+
+        nextAttackTime = Time.time + remainingTime;
+        isAttacking = false;
     }
 
     public void OnHitFrame()
@@ -68,7 +85,7 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
                 ?.GetDamage(GetComponent<StatusController>().damage);
         else
         {
-            if (attackArea != null)
+            if (attackArea != null && currentTarget != null)
             {
                 DetectEnemiesInArea(currentTarget);
             }
