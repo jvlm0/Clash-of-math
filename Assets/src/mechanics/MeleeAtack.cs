@@ -79,7 +79,7 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
 
     public void OnHitFrame()
     {
-        if (!GetComponent<StatusController>().attackInArea)
+        if (!GetComponent<StatusController>().attackInArea && currentTarget != null)
             currentTarget
                 .GetComponent<IAnimController>()
                 ?.GetDamage(GetComponent<StatusController>().damage);
