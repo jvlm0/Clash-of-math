@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
 public class SpawnOnStructureController : MonoBehaviour
 {
     public List<GameObject> slotsToSpawnOn = new List<GameObject>();
 
+    public bool spawnZombies = true;
+    public GameObject zombie;
 
     public static SpawnOnStructureController Instance;
 
-    private float physicsDelayTime = 0.1f; 
+    private float physicsDelayTime = 0.1f;
 
     void Awake()
     {
@@ -25,13 +25,33 @@ public class SpawnOnStructureController : MonoBehaviour
         }
     }
 
-
     public void SpawnOnStructures()
     {
+        if (spawnZombies)
+        {
+            StartCoroutine(SpawnZombies());
+        }
+        else
+        {
+            StartCoroutine(SpawnOnStructuresCoroutine());
+        }
+        
+    }
 
-        StartCoroutine(SpawnOnStructuresCoroutine());
-    } 
+    IEnumerator SpawnZombies()
+    {
+        yield return new WaitForEndOfFrame();
 
+        foreach (var slot in slotsToSpawnOn)
+        {
+            var go = Instantiate(zombie, slot.transform.position, slot.transform.rotation);
+
+            go.GetComponent<NpcController>().DisableIa();
+            SetRigidbodiesActive(go, false);
+
+            StartCoroutine(EnablePhysicsDelayed(go));
+        }
+    }
 
     IEnumerator SpawnOnStructuresCoroutine()
     {
@@ -47,7 +67,11 @@ public class SpawnOnStructureController : MonoBehaviour
             for (; j < pair.count; j++)
             {
                 Debug.Log($"Tamanho da lista de slots: {slotsToSpawnOn.Count} ");
-                var go =  Instantiate(pair.prefab, slotsToSpawnOn[j].transform.position, slotsToSpawnOn[j].transform.rotation);
+                var go = Instantiate(
+                    pair.prefab,
+                    slotsToSpawnOn[j].transform.position,
+                    slotsToSpawnOn[j].transform.rotation
+                );
 
                 go.GetComponent<NpcController>().DisableIa();
                 SetRigidbodiesActive(go, false);
@@ -56,6 +80,7 @@ public class SpawnOnStructureController : MonoBehaviour
             }
         }
     }
+
     private void SetRigidbodiesActive(GameObject obj, bool active)
     {
         Rigidbody[] rigidbodies = obj.GetComponentsInChildren<Rigidbody>();
@@ -64,7 +89,6 @@ public class SpawnOnStructureController : MonoBehaviour
             rb.isKinematic = !active;
         }
     }
-
 
     private System.Collections.IEnumerator EnablePhysicsDelayed(GameObject obj)
     {
@@ -78,6 +102,4 @@ public class SpawnOnStructureController : MonoBehaviour
             rb.Sleep();
         }
     }
-    
-   
 }
