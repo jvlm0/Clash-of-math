@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour, IAnimController
         animator.SetFloat("AttackSpeed", GetComponent<StatusController>().attackSpeed); 
         animator.SetTrigger("Attack");
 
-        GetComponent<IGunController>()?.Attack();
+        //GetComponent<IGunController>()?.Attack();
 
         
     }

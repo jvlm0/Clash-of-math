@@ -10,25 +10,25 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private float turnSpeed = 10f;
 
+    [Header("Combat Settings")]
+    [SerializeField]
+    private float attackRotationSpeed = 15f;
+
     [SerializeField]
     private LayerMask enemyLayer;
 
     [SerializeField]
     private float lockOnAngle = 60f;
 
-    private Transform currentTarget;
-
-    [Header("Combat Settings")]
     [SerializeField]
-    private float attackRotationSpeed = 15f;
-
-    public bool IsAtacking { get; set; }
+    private bool attackAndRun = false;
 
     private Rigidbody rb;
     private PlayerController animController;
     private PlayerLauncher launcher;
-
-    private IAttackHandler attackHandler;
+    private bool isAttacking;
+    private Transform currentTarget;
+    private bool wasAttacking;
 
     void Start()
     {
@@ -52,17 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Transform targetEnemy = GetComponent<MeleeAtack>().canAttack();
-
-        if (targetEnemy != null)
-        {
-            currentTarget = targetEnemy;
-            IsAtacking = true;
-            attackHandler.HandleAttack();
-            StartCoroutine(RotateTowardsTarget());
-            GetComponent<IAnimController>()?.Attack();
-        }
-        
+        HandleAttack();
     }
 
     void FixedUpdate()
@@ -76,9 +66,14 @@ public class PlayerMovement : MonoBehaviour
         float vertical = Input.GetAxis("Vertical");
 
         Vector3 inputDir = new Vector3(horizontal, 0f, vertical);
-
         // Só movimenta se não estiver no ar E não estiver atacando
-        if (!launcher.IsLaunched() && !IsAtacking)
+        bool canAttack = true;
+        if (!attackAndRun && isAttacking)
+        {
+            canAttack = false;
+        }
+
+        if (!launcher.IsLaunched() && canAttack)
         {
             if (inputDir.sqrMagnitude > 0.01f)
             {
@@ -90,12 +85,15 @@ public class PlayerMovement : MonoBehaviour
                             * Time.deltaTime
                 );
 
-                Quaternion targetRotation = Quaternion.LookRotation(inputDir);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    turnSpeed * Time.deltaTime
-                );
+                if (!isAttacking  && !wasAttacking)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(inputDir);
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        targetRotation,
+                        turnSpeed * Time.deltaTime
+                    );
+                }
             }
             else
             {
@@ -104,17 +102,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void OnAttackFinished()
+    void HandleAttack()
     {
-        IsAtacking = false;
-        currentTarget = null;
+        //if (Input.GetMouseButtonDown(0) && !launcher.IsLaunched() && !isAttacking)
+        //{
+        Transform targetEnemy = GetComponent<MeleeAtack>().canAttack();
+
+        if (targetEnemy != null)
+        {
+            Debug.Log("Atacando " + targetEnemy.name);
+            currentTarget = targetEnemy;
+            isAttacking = true;
+            StartCoroutine(RotateTowardsTarget());
+        }
+
+        //GetComponent<IAtackHandler>()?.Atack();
+        //}
     }
 
     IEnumerator RotateTowardsTarget()
     {
         if (currentTarget == null)
         {
-            IsAtacking = false;
+            isAttacking = false;
             yield break;
         }
 
@@ -142,8 +152,23 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        IsAtacking = false;
+        isAttacking = false;
         currentTarget = null;
+    }
+
+    public void OnAttackFinished()
+    {
+        isAttacking = false;
+        currentTarget = null;
+
+        StartCoroutine(delayCanAttack());
+    }
+
+    private IEnumerator delayCanAttack()
+    {
+        wasAttacking = true;
+        yield return new WaitForSeconds(1f);
+        wasAttacking = false;
     }
 
     public void OnTriggerEnter(Collider other)
