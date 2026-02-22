@@ -13,20 +13,18 @@ public class LifeBarController : MonoBehaviour
     private float totalLife;
     private float currentLife;
 
-    [SerializeField] private bool isIncavas = false;
-
-
+    [SerializeField]
+    private bool isIncavas = false;
 
     private float burstDamage;
     private float burstTimeCount;
-    
 
     public void UpdateLifeBar(float damage)
-    {   
-        burstDamage+=damage;
+    {
+        burstDamage += damage;
         currentLife -= damage;
         if (currentLife < 0)
-            currentLife = 0;    
+            currentLife = 0;
         float lifePercentage = currentLife / totalLife;
 
         lifeBarFill.localScale = new Vector3(lifePercentage, 1f, 1f);
@@ -50,11 +48,21 @@ public class LifeBarController : MonoBehaviour
         Vector3 rotacao = transform.eulerAngles;
         rotacao.x = 0;
         transform.eulerAngles = rotacao;
-        if (burstDamage >= totalLife*0.5f && currentLife == 0)
+        if (burstDamage >= totalLife * 0.5f && currentLife == 0)
         {
-            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate();
+            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(6);
             Destroy(gameObject, .1f);
-        } 
+        }
+        else if (burstDamage >= totalLife * 0.4f && currentLife == 0)
+        {
+            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(4);
+            Destroy(gameObject, .1f);
+        }
+        else if (burstDamage >= totalLife * 0.3f && currentLife == 0)
+        {
+            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(3);
+            Destroy(gameObject, .1f);
+        }
 
         if (burstTimeCount >= burstTime)
         {
@@ -62,10 +70,6 @@ public class LifeBarController : MonoBehaviour
             burstDamage = 0;
         }
 
-        burstTimeCount+=Time.deltaTime;
-
-        
-
-        
+        burstTimeCount += Time.deltaTime;
     }
 }
