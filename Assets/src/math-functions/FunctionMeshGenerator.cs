@@ -261,7 +261,7 @@ public class FunctionMeshGenerator : MonoBehaviour
         meshFilter.mesh = mesh;
 
         // Só gera colliders se não estiver animando ou se updateCollidersWhileAnimating estiver ativo
-        if (enableColliders && (!isAnimating || updateCollidersWhileAnimating))
+        if (enableColliders)
         {
             GenerateColliders();
         }
