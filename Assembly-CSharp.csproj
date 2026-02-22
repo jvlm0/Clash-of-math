@@ -71,6 +71,7 @@
     <Compile Include="Assets\src\z-bkp\ShockwaveShaderController.cs" />
     <Compile Include="Assets\src\ui\BlinkInterrogation.cs" />
     <Compile Include="Assets\src\player\PlayerMeeleAttackHandler.cs" />
+    <Compile Include="Assets\src\lifebar\LifeBarController.cs" />
     <Compile Include="Assets\src\portals\Portal.cs" />
     <Compile Include="Assets\src\player\PlayerLauncher.cs" />
     <Compile Include="Assets\src\npcs\NpcController.cs" />
@@ -79,14 +80,15 @@
     <Compile Include="Assets\src\math-functions\FunctionCurveMesh.cs" />
     <Compile Include="Assets\src\game\GameController.cs" />
     <Compile Include="Assets\src\z-bkp\AnimatedFunctionShockwave.cs" />
+    <Compile Include="Assets\src\shotgun\ShotgunController.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\src\npcs\EnemyChaseAndAttack.cs" />
     <Compile Include="Assets\src\portals\PortalCollider.cs" />
+    <Compile Include="Assets\src\mechanics\DualGunController.cs" />
     <Compile Include="Assets\src\game\AnimContants.cs" />
     <Compile Include="Assets\src\math-functions\CurveMeshGenerator.cs" />
     <Compile Include="Assets\Utils\PortalInfo.cs" />
     <Compile Include="Assets\src\structures\StackPrefabs.cs" />
-    <Compile Include="Assets\src\player\DualGunController.cs" />
     <Compile Include="Assets\src\procedural-terrain\CrackController.cs" />
     <Compile Include="Assets\src\interfaces\IGunController.cs" />
     <Compile Include="Assets\src\ui\MathExpression.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Assets\src\math-functions\FunctionMeshCollisionDetector.cs" />
     <Compile Include="Assets\Temple Minions\Demo\Scripts\RotateCharacter.cs" />
     <Compile Include="Assets\EgyptMonsters\Scripts\DemoController.cs" />
+    <Compile Include="Assets\src\tests\SpawnZombies.cs" />
     <Compile Include="Assets\src\mechanics\MeleeAttackSystem.cs" />
     <Compile Include="Assets\src\procedural-terrain\DynamicCrackSpawner.cs" />
     <Compile Include="Assets\src\portals\SpawnController.cs" />
@@ -106,7 +109,7 @@
     <Compile Include="Assets\src\game\FollowCamera.cs" />
     <Compile Include="Assets\src\math-functions\FunctionPrefabSpawner.cs" />
     <Compile Include="Assets\Utils\RotateObject.cs" />
-    <Compile Include="Assets\Utils\LifeBarController.cs" />
+    <Compile Include="Assets\src\mechanics\ObjectDisintegrator.cs" />
     <Compile Include="Assets\Utils\GameObjectSpritePair.cs" />
     <Compile Include="Assets\src\portals\PortalSpawner.cs" />
     <Compile Include="Assets\src\math-functions\FunctionMeshGenerator.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="Assets\Temple Minions\Demo\Scripts\AnimationSelector.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Base\Joystick.cs" />
     <Compile Include="Assets\src\player\PlayerController.cs" />
+    <Compile Include="Assets\src\shotgun\SimpleProjectile.cs" />
     <Compile Include="Assets\src\player\PlayerMovement.cs" />
     <Compile Include="Assets\src\math-functions\MathExpressionParser.cs" />
     <Compile Include="Assets\src\portals\UniquePairPortalCollider.cs" />
