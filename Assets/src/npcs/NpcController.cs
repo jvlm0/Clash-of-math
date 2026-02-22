@@ -18,6 +18,8 @@ public class NpcController : MonoBehaviour, IAnimController
 
     private float gravity = -9.81f;
 
+    public float AnimSpeed = 1;
+
     private Rigidbody rb;
 
     void Start()
@@ -56,6 +58,8 @@ public class NpcController : MonoBehaviour, IAnimController
         animator.SetBool("IsRunning", true);
         animator.SetBool("IsWalking", false);
         animator.SetBool("IsIdle", false);
+
+        animator.SetFloat("Speed", AnimSpeed*GetComponent<StatusController>().speed);
     }
 
     public void Death()

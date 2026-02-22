@@ -12,6 +12,8 @@ public class EnemyChaseAndAttack : MonoBehaviour
     private float attackRange;
     public float attackCooldown = 1.2f;
 
+    public Transform playerTarget;
+
     private NavMeshAgent agent;
     private Transform currentTarget;
     private float updateTimer;
@@ -31,6 +33,8 @@ public class EnemyChaseAndAttack : MonoBehaviour
         npcController = GetComponent<NpcController>();
         agent.stoppingDistance = attackRange;
         agent.speed = GetComponent<StatusController>().speed;
+
+        playerTarget = GameController.Instance.playerTarget;
     }
 
     void Update()
@@ -59,8 +63,8 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
         distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
         // Atualiza alvo mais próximo em intervalos
-        if (updateTimer >= targetUpdateRate)
-        {
+        //if (updateTimer >= targetUpdateRate)
+        //{
             updateTimer = 0f;
             if (distanceToTarget > attackRange)
                 FindNearestEnemy();
@@ -68,7 +72,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             {
                 currentTarget = GetComponent<MeleeAtack>().canAttack();
             }
-        }
+        //}
 
         if (currentTarget == null)
         {
@@ -90,7 +94,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             if (attackTimer >= attackCooldown)
             {
                 attackTimer = 0f;
-                npcController.Attack();
+                //npcController.Attack();
                 Debug.Log("Npc atacando");
             }
         }
@@ -126,7 +130,15 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
         if (enemiesInRange.Length == 0)
         {
-            currentTarget = null;
+            if (playerTarget != null)
+            {
+                currentTarget = playerTarget;
+            }
+            else
+            {
+                currentTarget = null;
+            }
+            
             return;
         }
 
