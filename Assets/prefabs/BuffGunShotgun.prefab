@@ -4849,9 +4849,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2748122698749316241}
   - component: {fileID: 9039834015397014852}
+  - component: {fileID: 1864294732724286323}
   m_Layer: 0
   m_Name: BuffGunShotgun
-  m_TagString: Untagged
+  m_TagString: pistol
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4887,6 +4888,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RotateTransform: {fileID: 6975765167528277349}
   RotateSpeed: 20
+--- !u!65 &1864294732724286323
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 758765233353265724}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.3427049, y: 1.0931988, z: 1.1814504}
+  m_Center: {x: -0.0577814, y: 0.90276957, z: 0.052541375}
 --- !u!1 &1903293599039035956
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,157 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5662491693851937635
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2470531230636811797}
+  - component: {fileID: 2795079845437230836}
+  - component: {fileID: 1461959377672114922}
+  - component: {fileID: 5253492663162351141}
+  m_Layer: 0
+  m_Name: HammerLeckBuff
+  m_TagString: ActiveBuff
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2470531230636811797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662491693851937635}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8526431917488441398}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2795079845437230836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662491693851937635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89104a0c8a563354799159e2567d9447, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RotateTransform: {fileID: 2470531230636811797}
+  RotateSpeed: 50
+--- !u!114 &1461959377672114922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662491693851937635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0b439880bd6f8b4192400c31da16410, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 15
+  isActive: 1
+  activeSprite: {fileID: 21300000, guid: 7c4e85350bd0b764e96ca6862c15bc5a, type: 3}
+  gamePrefab: {fileID: 6983025384027428209, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+--- !u!135 &5253492663162351141
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662491693851937635}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2
+  m_Center: {x: 0.89, y: 1.36, z: 0.04}
+--- !u!1001 &9177825358572670226
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2470531230636811797}
+    m_Modifications:
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983025384027428209, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+      propertyPath: m_Name
+      value: hammerLeck
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6068142895401798787, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 8003403402543481538, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 2054063071451460462, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 209209274841395586, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 4161556504893112259, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 5354887782231953007, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 3488229473583781715, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+--- !u!4 &8526431917488441398 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 652414117888935204, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+  m_PrefabInstance: {fileID: 9177825358572670226}
+  m_PrefabAsset: {fileID: 0}

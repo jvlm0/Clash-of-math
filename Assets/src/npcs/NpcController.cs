@@ -64,7 +64,8 @@ public class NpcController : MonoBehaviour, IAnimController
 
     public void Death()
     {
-        animator.SetTrigger("Death");
+        SpawnBuffs.instance.SpawnBuff(transform.position+Vector3.up);
+        //animator.SetTrigger("Death");
     }
 
     public void Idle()

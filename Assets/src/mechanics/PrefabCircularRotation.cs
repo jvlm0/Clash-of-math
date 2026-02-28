@@ -34,7 +34,7 @@ public class PrefabCircularRotation : MonoBehaviour
     [Tooltip("Mostrar gizmos no editor")]
     public bool mostrarGizmos = true;
 
-    private Transform centro;
+    public Transform centro;
     private GameObject[] objetosInstanciados;
     private float angulo = 0f;
     private bool objetosCriados = false;

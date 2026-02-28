@@ -50,18 +50,24 @@ public class LifeBarController : MonoBehaviour
         transform.eulerAngles = rotacao;
         if (burstDamage >= totalLife * 0.5f && currentLife == 0)
         {
+            GetComponentInParent<NpcController>()?.Death();
             GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(6);
             Destroy(gameObject, .1f);
         }
         else if (burstDamage >= totalLife * 0.4f && currentLife == 0)
         {
+            GetComponentInParent<NpcController>()?.Death();
             GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(4);
             Destroy(gameObject, .1f);
         }
         else if (burstDamage >= totalLife * 0.3f && currentLife == 0)
         {
             GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(3);
+            
+            GetComponentInParent<NpcController>()?.Death();
+
             Destroy(gameObject, .1f);
+
         }
 
         if (burstTimeCount >= burstTime)

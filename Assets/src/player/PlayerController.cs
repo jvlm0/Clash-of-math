@@ -5,6 +5,11 @@ public class PlayerController : MonoBehaviour, IAnimController
     LifeBarController lifeBarController;
     private Animator animator;
 
+
+    public GameObject hammerBelt;
+    public GameObject leftPistol;
+    public GameObject rightPistol;
+    public GameObject meeeleHammer;
   
 
 
@@ -26,7 +31,7 @@ public class PlayerController : MonoBehaviour, IAnimController
         baseLayer = animator.GetLayerIndex("Base");
 
         
-        
+        EnablePistols();
 
        
 
@@ -108,7 +113,7 @@ public class PlayerController : MonoBehaviour, IAnimController
         } 
         else if (attackMode == AttackMode.TwoPistol)
         {
-            i = animator.GetLayerIndex("TwoPistol");
+            i = animator.GetLayerIndex("DualGun");
             animator.SetLayerWeight(i, 1f);  
         }
         else if (attackMode == AttackMode.HammerBelt)
@@ -137,6 +142,40 @@ public class PlayerController : MonoBehaviour, IAnimController
 
             animator.SetLayerWeight(i, 0);
         }
+    }
+
+
+
+    public void MeeleState()
+    {
+        hammerBelt.SetActive(false);
+        leftPistol.SetActive(false);
+        rightPistol.SetActive(false);
+        meeeleHammer.SetActive(true);
+
+        SetAttackMode(AttackMode.Meele);
+    }
+
+
+    public void EnablePistols()
+    {
+        hammerBelt.SetActive(false);
+        leftPistol.SetActive(true);
+        rightPistol.SetActive(true);
+        meeeleHammer.SetActive(false);
+
+        SetAttackMode(AttackMode.TwoPistol);
+    }
+
+
+    public void EnableHammerbelt()
+    {
+        hammerBelt.SetActive(true);
+        leftPistol.SetActive(false);
+        rightPistol.SetActive(false);
+        meeeleHammer.SetActive(false);
+
+        SetAttackMode(AttackMode.HammerBelt);
     }
 
 }
