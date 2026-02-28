@@ -84,8 +84,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2
-  m_Center: {x: 0.89, y: 1.36, z: 0.04}
+  m_Radius: 2.83
+  m_Center: {x: 0.13, y: 1.36, z: 0.04}
 --- !u!1001 &9177825358572670226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -146,6 +146,7 @@ PrefabInstance:
     - {fileID: 4161556504893112259, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
     - {fileID: 5354887782231953007, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
     - {fileID: 3488229473583781715, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+    - {fileID: 3173587602382080798, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
