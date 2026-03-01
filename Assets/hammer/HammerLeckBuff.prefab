@@ -64,7 +64,7 @@ MonoBehaviour:
   duration: 15
   isActive: 1
   activeSprite: {fileID: 21300000, guid: 7c4e85350bd0b764e96ca6862c15bc5a, type: 3}
-  gamePrefab: {fileID: 6983025384027428209, guid: b632cb79426aef04da4955f18c75d5e9, type: 3}
+  gamePrefab: {fileID: 1911960149542420128, guid: 72fd2c31d2fc89b499cbfd9be2cee9e5, type: 3}
 --- !u!135 &5253492663162351141
 SphereCollider:
   m_ObjectHideFlags: 0

@@ -51,16 +51,6 @@ public class UiBuffButton : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gameObject.SetActive(false);
-
-        if (buff.gamePrefab != null)
-        {
-            var playerTransform = GameController.Instance.playerTarget;
-            Instantiate(buff.gamePrefab, playerTransform.position, playerTransform.rotation);
-        }
-
-        GameController.Instance.DeactivateBuff(buff);
-        
-
+        GameController.Instance.UseBuff(buff);      
     }
 }

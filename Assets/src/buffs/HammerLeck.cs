@@ -11,13 +11,13 @@ public class HammerLeck : MonoBehaviour
 
     [Header("Zona de Impacto")]
     public float impactRadius = 3f;
-    public Vector3 impactOffset = Vector3.zero; // centro da esfera relativo ao objeto
-    public LayerMask impactLayers = ~0;         // layers que recebem dano de impacto
+    public Vector3 impactOffset = Vector3.zero;
+    public LayerMask impactLayers = ~0;
 
     [Header("Aura")]
     public float auraScaleMultiplier = 3f;
     public float auraScaleDuration = 0.4f;
-    public string auraChildName = "Lightning aura";
+    // auraChildName removido - aura injetada via SetAura(), sem dependencia de nome
 
     private bool stopped = false;
     private Transform auraTransform;
@@ -47,16 +47,17 @@ public class HammerLeck : MonoBehaviour
                     hlc = mr.gameObject.AddComponent<HammerLeckCollision>();
 
                 hlc.owner = this;
-                Debug.Log("[HammerLeck] Collider trigger configurado em: " + mr.gameObject.name + " (pai: " + mr.transform.parent?.name + ")");
+                Debug.Log("[HammerLeck] Trigger configurado em: " + mr.gameObject.name + " (pai: " + mr.transform.parent?.name + ")");
             }
         }
+    }
 
-        Transform auraT = transform.Find(auraChildName);
-        if (auraT != null)
-        {
-            auraTransform = auraT;
-            auraOriginalScale = auraT.localScale;
-        }
+    /// <summary>Injeta a referencia da aura diretamente. Chamado pelo HammerLeckSpawner.</summary>
+    public void SetAura(Transform aura)
+    {
+        auraTransform = aura;
+        if (aura != null)
+            auraOriginalScale = aura.localScale;
     }
 
     void Update()
@@ -73,10 +74,8 @@ public class HammerLeck : MonoBehaviour
         if (auraTransform != null)
             StartCoroutine(PulseAura());
 
-        // Centro da esfera = posicao do objeto + offset configuravel no Inspector
         Vector3 sphereCenter = transform.position + transform.TransformDirection(impactOffset);
 
-        // OverlapSphere filtrando apenas as layers definidas no Inspector
         Collider[] hits = Physics.OverlapSphere(sphereCenter, impactRadius, impactLayers);
         foreach (var col in hits)
         {
@@ -103,7 +102,6 @@ public class HammerLeck : MonoBehaviour
         auraTransform.localScale = targetScale;
     }
 
-    // Gizmo mostra a esfera no editor na posicao exata com offset
     private void OnDrawGizmosSelected()
     {
         Vector3 sphereCenter = transform.position + transform.TransformDirection(impactOffset);

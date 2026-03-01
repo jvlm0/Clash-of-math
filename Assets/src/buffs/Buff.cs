@@ -11,6 +11,8 @@ public class Buff: MonoBehaviour
     public Sprite activeSprite;
     public GameObject gamePrefab;
 
+    public bool IsPawnedBuff;
+
 
     public void ActivateBuff()
     {

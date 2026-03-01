@@ -1,12 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
 public class GameController : MonoBehaviour
 {
-
     public bool IsBattleStart = false;
 
     public Camera cameraToLookAt;
@@ -27,7 +23,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-
     public void ActivateBuff(Buff buff, Vector3 position, Quaternion rotation)
     {
         if (activeBuffs.ContainsKey(buff))
@@ -35,8 +30,6 @@ public class GameController : MonoBehaviour
             activeBuffs[buff].renewBuff();
             return;
         }
-
-
 
         UiBuffButton button = GetAvailableButton();
         if (button != null)
@@ -46,8 +39,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-
-    public UiBuffButton GetAvailableButton() 
+    public UiBuffButton GetAvailableButton()
     {
         foreach (var button in uiBuffButton)
         {
@@ -59,7 +51,6 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-
     public void DeactivateBuff(Buff buff)
     {
         if (activeBuffs.ContainsKey(buff))
@@ -69,7 +60,25 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void UseBuff(Buff buff)
+    {
+        if (activeBuffs.ContainsKey(buff))
+        {
+            if (buff.IsPawnedBuff)
+            {
+                buff.gamePrefab.GetComponent<IBuffController>()
+                    .Spawn(
+                        playerTarget.position + playerTarget.up * 1f + playerTarget.forward * 1f,
+                        playerTarget.rotation
+                    );
+            }
+            else
+            {
+                Instantiate(buff.gamePrefab, playerTarget.position, playerTarget.rotation);
+            }
 
-
-
+            activeBuffs[buff].gameObject.SetActive(false);
+            activeBuffs.Remove(buff);
+        }
+    }
 }
