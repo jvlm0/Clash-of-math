@@ -3567,7 +3567,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7535b04fe1177524bb41649cacb43d91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 3274047518182168356, guid: 34a30280ad04ce446969e3471ba826be, type: 3}
+  projectilePrefab: {fileID: 271324192332515935, guid: 85000795035d4b2499c810c0af4b24c9, type: 3}
   firePoint: {fileID: 2120606438}
   projectileCount: 16
   spreadAngle: 30
@@ -3577,7 +3577,7 @@ MonoBehaviour:
   randomSpread: 0
   randomSpreadAmount: 2
   recoilForce: 5
-  muzzleFlash: {fileID: 0}
+  muzzleFlash: {fileID: 6985213258960184441, guid: 2db42c81eff0c1d48ace1c7db4fa7443, type: 3}
   shootSound: {fileID: 0}
 --- !u!1 &1389163229
 GameObject:
@@ -5393,7 +5393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7535b04fe1177524bb41649cacb43d91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 3274047518182168356, guid: 34a30280ad04ce446969e3471ba826be, type: 3}
+  projectilePrefab: {fileID: 271324192332515935, guid: 85000795035d4b2499c810c0af4b24c9, type: 3}
   firePoint: {fileID: 100059157}
   projectileCount: 16
   spreadAngle: 30
@@ -5403,7 +5403,7 @@ MonoBehaviour:
   randomSpread: 0
   randomSpreadAmount: 2
   recoilForce: 5
-  muzzleFlash: {fileID: 0}
+  muzzleFlash: {fileID: 6985213258960184441, guid: 2db42c81eff0c1d48ace1c7db4fa7443, type: 3}
   shootSound: {fileID: 0}
 --- !u!4 &1431082756
 Transform:

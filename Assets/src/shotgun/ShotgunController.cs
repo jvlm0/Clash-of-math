@@ -142,12 +142,9 @@ public class ShotgunController : MonoBehaviour
             {
                 behavior = projectile.AddComponent<ProjectileBehavior>();
             }
-            behavior.maxDistance = maxDistance;
-            behavior.startPosition = firePoint.position;
-            behavior.lifetime = projectileLifetime;
 
-            // Destrói o projétil após o tempo de vida
-            Destroy(projectile, projectileLifetime);
+            behavior.Init(firePoint.transform.position, maxDistance);
+        
         }
 
         // Aplica recuo ao jogador (se tiver Rigidbody)
@@ -200,45 +197,44 @@ public class ShotgunController : MonoBehaviour
 /// </summary>
 public class ProjectileBehavior : MonoBehaviour
 {
-    [HideInInspector]
-    public float maxDistance;
-    
-    [HideInInspector]
-    public Vector3 startPosition;
-    
-    [HideInInspector]
-    public float lifetime;
-
     [Header("Configurações de Dano")]
     public int damage = 10;
-    
+
     [Header("Efeitos de Impacto")]
     public GameObject impactEffect;
-    
+
+    [HideInInspector] public float maxDistance = 6f;
+    [HideInInspector] public float lifetime;
+
     private float distanceTraveled = 0f;
+    private Vector3 lastPosition;
+    private bool initialized = false;
+
+    // Chamado pelo ShotgunController logo apos AddComponent, antes do primeiro Update
+    public void Init(Vector3 spawnPosition, float maxDist)
+    {
+        lastPosition = spawnPosition;
+        maxDistance = maxDist;
+        initialized = true;
+    }
 
     void Update()
     {
-        // Calcula distância percorrida
-        distanceTraveled = Vector3.Distance(startPosition, transform.position);
+        if (!initialized) return;
+        distanceTraveled += Vector3.Distance(lastPosition, transform.position);
+        lastPosition = transform.position;
 
-        // Destrói se ultrapassar a distância máxima
         if (distanceTraveled >= maxDistance)
         {
+            Debug.Log("distancia para destruir "+distanceTraveled);
             DestroyProjectile();
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // Aplica dano se o objeto colidido tiver um componente de vida
-        //IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-
         collision.gameObject.GetComponent<IAnimController>()?.GetDamage(damage);
 
-        
-
-        // Efeito de impacto
         if (impactEffect != null)
         {
             GameObject effect = Instantiate(impactEffect, transform.position, Quaternion.LookRotation(collision.contacts[0].normal));
@@ -250,7 +246,7 @@ public class ProjectileBehavior : MonoBehaviour
 
     void DestroyProjectile()
     {
-        Destroy(gameObject,.1f);
+        Destroy(gameObject, .1f);
     }
 }
 
