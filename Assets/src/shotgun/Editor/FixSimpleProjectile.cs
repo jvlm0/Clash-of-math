@@ -1,4 +1,17 @@
-﻿using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEngine;
+using UnityEditor;
+using System.IO;
+
+public class FixSimpleProjectile : Editor
+{
+    [MenuItem("Tools/Shotgun/Fix SimpleProjectile Script")]
+    static void Fix()
+    {
+        string path = Application.dataPath + "/src/shotgun/SimpleProjectile.cs";
+
+        string content = @"using UnityEngine;
 
 /// <summary>
 /// Script do prefab do projetil da shotgun.
@@ -7,7 +20,7 @@
 [RequireComponent(typeof(Rigidbody))]
 public class SimpleProjectile : MonoBehaviour
 {
-    [Header("Configuracoes Visuais")]
+    [Header(""Configuracoes Visuais"")]
     public TrailRenderer trail;
     public Light projectileLight;
 
@@ -34,3 +47,11 @@ public class SimpleProjectile : MonoBehaviour
         }
     }
 }
+";
+        File.WriteAllText(path, content, System.Text.Encoding.UTF8);
+        AssetDatabase.ImportAsset("Assets/src/shotgun/SimpleProjectile.cs");
+        AssetDatabase.Refresh();
+        Debug.Log("SimpleProjectile.cs reescrito com sucesso!");
+    }
+}
+#endif

@@ -4,13 +4,12 @@ public class PlayerController : MonoBehaviour, IAnimController
 {
     LifeBarController lifeBarController;
     private Animator animator;
-
-
     public GameObject hammerBelt;
     public GameObject leftPistol;
     public GameObject rightPistol;
     public GameObject meeeleHammer;
-  
+    
+    public float meeleRange=2f, rangedRange=6f;
 
 
 
@@ -152,8 +151,10 @@ public class PlayerController : MonoBehaviour, IAnimController
         leftPistol.SetActive(false);
         rightPistol.SetActive(false);
         meeeleHammer.SetActive(true);
-
+        
         SetAttackMode(AttackMode.Meele);
+
+        GetComponent<StatusController>().attackRange = meeleRange;
     }
 
 
@@ -165,6 +166,8 @@ public class PlayerController : MonoBehaviour, IAnimController
         meeeleHammer.SetActive(false);
 
         SetAttackMode(AttackMode.TwoPistol);
+
+        GetComponent<StatusController>().attackRange = rangedRange;
     }
 
 
