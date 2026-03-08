@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour, IAnimController
         baseLayer = animator.GetLayerIndex("Base");
 
         
-        EnablePistols();
+        MeeleState();
 
        
 

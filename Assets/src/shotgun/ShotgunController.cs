@@ -246,7 +246,7 @@ public class ProjectileBehavior : MonoBehaviour
 
     void DestroyProjectile()
     {
-        Destroy(gameObject, .1f);
+        Destroy(gameObject, .2f);
     }
 }
 

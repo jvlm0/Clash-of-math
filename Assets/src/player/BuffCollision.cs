@@ -22,7 +22,7 @@ public class BuffCollision : MonoBehaviour
             GameController.Instance.ActivateBuff(buff, other.transform.position, other.transform.rotation);
         }
 
-        Destroy(other.gameObject);
+        //Destroy(other.gameObject);
     }
 }
 

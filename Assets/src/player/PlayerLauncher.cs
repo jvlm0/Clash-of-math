@@ -4,49 +4,75 @@ using UnityEngine;
 public class PlayerLauncher : MonoBehaviour
 {
     [Header("Configurações de Lançamento")]
-    [SerializeField] private Transform posicaoAlvo;
-    [SerializeField] private float horizontalJumpSpeed = 10f;
-    [SerializeField] private float verticalJumpSpeed = 15f;
-    
-    [Header("Configurações de Animação")]
-    [SerializeField] private float minAirTime = 0.3f;
-    [SerializeField] private float maxAirTime = 3.2f;
-    [SerializeField] private float minAnimSpeed = 0.2f;
-    
+    [SerializeField]
+    private Transform posicaoAlvo;
+
+    [SerializeField]
+    private float horizontalJumpSpeed = 10f;
+
+    [SerializeField]
+    private float verticalJumpSpeed = 15f;
+
+    [Header("Configurações de Animação (Animação Única)")]
+    [Tooltip("NormalizedTime no qual o personagem sai do chão (evento OnJumpStartFinished)")]
+    [SerializeField]
+    private float takeoffNormalizedTime = 0.15f;
+
+    [Tooltip("NormalizedTime no qual o personagem deve aterrissar")]
+    [SerializeField]
+    private float landingNormalizedTime = 0.85f;
+
+    [SerializeField]
+    private float minAirTime = 0.3f;
+
+    [SerializeField]
+    private float maxAirTime = 3.2f;
+
+    [Header("Velocidade da Animação")]
+    [Tooltip("JumpSpeed no início do voo (animação mais rápida)")]
+    [SerializeField]
+    private float jumpSpeedStart = 1f;
+
+    [Tooltip("JumpSpeed no pico do voo (animação mais lenta)")]
+    [SerializeField]
+    private float jumpSpeedEnd = 0.05f;
+
     [Header("Ground Check")]
-    [SerializeField] private float groundCheckDistance = 0.2f;
-    [SerializeField] private LayerMask groundLayer;
-    
+    [SerializeField]
+    private float groundCheckDistance = 0.2f;
+    [SerializeField] private float groundCheckRadius = 0.3f;
+
+    [SerializeField]
+    private LayerMask groundLayer;
+
     private Rigidbody rb;
     private Animator animator;
     private PlayerController animController;
-    
+
     private bool isLaunched = false;
-    private bool applyRootMotion = true;
+    private bool controllingAnimation = false;
     private float airTime;
     private float estimatedAirTime;
     private float gravity;
+    private float capturedTakeoffTime;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         animController = GetComponent<PlayerController>();
-        
+
         if (rb == null)
         {
             Debug.LogError("Rigidbody não encontrado no objeto!");
             return;
         }
-        
-        // Configurações do Rigidbody
+
         rb.useGravity = true;
         rb.isKinematic = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-        
+
         gravity = Mathf.Abs(Physics.gravity.y);
-        
-        // IMPORTANTE: Manter Apply Root Motion ATIVADO
         animator.applyRootMotion = true;
     }
 
@@ -60,33 +86,32 @@ public class PlayerLauncher : MonoBehaviour
 
     void OnAnimatorMove()
     {
-        // Durante o salto, ignoramos o Root Motion e usamos física
-        if (isLaunched && !applyRootMotion)
-        {
-            // Não aplica o Root Motion durante o voo
+        // Durante o controle do voo, ignoramos Root Motion
+        if (controllingAnimation)
             return;
-        }
-        
-        // Fora do salto, aplica normalmente o Root Motion
-        if (!isLaunched)
-        {
-            // Movimento via Root Motion (para idle, run, etc)
-            rb.MovePosition(rb.position + animator.deltaPosition);
-            rb.MoveRotation(rb.rotation * animator.deltaRotation);
-        }
+
+        // Nas fases de takeoff e landing, Root Motion normal
+        rb.MovePosition(rb.position + animator.deltaPosition);
+        rb.MoveRotation(rb.rotation * animator.deltaRotation);
     }
 
     void HandleLaunchedMovement()
     {
         airTime += Time.deltaTime;
+        Debug.Log("controllingAnim atual " + controllingAnimation + "airtime " + airTime);
+        if (controllingAnimation)
+        {
+            // Mapeia o progresso no ar (0 = decolagem, 1 = aterrissagem)
+            float t = Mathf.Clamp01(airTime / estimatedAirTime);
 
-        // Atualiza a velocidade da animação baseado no tempo no ar
-        float t = Mathf.Clamp01(airTime / estimatedAirTime);
-        float jumpAnimSpeed = Mathf.Lerp(2f, minAnimSpeed, t);
-        animator.SetFloat("JumpSpeed", jumpAnimSpeed);
+            // Interpola JumpSpeed: rápido no início, lento no pico/final
+            // Isso estica a animação para durar exatamente o tempo no ar
+            float jumpSpeed = Mathf.Lerp(jumpSpeedStart, jumpSpeedEnd, t);
+            animator.SetFloat("JumpSpeed", jumpSpeed);
+            Debug.Log("Velocidade atual " + jumpSpeed);
+        }
 
-        // Verifica se aterrissou
-        if (IsGrounded())
+        if (airTime > 2f && IsGrounded())
         {
             FinishJump();
         }
@@ -94,53 +119,55 @@ public class PlayerLauncher : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics.Raycast(
-            transform.position,
-            Vector3.down,
-            groundCheckDistance,
-            groundLayer
-        );
+        Vector3 spherePos = transform.position + Vector3.down * groundCheckDistance;
+        return Physics.CheckSphere(spherePos, groundCheckRadius, groundLayer);
     }
 
     void FinishJump()
     {
-        animator.SetTrigger("FinishJump");
-        
-        // Reativa o Root Motion para o landing
-        applyRootMotion = true;
-        
-        EquationController.instance.SpawnFunctionMesh(transform.position);
-        GameController.Instance.IsBattleStart = true;
-        
+        Debug.Log("FinishJump");
+        // Libera o controle — Root Motion volta a agir na fase de landing
+        //controllingAnimation = false;
         isLaunched = false;
         airTime = 0f;
-        
-        // Para o movimento horizontal suavemente
+
+        // Reseta JumpSpeed para velocidade normal
+        animator.SetFloat("JumpSpeed", 1f);
+
+        // Para movimento horizontal residual
         Vector3 vel = rb.velocity;
         vel.x = 0;
         vel.z = 0;
         rb.velocity = vel;
+        GetComponent<LightningPropagation>().Active();
+        EquationController.instance?.SpawnFunctionMesh(transform.position);
+        GameController.Instance.IsBattleStart = true;
     }
 
     public void IniciarLancamento()
     {
-        if (isLaunched) return;
-        
+        if (isLaunched)
+            return;
+
         isLaunched = true;
-        applyRootMotion = true; // Mantém Root Motion para animação inicial
+        controllingAnimation = false;
         animController.jump();
-        
+
         Debug.Log("Lançamento iniciado! Aguardando Animation Event OnJumpStartFinished()");
     }
 
-    // Chamado pelo Animation Event quando a animação de início do pulo termina
+    // ─── Animation Event ──────────────────────────────────────────────────────
+    // Coloque este evento no frame EXATO em que o pé sai do chão na animação.
     public void OnJumpStartFinished()
     {
         Debug.Log("OnJumpStartFinished chamado!");
-        
-        // DESATIVA Root Motion apenas durante o voo
-        applyRootMotion = false;
-        
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        capturedTakeoffTime = stateInfo.normalizedTime;
+
+        // Ativa o controle de JumpSpeed durante o voo
+        controllingAnimation = true;
+
         if (posicaoAlvo == null)
         {
             Debug.LogWarning("Posição alvo não definida! Usando lançamento para frente.");
@@ -156,65 +183,71 @@ public class PlayerLauncher : MonoBehaviour
     void LancarParaFrente()
     {
         Vector3 launchDirection = transform.forward;
-        
         Vector3 horizontalVelocity = launchDirection.normalized * horizontalJumpSpeed;
-        Vector3 velocity = new Vector3(horizontalVelocity.x, verticalJumpSpeed, horizontalVelocity.z);
-        
+        Vector3 velocity = new Vector3(
+            horizontalVelocity.x,
+            verticalJumpSpeed,
+            horizontalVelocity.z
+        );
         rb.velocity = velocity;
-        
-        Debug.Log($"Lançado para frente! Velocidade: {velocity}, Magnitude: {velocity.magnitude}");
-        
+
+        Debug.Log($"Lançado para frente! Velocidade: {velocity}");
         CalcularTempoEstimado(launchDirection);
     }
 
     void LancarParaAlvo()
     {
-        Vector3 direcaoParaAlvo = (posicaoAlvo.position - transform.position);
+        Vector3 direcaoParaAlvo = posicaoAlvo.position - transform.position;
         Vector3 direcaoHorizontal = new Vector3(direcaoParaAlvo.x, 0, direcaoParaAlvo.z);
         float distanciaHorizontal = direcaoHorizontal.magnitude;
         float distanciaVertical = direcaoParaAlvo.y;
 
-        // Calcula o tempo de voo
-        float velocidadeVerticalInicial = verticalJumpSpeed;
-        float tempoSubida = velocidadeVerticalInicial / gravity;
-        float alturaMaxima = (velocidadeVerticalInicial * velocidadeVerticalInicial) / (2 * gravity);
-        
+        float tempoSubida = verticalJumpSpeed / gravity;
+        float alturaMaxima = (verticalJumpSpeed * verticalJumpSpeed) / (2f * gravity);
         float alturaQueda = alturaMaxima - distanciaVertical;
-        float tempoDescida = Mathf.Sqrt(2 * Mathf.Max(0, alturaQueda) / gravity);
+        float tempoDescida = Mathf.Sqrt(2f * Mathf.Max(0, alturaQueda) / gravity);
         float tempoTotal = tempoSubida + tempoDescida;
 
-        // Calcula a velocidade horizontal necessária
         float velocidadeHorizontal = distanciaHorizontal / tempoTotal;
         Vector3 velocidadeHorizontalVec = direcaoHorizontal.normalized * velocidadeHorizontal;
-
-        // Aplica a velocidade
-        Vector3 velocidadeFinal = new Vector3(velocidadeHorizontalVec.x, verticalJumpSpeed, velocidadeHorizontalVec.z);
+        Vector3 velocidadeFinal = new Vector3(
+            velocidadeHorizontalVec.x,
+            verticalJumpSpeed,
+            velocidadeHorizontalVec.z
+        );
         rb.velocity = velocidadeFinal;
-        
-        Debug.Log($"Lançado para alvo! Velocidade: {velocidadeFinal}, Distância: {distanciaHorizontal:F2}m, Tempo estimado: {tempoTotal:F2}s");
-        
-        // Rotaciona o personagem para a direção do alvo
+
         if (direcaoHorizontal.sqrMagnitude > 0.01f)
-        {
             transform.rotation = Quaternion.LookRotation(direcaoHorizontal.normalized);
-        }
-        
+
         estimatedAirTime = Mathf.Clamp(tempoTotal, minAirTime, maxAirTime);
-        SincronizarAnimacao();
+
+        Debug.Log(
+            $"Lançado para alvo! Velocidade: {velocidadeFinal}, Tempo estimado: {tempoTotal:F2}s"
+        );
     }
 
     void CalcularTempoEstimado(Vector3 direction)
     {
-        Vector3 horizontalVelocity = new Vector3(direction.normalized.x * horizontalJumpSpeed, 0, direction.normalized.z * horizontalJumpSpeed);
+        Vector3 horizontalVelocity = new Vector3(
+            direction.normalized.x * horizontalJumpSpeed,
+            0,
+            direction.normalized.z * horizontalJumpSpeed
+        );
         float horizontalSpeed = horizontalVelocity.magnitude;
 
         RaycastHit hit;
-        float maxDistance = 50f;
-
-        if (Physics.Raycast(transform.position, horizontalVelocity.normalized, out hit, maxDistance, groundLayer))
+        if (
+            Physics.Raycast(
+                transform.position,
+                horizontalVelocity.normalized,
+                out hit,
+                50f,
+                groundLayer
+            )
+        )
         {
-            float horizontalDistance = hit.distance;
-            float timeToReachPlatform = horizontalDistance / horizontalSpeed;
+            float timeToReachPlatform = hit.distance / horizontalSpeed;
             estimatedAirTime = Mathf.Clamp(timeToReachPlatform, minAirTime, maxAirTime);
         }
         else
@@ -222,39 +255,17 @@ public class PlayerLauncher : MonoBehaviour
             float theoreticalAirTime = (2f * verticalJumpSpeed) / gravity;
             estimatedAirTime = Mathf.Clamp(theoreticalAirTime, minAirTime, maxAirTime);
         }
-
-        SincronizarAnimacao();
     }
 
-    void SincronizarAnimacao()
-    {
-        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
-        float jumpAnimDuration = 1f;
-
-        foreach (AnimationClip clip in clips)
-        {
-            if (clip.name == "Jump")
-            {
-                jumpAnimDuration = clip.length;
-                break;
-            }
-        }
-
-        float perfectSpeed = jumpAnimDuration / estimatedAirTime;
-        animator.SetFloat("JumpSpeed", perfectSpeed);
-    }
-
-    public bool IsLaunched()
-    {
-        return isLaunched;
-    }
+    public bool IsLaunched() => isLaunched;
 
     public void ResetarLancamento()
     {
         isLaunched = false;
-        applyRootMotion = true;
+        controllingAnimation = false;
         airTime = 0f;
         rb.velocity = Vector3.zero;
+        animator.SetFloat("JumpSpeed", 1f);
     }
 
     void OnDrawGizmos()
@@ -265,7 +276,6 @@ public class PlayerLauncher : MonoBehaviour
             Gizmos.DrawLine(transform.position, posicaoAlvo.position);
             Gizmos.DrawWireSphere(posicaoAlvo.position, 0.5f);
         }
-
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position, Vector3.down * groundCheckDistance);
     }
