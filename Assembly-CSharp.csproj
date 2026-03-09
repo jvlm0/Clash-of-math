@@ -81,6 +81,7 @@
     <Compile Include="Assets\src\mechanics\PrefabCircularRotation.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\src\player\LightningPropagation.cs" />
+    <Compile Include="Assets\src\structures\StructureController.cs" />
     <Compile Include="Assets\src\math-functions\FunctionCurveMesh.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\Utils\PortalInfo.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\src\structures\StackPrefabs.cs" />
+    <Compile Include="Assets\src\structures\StructurePart.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
