@@ -5,7 +5,7 @@ public class PortalSpawner : MonoBehaviour
 {
     [Header("Configurações de Portais")]
     [SerializeField] private GameObject portalPrefab;
-    [SerializeField] private int numberOfPortalPairs = 5;
+    [SerializeField] private int numberOfPortalPairs = 5; 
     
     
     
@@ -34,58 +34,48 @@ public class PortalSpawner : MonoBehaviour
     }
     
     [ContextMenu("Gerar Portais")]
-    public void SpawnPortals()
+public void SpawnPortals()
     {
-        // Limpar portais existentes
         ClearExistingPortals();
-        
-        // Validações
-        if (!ValidateSetup())
-        {
-            return;
-        }
-        
-        // Calcular altura do portal
+
+        if (!ValidateSetup()) return;
+
         CalculatePortalHeight();
-        
-        // Inicializar listas de textos disponíveis
-        
-        
-        // Calcular posições
-        float startZ = startPoint.position.z;
-        float endZ = endPoint.position.z;
-        float totalDistance = Mathf.Abs(endZ - startZ);
-        
-        
+
+        // Usa posição LOCAL em relação ao próprio PortalSpawner
+        // para não ser afetado por escala ou posição global do segmento
+        Vector3 localStart = transform.InverseTransformPoint(startPoint.position);
+        Vector3 localEnd   = transform.InverseTransformPoint(endPoint.position);
+
+        float totalDistance = Vector3.Distance(localStart, localEnd);
+        Vector3 localDir    = (localEnd - localStart).normalized;
+
+        float yPosition = localStart.y + (portalHeight / 2f) + verticalOffset;
+
         if (numberOfPortalPairs <= 1)
         {
-            SpawnPortalPair(startPoint.position, 0);
+            // Converte de volta para world para o Instantiate
+            SpawnPortalPair(transform.TransformPoint(new Vector3(localStart.x, yPosition, localStart.z)), 0);
         }
         else
         {
             float spacing = totalDistance / (numberOfPortalPairs - 1);
-            int direction = startZ > endZ ? -1 : 1;
-            
-            
-            
+
             for (int i = 0; i < numberOfPortalPairs; i++)
             {
-                float zPosition = startZ + (spacing * i * direction);
-                
-                // Calcular Y considerando a altura do portal
-                float yPosition = startPoint.position.y + (portalHeight / 2f) + verticalOffset;
-                
-                // Calcular deslocamento horizontal aleatório (primeiro par sempre no centro)
+                Vector3 localPos = localStart + localDir * (spacing * i);
+                localPos.y = yPosition;
+
+                // Offset horizontal no eixo perpendicular LOCAL
                 float xOffset = 0f;
                 if (i > 0 && horizontalOffset > 0f)
-                {
                     xOffset = Random.Range(-horizontalOffset, horizontalOffset);
-                }
-                
-                Vector3 position = new Vector3(startPoint.position.x + xOffset, yPosition, zPosition);
-                
-                
-                SpawnPortalPair(position, i);
+
+                // Perpendicular ao dir no plano XZ local
+                Vector3 localPerp = new Vector3(-localDir.z, 0f, localDir.x);
+                localPos += localPerp * xOffset;
+
+                SpawnPortalPair(transform.TransformPoint(localPos), i);
             }
         }
     }
@@ -133,37 +123,46 @@ public class PortalSpawner : MonoBehaviour
     
     
     
-    private void SpawnPortalPair(Vector3 centerPosition, int pairIndex)
+// Substitua o método SpawnPortalPair inteiro por este:
+
+private void SpawnPortalPair(Vector3 centerPosition, int pairIndex)
     {
-        // Decidir aleatoriamente qual portal (esquerdo ou direito) será azul ou vermelho
         bool leftIsBlue = Random.Range(0, 2) == 0;
         bool isExpressionPortal = Random.Range(0f, 1f) < 0.7f;
 
         if (isExpressionPortal)
-        {
             numberOfExpressions++;
-        }
-        
-        // Calcular posições dos portais do par (separados no eixo X)
-        Vector3 leftPosition = centerPosition - Vector3.right * (distanceBetweenPairPortals / 2f);
-        Vector3 rightPosition = centerPosition + Vector3.right * (distanceBetweenPairPortals / 2f);
-        
+
+        // Direção world start → end (jogador avança nesse sentido)
+        Vector3 worldDir = (endPoint.position - startPoint.position).normalized;
+        worldDir.y = 0f;
+        if (worldDir == Vector3.zero) worldDir = transform.forward;
+
+        // Portal deve olhar CONTRA o jogador, ou seja, -worldDir
+        Quaternion portalRotation = Quaternion.LookRotation(-worldDir, Vector3.up);
+
+        // Eixo direito baseado na direção real de avanço (não invertida)
+        Vector3 rightDir = Quaternion.LookRotation(worldDir, Vector3.up) * Vector3.right;
+
+        Vector3 leftPosition  = centerPosition - rightDir * (distanceBetweenPairPortals / 2f);
+        Vector3 rightPosition = centerPosition + rightDir * (distanceBetweenPairPortals / 2f);
+
+        // Parent neutro — só agrupa, sem rotação própria
         GameObject portalParent = new GameObject($"Portal_Pair{pairIndex}");
         portalParent.transform.position = centerPosition;
-        portalParent.transform.parent = this.transform;
+        portalParent.transform.rotation = portalRotation;
+        portalParent.transform.parent   = this.transform;
         portalParent.AddComponent<UniquePairPortalCollider>();
 
-        // Criar portais
-        GameObject leftPortal = Instantiate(portalPrefab, leftPosition, portalPrefab.transform.rotation, portalParent.transform);
-        GameObject rightPortal = Instantiate(portalPrefab, rightPosition, portalPrefab.transform.rotation, portalParent.transform);
-        
-        leftPortal.name = $"Portal_Pair{pairIndex}_Left_{(leftIsBlue ? "Blue" : "Red")}";
-        rightPortal.name = $"Portal_Pair{pairIndex}_Right_{(leftIsBlue ? "Red" : "Blue")}";
-        
-        // Configurar portais
-        Portal leftPortalScript = leftPortal.GetComponent<Portal>();
-        Portal rightPortalScript = rightPortal.GetComponent<Portal>();
+        // Portais instanciados com a rotação final correta (contra o jogador)
+        GameObject leftPortal  = Instantiate(portalPrefab, leftPosition,  portalRotation, portalParent.transform);
+        GameObject rightPortal = Instantiate(portalPrefab, rightPosition, portalRotation, portalParent.transform);
 
+        leftPortal.name  = $"Portal_Pair{pairIndex}_Left_{(leftIsBlue  ? "Blue" : "Red")}";
+        rightPortal.name = $"Portal_Pair{pairIndex}_Right_{(leftIsBlue ? "Red"  : "Blue")}";
+
+        Portal leftPortalScript  = leftPortal.GetComponent<Portal>();
+        Portal rightPortalScript = rightPortal.GetComponent<Portal>();
 
         PortalExpressionsController.Instance.InitPairPortals(leftPortalScript, rightPortalScript, !leftIsBlue, isExpressionPortal);
     }

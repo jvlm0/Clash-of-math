@@ -1,7 +1,5 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class PortalExpressionsController : MonoBehaviour
 {   
@@ -120,6 +118,9 @@ public class PortalExpressionsController : MonoBehaviour
         {
             enemyPortals.Add(portalPair.redPortal);
         }
+
+        Debug.Log($"numero de portais do inimigo {enemyPortals.Count}");
+        
     }
 
 

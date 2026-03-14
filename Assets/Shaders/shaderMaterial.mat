@@ -70,7 +70,7 @@ Material:
     - _B: 0
     - _BumpScale: 1
     - _C: 0
-    - _CurveThickness: 0.20066138
+    - _CurveThickness: 0.12684879
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -83,7 +83,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Radius: 5.033069
+    - _Radius: 1.342439
     - _ShockRadius: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

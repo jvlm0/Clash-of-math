@@ -1,0 +1,190 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1823683009948513024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6829055156603833414}
+  m_Layer: 0
+  m_Name: end_run
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6829055156603833414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823683009948513024}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 27.33629, y: -25.184593, z: 63.11945}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5658564805956130409}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5293392145680822081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1727192905409843086}
+  - component: {fileID: 528168734012004070}
+  - component: {fileID: 1920927925281510945}
+  m_Layer: 0
+  m_Name: PortalSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1727192905409843086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5293392145680822081}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 21.990366, y: -26.79761, z: 237.97441}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5658564805956130409}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &528168734012004070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5293392145680822081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c743acf5ac694744afcc69dc3eb6750, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalPrefab: {fileID: 1763209629664047247, guid: 0a1d68bd8d564fc4fbbae39573695d5e, type: 3}
+  numberOfPortalPairs: 5
+  startPoint: {fileID: 2092113349025860183}
+  endPoint: {fileID: 6829055156603833414}
+  distanceBetweenPairPortals: 15
+  verticalOffset: 0
+  horizontalOffset: 5
+--- !u!114 &1920927925281510945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5293392145680822081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b733ef50b34523645978ea6d5d7219af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bluePortalTexts:
+  - sin(x)
+  - tan(x)
+  - x
+  - +3
+  - x^2
+  - 2x
+  - 2^x
+  redPortalTexts:
+  - x/2
+  - 1/x
+  - -1
+  - +2
+  - cos(x)
+  - sqrt(x)
+  - log(x)
+  blueColor: {r: 0.5294118, g: 0.6862745, b: 0.9607843, a: 0.7058824}
+  redColor: {r: 1, g: 0.2, b: 0.2, a: 0.7058824}
+  functionCanvasManager: {fileID: 0}
+  functionMeshPrefab: {fileID: 2493868926683609179, guid: 68559344866ffaf4db81746a8804a309, type: 3}
+  transformFunctionPos: {fileID: 0}
+  portalTroopPairs:
+  - key: {fileID: 1562803277841577437, guid: 1e0237e637093f746b25f4f029d4f38a, type: 3}
+    value: {fileID: 21300000, guid: 71e576a675ffd834eac608617968d28f, type: 3}
+  - key: {fileID: 1940098064602988, guid: cef4a5589e7a5e64d996e7fd24b53f7f, type: 3}
+    value: {fileID: 21300000, guid: 8e6e56d6034e867409cc30adbb06e1fb, type: 3}
+  - key: {fileID: 1011237800896726, guid: a6e84b8c82f20a44f8cd7edc4ae067d7, type: 3}
+    value: {fileID: 21300000, guid: 6461832e5132b8a4c9b3bdf8df9e57f0, type: 3}
+--- !u!1 &7142625763627293305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5658564805956130409}
+  m_Layer: 0
+  m_Name: portalRun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5658564805956130409
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7142625763627293305}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.83629, y: 25.184593, z: -111.41945}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2092113349025860183}
+  - {fileID: 6829055156603833414}
+  - {fileID: 1727192905409843086}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8334344790098234227
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2092113349025860183}
+  m_Layer: 0
+  m_Name: start_run
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2092113349025860183
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334344790098234227}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 27.33629, y: -25.184593, z: -54.680557}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5658564805956130409}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
