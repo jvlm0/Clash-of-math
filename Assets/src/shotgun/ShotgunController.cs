@@ -72,10 +72,10 @@ public class ShotgunController : MonoBehaviour
     void Update()
     {
         // Dispara ao pressionar o botão de fogo (pode customizar)
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Shoot();
-        }
+        //if (Input.GetButtonDown("Fire1"))
+        //{
+        //    Shoot();
+        //}
     }
 
     /// <summary>

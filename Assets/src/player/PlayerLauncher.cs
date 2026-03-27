@@ -147,14 +147,22 @@ public class PlayerLauncher : MonoBehaviour
     public void IniciarLancamento()
     {
         if (isLaunched)
-            return;
+           return;
 
+        posicaoAlvo = RoadSpawner.actualJumpPos;
+        GetComponent<PlayerController>().TurnOffLayers();
         isLaunched = true;
         controllingAnimation = false;
         animController.jump();
 
         Debug.Log("Lançamento iniciado! Aguardando Animation Event OnJumpStartFinished()");
     }
+
+    public void OnEndJump()
+    {
+        GetComponent<PlayerController>().TurnOnLayers();
+    }
+
 
     // ─── Animation Event ──────────────────────────────────────────────────────
     // Coloque este evento no frame EXATO em que o pé sai do chão na animação.

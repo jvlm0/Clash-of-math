@@ -51,13 +51,13 @@ public class LifeBarController : MonoBehaviour
         if (burstDamage >= totalLife * 0.5f && currentLife == 0)
         {
             GetComponentInParent<NpcController>()?.Death();
-            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(6);
+            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate();
             Destroy(gameObject, .1f);
         }
         else if (burstDamage >= totalLife * 0.4f && currentLife == 0)
         {
             GetComponentInParent<NpcController>()?.Death();
-            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(4);
+            GetComponentInParent<ObjectDisintegrator>()?.Disintegrate(6);
             Destroy(gameObject, .1f);
         }
         else if (burstDamage >= totalLife * 0.3f && currentLife == 0)

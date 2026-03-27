@@ -33,6 +33,8 @@ public class RoadSpawner : MonoBehaviour
     [Tooltip("Altura adicional a cada novo segmento.")]
     public float heightIncrement = 1f;
 
+    public static Transform actualJumpPos; 
+
     // ── Estado ────────────────────────────────────────────────────
     private GameObject _lastSegment;
     private int        _stepIndex  = 0;
@@ -50,6 +52,19 @@ public class RoadSpawner : MonoBehaviour
         _lastSegment = Instantiate(segmentPrefab, Vector3.zero, Quaternion.identity);
         _lastSegment.name = "Segment_0";
         _spawnCount = 1;
+
+        var startPos = _lastSegment.transform.Find("playerStart");
+        GameController.Instance.player.transform.position = startPos.position;
+        GameController.Instance.player.transform.rotation = startPos.rotation;
+        
+        var functionPos = _lastSegment.transform.Find("functionPos");
+        PortalExpressionsController.Instance.transformFunctionPos = functionPos;
+
+        SpawnController.Instance.transformFunctionPos = functionPos;
+
+        actualJumpPos = functionPos;
+
+        
     }
 
     private void Update()

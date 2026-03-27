@@ -16,7 +16,7 @@ public class PortalSpawner : MonoBehaviour
     [SerializeField] private float distanceBetweenPairPortals = 2f;
     [SerializeField] private float verticalOffset = 0f; // Ajuste vertical adicional se necessário
     [SerializeField] private float horizontalOffset = 3f; // Deslocamento horizontal aleatório dos pares
-    
+    [SerializeField] private float scaleFactor = 1f;   
     private int numberOfExpressions = 0;
     
 
@@ -157,6 +157,9 @@ private void SpawnPortalPair(Vector3 centerPosition, int pairIndex)
         // Portais instanciados com a rotação final correta (contra o jogador)
         GameObject leftPortal  = Instantiate(portalPrefab, leftPosition,  portalRotation, portalParent.transform);
         GameObject rightPortal = Instantiate(portalPrefab, rightPosition, portalRotation, portalParent.transform);
+
+        leftPortal.transform.localScale = Vector3.one*scaleFactor;
+        rightPortal.transform.localScale = Vector3.one*scaleFactor;
 
         leftPortal.name  = $"Portal_Pair{pairIndex}_Left_{(leftIsBlue  ? "Blue" : "Red")}";
         rightPortal.name = $"Portal_Pair{pairIndex}_Right_{(leftIsBlue ? "Red"  : "Blue")}";

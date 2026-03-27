@@ -6,8 +6,10 @@ public class GameController : MonoBehaviour
     public bool IsBattleStart = false;
 
     public Camera cameraToLookAt;
+    public GameObject player;
     public Transform playerTarget;
     public UiBuffButton[] uiBuffButton;
+    public Transform playerStarterPos;
     public static GameController Instance;
     Dictionary<Buff, UiBuffButton> activeBuffs = new Dictionary<Buff, UiBuffButton>();
 
@@ -21,6 +23,12 @@ public class GameController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+
+    void Start()
+    {
+        //playerTarget = playerStarterPos;
     }
 
     public void ActivateBuff(Buff buff, Vector3 position, Quaternion rotation)

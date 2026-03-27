@@ -6,7 +6,6 @@ public class EquationController : MonoBehaviour
 {
     public string currentEquation = "";
     public static EquationController instance;
-    public GameObject functionMeshPrefab;
 
     public FunctionCanvasManager playerFunctionManager;
 

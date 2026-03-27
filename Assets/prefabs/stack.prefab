@@ -51,8 +51,9 @@ MonoBehaviour:
   - {fileID: 406072487076418763, guid: 5f6377da136c184459f9c3b5e89885c9, type: 3}
   - {fileID: 406072487076418763, guid: dd8363a706b042749af2fa63b7e5af2e, type: 3}
   - {fileID: 406072487076418763, guid: 578480e1cd46bc84caf5f3eb25fc25bf, type: 3}
+  prefabInitialScale: {x: 0.4, y: 0.4, z: 0.4}
   slotPrefab: {fileID: 9012524957791606045, guid: e620581a36e212946b6c796bf715a049, type: 3}
-  slotInitialScale: {x: 2.5, y: 2.5, z: 2.5}
+  slotInitialScale: {x: 1, y: 1, z: 1}
   scaleMultiplier: {x: 0.8, y: 0.8, z: 0.8}
   spacing: 0
   usePhysicsDelay: 1

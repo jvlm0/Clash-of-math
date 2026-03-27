@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -144,7 +144,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &56866847
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -280,6 +280,11 @@ RectTransform:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5250637944842374313, guid: a41de7c1f4a81e3449f0fb6ad7bc4e62, type: 3}
   m_PrefabInstance: {fileID: 84984999}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &145425251 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2613889494972076907, guid: 4cc78cab16c5a0a459274442a7935770, type: 3}
+  m_PrefabInstance: {fileID: 5767565186407243938}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &160993451
 GameObject:
@@ -509,6 +514,7 @@ MonoBehaviour:
   distanceBetweenPairPortals: 15
   verticalOffset: 0
   horizontalOffset: 1
+  scaleFactor: 1
 --- !u!64 &329214328
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -768,7 +774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &394701734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1748,7 +1754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &982904288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1762,11 +1768,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segmentPrefab: {fileID: 4736544778041707012, guid: 39d373586962169469f398cfb84b986f, type: 3}
-  roadMaterial: {fileID: 0}
-  groundMaterial: {fileID: 0}
-  groundScale: {x: 1, y: 1, z: 1}
-  roadScale: {x: 0.8, y: 1, z: 0.3}
-  spawnDistance: 5
+  mainDistance: 462
+  sideOffset: 77
   heightIncrement: 1
 --- !u!4 &982904289
 Transform:
@@ -2060,7 +2063,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1117621324
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2178,11 +2181,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsBattleStart: 1
   cameraToLookAt: {fileID: 2120822223}
+  player: {fileID: 145425251}
   playerTarget: {fileID: 38319338}
   uiBuffButton:
   - {fileID: 463192922}
   - {fileID: 221032843}
   - {fileID: 1420754689}
+  playerStarterPos: {fileID: 0}
 --- !u!4 &1135005278
 Transform:
   m_ObjectHideFlags: 0
@@ -2511,7 +2516,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1419399179
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5803,7 +5808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1504363210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5972,6 +5977,7 @@ MonoBehaviour:
   - {fileID: 758765233353265724, guid: 4eac74e4a5b2935459d31a57782068f6, type: 3}
   - {fileID: 6983025384027428209, guid: f5aa6c1361602e849be5a740df572d81, type: 3}
   - {fileID: 5662491693851937635, guid: 06e2845ea47c0bd48be3ef05da348efe, type: 3}
+  prob: 10
 --- !u!4 &1545645214
 Transform:
   m_ObjectHideFlags: 0
@@ -6308,7 +6314,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1766739726
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -6415,6 +6421,7 @@ MonoBehaviour:
   distanceBetweenPairPortals: 15
   verticalOffset: 0
   horizontalOffset: 1
+  scaleFactor: 1
 --- !u!1 &1799579652
 GameObject:
   m_ObjectHideFlags: 0
@@ -6683,6 +6690,7 @@ MonoBehaviour:
   distanceBetweenPairPortals: 15
   verticalOffset: 0
   horizontalOffset: 1
+  scaleFactor: 1
 --- !u!64 &1897961794
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7095,6 +7103,7 @@ MonoBehaviour:
   distanceBetweenPairPortals: 15
   verticalOffset: 0
   horizontalOffset: 1
+  scaleFactor: 1
 --- !u!64 &2125302046
 MeshCollider:
   m_ObjectHideFlags: 0

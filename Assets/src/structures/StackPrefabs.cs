@@ -6,6 +6,8 @@ public class StackPrefabs : MonoBehaviour
     [Header("Configurações dos Prefabs")]
     [SerializeField] private List<GameObject> prefabList = new List<GameObject>();
 
+    [SerializeField] private Vector3 prefabInitialScale = Vector3.one;
+
     [Header("Configurações de Slot")]
     [SerializeField] private GameObject slotPrefab; // Prefab a ser instanciado na posição do 'slot'
     [SerializeField] private Vector3 slotInitialScale = Vector3.one; // Escala inicial do slot no primeiro nível
@@ -50,7 +52,7 @@ public class StackPrefabs : MonoBehaviour
         ClearStack();
 
         Vector3 currentPosition = startPoint != null ? startPoint.position : transform.position;
-        Vector3 currentScale = Vector3.one;
+        Vector3 currentScale = prefabInitialScale;
         Vector3 currentSlotScale = slotInitialScale;
 
         for (int i = 0; i < numberOfLevels; i++)
@@ -222,7 +224,7 @@ public class StackPrefabs : MonoBehaviour
         }
 
         Vector3 topPosition = startPoint != null ? startPoint.position : transform.position;
-        Vector3 currentScale = Vector3.one;
+        Vector3 currentScale = prefabInitialScale;
         Vector3 currentSlotScale = slotInitialScale;
 
         int currentLevel = stackedObjects.Count;

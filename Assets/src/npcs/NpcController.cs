@@ -22,6 +22,8 @@ public class NpcController : MonoBehaviour, IAnimController
 
     private Rigidbody rb;
 
+    private bool IsDeath = false;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -64,8 +66,12 @@ public class NpcController : MonoBehaviour, IAnimController
 
     public void Death()
     {
+        if (IsDeath) return;
+
         SpawnBuffs.instance.SpawnBuff(transform.position+Vector3.up);
-        //animator.SetTrigger("Death");
+        animator.SetTrigger("Death");
+
+        IsDeath = true;
     }
 
     public void Idle()
