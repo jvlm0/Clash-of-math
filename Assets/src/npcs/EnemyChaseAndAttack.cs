@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -23,8 +24,12 @@ public class EnemyChaseAndAttack : MonoBehaviour
 
     private float distanceToTarget;
 
+    private Rigidbody rb;
+
     void Start()
     {
+
+        rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
 
         attackRange = GetComponent<StatusController>().attackRange;
@@ -37,19 +42,44 @@ public class EnemyChaseAndAttack : MonoBehaviour
         playerTarget = GameController.Instance.playerTarget;
     }
 
+
+    void OnCollisionEnter(Collision collision)
+    {
+        StartCoroutine(Knockback());
+    }
+
+    IEnumerator Knockback()
+    {
+        // RB já recebeu a força normalmente — só desliga o agent
+        agent.enabled = false;
+
+        yield return new WaitForSeconds(1.5f);
+
+        // Recupera
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
+        agent.enabled = true;
+        agent.SetDestination(currentTarget.position);
+    }
+
     void Update()
     {
 
-        if (GameController.Instance.IsBattleStart && GetComponent<NavMeshAgent>().enabled == false)
-        {
-            transform.position += Vector3.forward * Time.deltaTime;
-            return;
-        }
+        /*
+                if (GameController.Instance.IsBattleStart && GetComponent<NavMeshAgent>().enabled == false)
+                {
+                    transform.position += Vector3.forward * Time.deltaTime;
+                    return;
+                }
+                */
 
         if (!GameController.Instance.IsBattleStart)
         {
             return;
         }
+
+
+        GetComponent<NpcController>().EnableIa();
 
         updateTimer += Time.deltaTime;
         attackTimer += Time.deltaTime;
@@ -65,13 +95,13 @@ public class EnemyChaseAndAttack : MonoBehaviour
         // Atualiza alvo mais próximo em intervalos
         //if (updateTimer >= targetUpdateRate)
         //{
-            updateTimer = 0f;
-            if (distanceToTarget > attackRange)
-                FindNearestEnemy();
-            else
-            {
-                currentTarget = GetComponent<MeleeAtack>().canAttack();
-            }
+        updateTimer = 0f;
+        if (distanceToTarget > attackRange)
+            FindNearestEnemy();
+        else
+        {
+            currentTarget = GetComponent<MeleeAtack>().canAttack();
+        }
         //}
 
         if (currentTarget == null)
@@ -138,7 +168,7 @@ public class EnemyChaseAndAttack : MonoBehaviour
             {
                 currentTarget = null;
             }
-            
+
             return;
         }
 
