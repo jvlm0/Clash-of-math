@@ -13,7 +13,7 @@ public class BuffCollision : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("pistol"))
         {
-            GetComponent<PlayerController>().SetAttackMode(PlayerController.AttackMode.TwoPistol);
+            GetComponent<PlayerController>().SetAttackMode(PlayerController.AttackMode.DualGun);
             Debug.Log("Pistol buff coletado!");
             Destroy(other.gameObject);
         } else if (other.gameObject.CompareTag("ActiveBuff"))

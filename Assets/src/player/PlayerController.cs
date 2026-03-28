@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour, IAnimController
     public GameObject rightPistol;
     public GameObject meeeleHammer;
 
+    public AvatarMask runningDualGunMask;
+    public AvatarMask attackDualGunMask;
+
     public float meeleRange = 2f,
         rangedRange = 6f;
 
@@ -17,7 +20,7 @@ public class PlayerController : MonoBehaviour, IAnimController
     {
         HammerBelt,
         OnePistol,
-        TwoPistol,
+        DualGun,
         Meele,
     }
 
@@ -32,9 +35,8 @@ public class PlayerController : MonoBehaviour, IAnimController
 
         baseLayer = animator.GetLayerIndex("Base");
 
-        SetAttackMode(AttackMode.TwoPistol);
+        SetAttackMode(AttackMode.Meele);
     }
-
 
     void Update()
     {
@@ -42,8 +44,6 @@ public class PlayerController : MonoBehaviour, IAnimController
         {
             Attack();
         }
-
-        //SetAttackMode(attackMode);
     }
 
     public void GetAnimDuration(string animName)
@@ -95,9 +95,14 @@ public class PlayerController : MonoBehaviour, IAnimController
         animator.SetFloat("AttackSpeed", GetComponent<StatusController>().attackSpeed);
         animator.SetTrigger("Attack");
 
-        if (attackMode == AttackMode.TwoPistol)
+        if (attackMode == AttackMode.DualGun)
         {
             GetComponent<DualGunController>().Attack();
+        }
+        else if (attackMode == AttackMode.Meele)
+        {
+            int i = animator.GetLayerIndex("MeeleAttack");
+            animator.SetLayerWeight(i, 1f);
         }
 
         //GetComponent<IGunController>()?.Attack();
@@ -123,7 +128,7 @@ public class PlayerController : MonoBehaviour, IAnimController
             i = animator.GetLayerIndex("OnePistol");
             animator.SetLayerWeight(i, 1f);
         }
-        else if (attackMode == AttackMode.TwoPistol)
+        else if (attackMode == AttackMode.DualGun)
         {
             i = animator.GetLayerIndex("DualGun");
             animator.SetLayerWeight(i, 1f);
@@ -132,7 +137,7 @@ public class PlayerController : MonoBehaviour, IAnimController
         else if (attackMode == AttackMode.HammerBelt) { }
         else if (attackMode == AttackMode.Meele)
         {
-            i = animator.GetLayerIndex("Meele");
+            i = animator.GetLayerIndex("MeeleRunning");
             animator.SetLayerWeight(i, 1f);
 
             MeeleState();
@@ -140,8 +145,6 @@ public class PlayerController : MonoBehaviour, IAnimController
 
         DisableOthers(i);
     }
-
-    
 
     private void DisableOthers(int a)
     {
@@ -163,8 +166,6 @@ public class PlayerController : MonoBehaviour, IAnimController
         rightPistol.SetActive(false);
         meeeleHammer.SetActive(true);
 
-        //SetAttackMode(AttackMode.Meele);
-
         GetComponent<StatusController>().attackRange = meeleRange;
     }
 
@@ -175,20 +176,17 @@ public class PlayerController : MonoBehaviour, IAnimController
         rightPistol.SetActive(true);
         meeeleHammer.SetActive(false);
 
-        //SetAttackMode(AttackMode.TwoPistol);
-
         GetComponent<StatusController>().attackRange = rangedRange;
     }
 
     public void TurnOffLayers()
     {
-        StartCoroutine(ChangeLayerWeight(animator, "Meele", 0f, 1f)); // desligar
-
+        StartCoroutine(ChangeLayerWeight(animator, "MeeleRunning", 0f, 1f)); // desligar
     }
 
     public void TurnOnLayers()
     {
-        StartCoroutine(ChangeLayerWeight(animator, "Meele", 1f, 1f)); // ligar
+        StartCoroutine(ChangeLayerWeight(animator, "MeeleRunning", 1f, 1f)); // ligar
     }
 
     IEnumerator ChangeLayerWeight(
@@ -225,5 +223,20 @@ public class PlayerController : MonoBehaviour, IAnimController
         meeeleHammer.SetActive(false);
 
         SetAttackMode(AttackMode.HammerBelt);
+    }
+
+    public void OnStartMeleeAttack()
+    {
+        int i = animator.GetLayerIndex("MeeleAttack");
+        animator.SetLayerWeight(i, 1f);
+        Debug.Log($"OnStartMeleeAttack chamado | layer index: {i}");
+    }
+
+    public void OnEndMeleeAttack()
+    {
+        int i = animator.GetLayerIndex("MeeleAttack");
+        animator.SetLayerWeight(i, 0f);
+
+        Debug.Log($"OnEndMeleeAttack chamado | layer index: {i}");
     }
 }
