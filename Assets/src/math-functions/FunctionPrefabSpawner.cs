@@ -70,6 +70,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
     public int prefabsLayer;
 
+
     public enum SpawnMode
     {
         EvenlySpaced,      // Distribui uniformemente pelos índices dos pontos
@@ -113,8 +114,10 @@ public class FunctionPrefabSpawner : MonoBehaviour
         return prefabCountPairs[currentPrefabIndex].prefab;
     }
 
+
     void Start()
     {
+        this.numberOfPrefabs = GameController.Instance.currentLevelConfig.numberPrefabsToSpawn;
         if (functionGenerator == null)
         {
             functionGenerator = GetComponent<FunctionMeshGenerator>();
@@ -389,7 +392,7 @@ public class FunctionPrefabSpawner : MonoBehaviour
 
         GameObject instance = Instantiate(prefabToSpawn, transform.TransformPoint(position), Quaternion.identity);
 
-        
+        instance.transform.SetParent(transform.parent);
 
         
 

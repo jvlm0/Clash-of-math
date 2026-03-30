@@ -64,20 +64,20 @@ public class PortalExpressionsController : MonoBehaviour
     }
 
 
-    public void InitPairPortals(Portal leftPortal, Portal rightPortal, bool rightIsBlue, bool isExpressionPortal)
+    public void InitPairPortals(Portal leftPortal, Portal rightPortal, bool rightIsBlue, bool isExpressionPortal, PortalPairExpression portalPair)
     {
-        PortalPairExpression portalPair = new PortalPairExpression();
+        //PortalPairExpression portalPair = new PortalPairExpression();
         bool enemyChoice = Random.Range(0,2) == 1 ? true : false;
         
-        portalPair.bluePortal = new PortalInfo();
-        portalPair.redPortal = new PortalInfo();
+        //portalPair.bluePortal = new PortalInfo();
+        //portalPair.redPortal = new PortalInfo();
 
-        if (isExpressionPortal)
+        if (portalPair.isExpressionPortal)
         {   
-            portalPair.bluePortal.isExpressionPortal = true;
-            portalPair.redPortal.isExpressionPortal = true;
-            portalPair.bluePortal.portalText = GetRandomText(true);
-            portalPair.redPortal.portalText = GetRandomText(false);
+            //portalPair.bluePortal.isExpressionPortal = true;
+            //portalPair.redPortal.isExpressionPortal = true;
+            //portalPair.bluePortal.portalText = GetRandomText(true);
+            //portalPair.redPortal.portalText = GetRandomText(false);
 
             if (rightIsBlue)
             {
@@ -91,12 +91,12 @@ public class PortalExpressionsController : MonoBehaviour
             
         }
         else {
-            portalPair.bluePortal.isExpressionPortal = false;
-            portalPair.redPortal.isExpressionPortal = false;
-            (portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopSprite) = GetRandomTroop();
-            (portalPair.redPortal.portalPrefab, portalPair.redPortal.troopSprite) = GetRandomTroop();
-            portalPair.bluePortal.troopCount = Random.Range(7,12);
-            portalPair.redPortal.troopCount = Random.Range(4,8);
+            //portalPair.bluePortal.isExpressionPortal = false;
+            //portalPair.redPortal.isExpressionPortal = false;
+            //(portalPair.bluePortal.portalPrefab, portalPair.bluePortal.troopSprite) = GetRandomTroop();
+            //(portalPair.redPortal.portalPrefab, portalPair.redPortal.troopSprite) = GetRandomTroop();
+            //portalPair.bluePortal.troopCount = Random.Range(7,12);
+            //portalPair.redPortal.troopCount = Random.Range(4,8);
 
             if (rightIsBlue)
             {
@@ -182,7 +182,7 @@ public class PortalExpressionsController : MonoBehaviour
     }
 
 
-    public void DrawEnemyMeshFuction()
+    public void DrawEnemyMeshFuction(Transform transformParent)
     {
         string r = "";
         for (int i = 0;  i < enemyPortals.Count; i++)
@@ -202,7 +202,7 @@ public class PortalExpressionsController : MonoBehaviour
         }
         
 
-        SpawnController.Instance.SpawnEnemyMesh(r);
+        SpawnController.Instance.SpawnEnemyMesh(r, transformParent);
         
     }
 

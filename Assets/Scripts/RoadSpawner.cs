@@ -77,7 +77,7 @@ public class RoadSpawner : MonoBehaviour
     /// <summary>
     /// Gera o próximo segmento. Chame aqui ao atingir um objetivo no jogo.
     /// </summary>
-public void SpawnNext()
+    public void SpawnNext()
     {
         if (_lastSegment == null) return;
 
@@ -93,6 +93,11 @@ public void SpawnNext()
 
         _lastSegment      = Instantiate(segmentPrefab, newPos, newRot);
         _lastSegment.name = $"Segment_{_spawnCount}";
+
+        var functionPos = _lastSegment.transform.Find("functionPos");
+        PortalExpressionsController.Instance.transformFunctionPos = functionPos;
+
+        SpawnController.Instance.transformFunctionPos = functionPos;
 
         Debug.Log($"[RoadSpawner] Segment_{_spawnCount} | pos={newPos} | rotY={rotY}°");
         _spawnCount++;

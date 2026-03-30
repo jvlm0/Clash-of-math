@@ -280,6 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalPrefab: {fileID: 1763209629664047247, guid: 0a1d68bd8d564fc4fbbae39573695d5e, type: 3}
   numberOfPortalPairs: 5
+  portals: []
   startPoint: {fileID: 3387500558810235946}
   endPoint: {fileID: 9064695680733535382}
   distanceBetweenPairPortals: 7.5
@@ -311,7 +312,7 @@ Transform:
   m_GameObject: {fileID: 2938496548320693406}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 82.2}
+  m_LocalPosition: {x: 0, y: 0.1, z: 82.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -327,6 +328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3211400592708273704}
   - component: {fileID: 2402089684068178134}
+  - component: {fileID: 6985357762014008721}
   m_Layer: 0
   m_Name: n1
   m_TagString: Untagged
@@ -387,6 +389,64 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 9d93c60bd18238143b97e0cd67d26d88, type: 2}
   m_BuildHeightMesh: 0
+--- !u!114 &6985357762014008721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4736544778041707012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6433ab986ccf12047b4745c61ecb7f0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portals:
+  - redPortal:
+      isExpressionPortal: 1
+      portalText: x
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    bluePortal:
+      isExpressionPortal: 1
+      portalText: +1
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    isExpressionPortal: 1
+  - redPortal:
+      isExpressionPortal: 1
+      portalText: cos(x)
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    bluePortal:
+      isExpressionPortal: 1
+      portalText: sin(x)
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    isExpressionPortal: 1
+  - redPortal:
+      isExpressionPortal: 1
+      portalText: +2
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    bluePortal:
+      isExpressionPortal: 1
+      portalText: 2x
+      portalPrefab: {fileID: 0}
+      troopCount: 0
+      troopSprite: {fileID: 0}
+    isExpressionPortal: 1
+  numberPrefabsToSpawn: 10
+  minHeightOfStructures: 2
+  maxHeightOfStructures: 5
+  numberOfSpawns: 3
+  timeToSpawn: 3
+  numberOfWaves: 3
 --- !u!1 &7168601720500893811
 GameObject:
   m_ObjectHideFlags: 0

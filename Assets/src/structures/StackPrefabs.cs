@@ -28,10 +28,12 @@ public class StackPrefabs : MonoBehaviour
 
     public int levels = 1;
 
+
     void Start()
     {
-        StackObjects(Random.Range(2, 4));
+        StackObjects(Random.Range(GameController.Instance.currentLevelConfig.minHeightOfStructures, GameController.Instance.currentLevelConfig.maxHeightOfStructures + 1));
     }
+
 
     void Update()
     {
@@ -118,7 +120,7 @@ public class StackPrefabs : MonoBehaviour
         }
 
         // Instancia na posição/rotação do slot, mas sem pai (hierarquia global)
-        GameObject slotObj = Instantiate(slotPrefab, slotTransform.position, slotTransform.rotation, null);
+        GameObject slotObj = Instantiate(slotPrefab, slotTransform.position, slotTransform.rotation, transform.parent);
         slotObj.name = $"{slotPrefab.name}_Slot_Level_{levelIndex + 1}";
         slotObj.transform.localScale = slotScale;
 

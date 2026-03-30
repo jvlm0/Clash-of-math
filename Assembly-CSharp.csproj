@@ -85,6 +85,7 @@
     <Compile Include="Assets\src\math-functions\FunctionCurveMesh.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
+    <Compile Include="Assets\src\game\LevelConfig.cs" />
     <Compile Include="Assets\src\game\GameController.cs" />
     <Compile Include="Assets\src\z-bkp\AnimatedFunctionShockwave.cs" />
     <Compile Include="Assets\src\shotgun\ShotgunController.cs" />

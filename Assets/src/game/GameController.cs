@@ -13,6 +13,8 @@ public class GameController : MonoBehaviour
     public static GameController Instance;
     Dictionary<Buff, UiBuffButton> activeBuffs = new Dictionary<Buff, UiBuffButton>();
 
+    public LevelConfig currentLevelConfig;
+
     void Awake()
     {
         if (Instance == null)

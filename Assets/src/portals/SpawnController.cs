@@ -38,9 +38,14 @@ public class SpawnController : MonoBehaviour
         }
     }
 
-    public void SpawnMesh(GameObject functionMeshPrefab, string expression, List<PrefabCountPair> prefabCountPairs, LayerMask layerMask, int layer)
+    public void SpawnMesh(GameObject functionMeshPrefab, string expression, List<PrefabCountPair> prefabCountPairs, LayerMask layerMask, int layer, Transform transformParent = null)
     {
-        GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,Quaternion.identity);
+        GameObject functionMesh = Instantiate(functionMeshPrefab, transformFunctionPos.position,transformFunctionPos.rotation);
+
+        if (transformParent != null)
+        {
+            functionMesh.transform.SetParent(transformParent);
+        }
 
         functionMesh.GetComponent<FunctionMeshGenerator>().mathExpression = expression;
 
@@ -51,9 +56,9 @@ public class SpawnController : MonoBehaviour
         functionMesh.GetComponent<FunctionPrefabSpawner>().prefabsLayer = layer;
     }
 
-    public void SpawnEnemyMesh(string expression)
+    public void SpawnEnemyMesh(string expression, Transform transformParent)
     {
-        SpawnMesh(functionEnemyMeshPrefab, expression, enemyPrefabCountPairs, playerLayerMask, enemyPrefabLayer);
+        SpawnMesh(functionEnemyMeshPrefab, expression, enemyPrefabCountPairs, playerLayerMask, enemyPrefabLayer, transformParent);
     }
 
     public void SpawnPlayerMesh(string expression)
