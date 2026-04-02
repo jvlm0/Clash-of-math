@@ -183,6 +183,7 @@
     <Compile Include="Assets\src\player\PlayerMovement.cs" />
     <Compile Include="Assets\src\math-functions\MathExpressionParser.cs" />
     <Compile Include="Assets\src\portals\UniquePairPortalCollider.cs" />
+    <Compile Include="Assets\src\props\PropPlacer.cs" />
     <Compile Include="Assets\src\interfaces\IAtackHandler.cs" />
     <Compile Include="Assets\src\game\EquationController.cs" />
     <Compile Include="Assets\src\procedural-terrain\CenteredCrackController.cs" />

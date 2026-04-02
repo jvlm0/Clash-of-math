@@ -174,6 +174,28 @@ public class FunctionMeshGenerator : MonoBehaviour
         Debug.Log($"Iniciando propagação da função: {mathExpression}");
     }
 
+/// <summary>
+    /// Retorna os pontos validos da curva como Vector2 (x, y) para uso externo.
+    /// </summary>
+    public List<Vector2> GetCurvePoints()
+    {
+        List<Vector2> result = new List<Vector2>();
+        int segCount = meshSegments.Count;
+        for (int s = 0; s < segCount; s++)
+        {
+            var seg = meshSegments[s];
+            if (seg.isDiscontinuity) continue;
+            int ptCount = seg.points.Count;
+            for (int p = 0; p < ptCount; p++)
+            {
+                var pt = seg.points[p];
+                if (pt.isValid) result.Add(new Vector2(pt.x, pt.z));
+            }
+        }
+        Debug.Log($"pontos195 {result}");
+        return result;
+    }
+
     public void ResetPropagation()
     {
         StartPropagation();
@@ -641,7 +663,9 @@ public class FunctionMeshGenerator : MonoBehaviour
                             GenerateColliders();
                         }
                         Debug.Log("Propagação completa!");
+                        PropPlacer.Instance.PlaceProps(this);
                         GetComponent<FunctionPrefabSpawner>()?.SpawnPrefabs();
+                        
                         //Destroy(gameObject, 1f);
                     }
                     break;

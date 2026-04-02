@@ -41,7 +41,7 @@ public class MeleeAtack : MonoBehaviour, IAtackHandler
 
         if (currentTarget == null)
         {
-            Debug.Log("Nenhum alvo disponível para ataque");
+            //Debug.Log("Nenhum alvo disponível para ataque");
         }
         else
         {
